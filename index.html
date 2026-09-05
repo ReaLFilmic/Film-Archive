@@ -1,8 +1,10 @@
-<!DOCTYPE html><html lang="ko"><head>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>영화 기록 서비스 — 프로토타입</title>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --page:#E9EAD9;          /* 지면 — 옅은 세이지 크림 */
@@ -295,7 +297,8 @@
         <button data-qmode="person" aria-pressed="false">감독으로</button>
       </div>
       <div class="hookrow">
-        <input type="text" id="q" placeholder="제목으로 검색 (예: 올드보이, Oldboy, 화양연화)" autocomplete="off" aria-label="영화 검색">
+        <input type="text" id="q" placeholder="제목으로 검색 (예: 올드보이, Oldboy, 화양연화)"
+               autocomplete="off" aria-label="영화 검색">
         <button class="go" id="qgo">검색</button>
       </div>
       <p class="hint" id="qlog">TMDB 에 등록된 거의 모든 영화를 찾을 수 있습니다.
@@ -322,7 +325,8 @@
         <input type="file" id="impFile" accept=".csv,text/csv" aria-label="CSV 파일 고르기">
         <button class="go" id="impGo">가져오기</button>
       </div>
-      <textarea id="impText" spellcheck="false" placeholder="또는 CSV 내용을 여기에 붙여넣기"></textarea>
+      <textarea id="impText" spellcheck="false"
+        placeholder="또는 CSV 내용을 여기에 붙여넣기"></textarea>
       <div class="bar"><i id="impFill" style="width:0%"></i></div>
       <p class="hint" id="impLog">먼저 아래 <b>TMDB 연결</b>에서 키를 넣어주세요. 제목을 TMDB 와 맞추는 데 씁니다.</p>
       <div id="impOut"></div>
@@ -340,13 +344,15 @@
         함께 있습니다. <b>둘 중 아무거나</b> 넣으면 알아서 맞는 방식으로 보냅니다.
       </p>
       <div class="hookrow">
-        <input type="password" id="key" placeholder="TMDB API 키 (v3 auth, 32자)" autocomplete="off" spellcheck="false" aria-label="TMDB API 키">
+        <input type="password" id="key" placeholder="TMDB API 키 (v3 auth, 32자)"
+               autocomplete="off" spellcheck="false" aria-label="TMDB API 키">
         <button class="go" id="fetch">불러오기</button>
         <button class="ghost" id="diag">진단</button>
         <button class="ghost" id="drop">지우기</button>
       </div>
       <div class="hookrow">
-        <input type="password" id="omdb" placeholder="OMDb API 키 (선택 — 메타스코어 · 로튼토마토)" autocomplete="off" spellcheck="false" aria-label="OMDb API 키">
+        <input type="password" id="omdb" placeholder="OMDb API 키 (선택 — 메타스코어 · 로튼토마토)"
+               autocomplete="off" spellcheck="false" aria-label="OMDb API 키">
       </div>
       <p class="hint">
         <b>메타크리틱 · 로튼토마토</b> 점수는 TMDB 가 주지 않습니다. omdbapi.com 에서
@@ -358,7 +364,7 @@
         <button id="bake">이 키를 심은 파일 내려받기</button>
         <span class="hint" style="margin:0;align-self:center">한 번 받아두면 열 때마다 자동으로 연결됩니다</span>
       </div>
-      <label class="keep"><input type="checkbox" id="remember" checked="">
+      <label class="keep"><input type="checkbox" id="remember" checked>
         <span>키와 받아온 이미지 정보를 <b id="storeWhere">이 브라우저</b>에 저장 —
           다음에 열면 API 호출 없이 바로 뜹니다</span></label>
       <div class="bar"><i id="fill" style="width:0%"></i></div>
@@ -378,7 +384,8 @@
           그럴 때는 <b>fetch_media.py</b> 를 컴퓨터에서 한 번 실행해 <b>media.json</b> 을 만들고,
           그 내용을 아래에 붙여넣으세요. 요청이 파이썬에서 나가므로 막히지 않습니다.
         </p>
-        <textarea id="paste" spellcheck="false" placeholder="media.json 내용을 그대로 붙여넣기  —  [{&quot;id&quot;:&quot;f01&quot;,&quot;poster&quot;:&quot;https://…&quot;, …}, …]"></textarea>
+        <textarea id="paste" spellcheck="false"
+          placeholder='media.json 내용을 그대로 붙여넣기  —  [{"id":"f01","poster":"https://…", …}, …]'></textarea>
         <button class="go" id="usepaste" style="margin-top:8px">이 내용으로 채우기</button>
       </details>
 
@@ -7357,12 +7364,7 @@ window.addEventListener("message", function (e) {
       </div>
 
       <div class="grp">
-        <div class="lab">영화의전당 자동 받기 <span id="syncNote" style="color:var(--dim)"></span></div>
-        <div class="prow">
-          <input type="number" id="syncDays" value="7" min="1" max="21" aria-label="며칠치">
-          <button class="go" id="syncGo">지금 받기</button>
-        </div>
-        <p class="tnote" id="syncLog">웹으로 올린 주소에서만 됩니다. 서버가 대신 받아오기 때문입니다.</p>
+        <p class="tnote" id="syncLog"></p>
 
         <details class="paste" id="pasteBox">
           <summary>시간표 붙여넣기 도우미</summary>
@@ -7698,51 +7700,53 @@ window.addEventListener("message", function (e) {
     say(rows.length + "회차를 시간표에 넣었습니다.");
   });
 
-  /* 서버 함수로 영화의전당 시간표를 받아옵니다.
-     브라우저는 다른 사이트를 직접 못 읽으므로(CORS) 내 서버가 대신 읽습니다.
-     그래서 이 기능은 웹에 올린 주소에서만 동작합니다. */
-  var canSync = (location.protocol === "http:" || location.protocol === "https:");
-  (function () {
-    var note = $("syncNote");
-    if (!canSync) {
-      if (note) note.textContent = "· 파일로 열면 쓸 수 없습니다";
-      $("syncGo").disabled = true;
-    }
-  })();
+  /* ── 영화의전당 자동 갱신 ──
+     브라우저는 다른 사이트를 직접 못 읽으므로(CORS) 내 서버 함수가 대신 읽습니다.
+     그래서 웹에 올린 주소에서만 동작합니다.
+     하루가 지났으면 열 때 알아서 7일치를 새로 받아옵니다. */
+  var SYNC_DAYS = 7;
+  var SYNC_EVERY = 24 * 60 * 60 * 1000;
 
-  $("syncGo").addEventListener("click", function () {
-    if (!canSync) {
-      $("syncLog").innerHTML = "이 기능은 <b>웹에 올린 주소</b>에서만 됩니다. " +
-        "지금처럼 파일을 직접 열었을 때는 아래 <b>붙여넣기 도우미</b>를 쓰세요.";
+  function syncNote(t) { var el = $("syncLog"); if (el) el.innerHTML = t || ""; }
+
+  function syncCinema() {
+    if (!(location.protocol === "http:" || location.protocol === "https:")) {
+      syncNote("파일을 직접 열면 자동 갱신이 되지 않습니다. 웹에 올린 주소로 들어오세요.");
       return;
     }
-    var days = parseInt($("syncDays").value, 10) || 7;
-    var btn = $("syncGo");
-    btn.disabled = true;
-    $("syncLog").innerHTML = "영화의전당에서 " + days + "일치를 받는 중… " +
-      "하루에 1초씩 쉬며 받으므로 " + days + "초쯤 걸립니다.";
-
-    fetch("/api/cinema?days=" + days, { cache: "no-store" })
+    syncNote("영화의전당에서 " + SYNC_DAYS + "일치를 받는 중…");
+    fetch("/api/cinema?days=" + SYNC_DAYS, { cache: "no-store" })
       .then(function (r) {
-        if (!r.ok) return r.json().then(function (j) {
-          throw new Error(j.error || ("HTTP " + r.status));
-        }).catch(function () { throw new Error("HTTP " + r.status); });
+        if (!r.ok) throw new Error("HTTP " + r.status);
         return r.text();
       })
       .then(function (csv) {
+        if (csv.indexOf("title,venue") !== 0) throw new Error("받은 내용이 시간표가 아닙니다");
         $("csv").value = csv;
         boot(csv);
         try { APP.setCSV(MODKEY, csv); } catch (e) {}
+        try { window.localStorage.setItem("cinema-synced", String(Date.now())); } catch (e) {}
         var n = csv.split("\n").length - 1;
-        $("syncLog").innerHTML = "<b>" + n + "회차</b>를 받아 시간표에 넣었습니다. 이 내용은 저장됩니다.";
+        syncNote("영화의전당 " + SYNC_DAYS + "일치 " + n + "회차 · 방금 갱신");
         say(n + "회차를 받았습니다.");
       })
       .catch(function (e) {
-        $("syncLog").innerHTML = "받지 못했습니다 — " + e.message +
-          "<br><code>api/cinema.js</code> 가 함께 올라가 있는지 확인해보세요.";
-      })
-      .then(function () { btn.disabled = false; });
-  });
+        syncNote("자동 갱신 실패 — " + e.message + " · 저장해둔 시간표를 그대로 씁니다.");
+      });
+  }
+
+  /* 하루에 한 번만 받습니다. 그 사이에는 저장해둔 것을 씁니다. */
+  (function autoSync() {
+    var last = 0;
+    try { last = parseInt(window.localStorage.getItem("cinema-synced"), 10) || 0; } catch (e) {}
+    var cur = ($("csv").value || "").trim();
+    var empty = !cur || cur.split("\n").length < 3;
+    if ((Date.now() - last) > SYNC_EVERY || empty) setTimeout(syncCinema, 500);
+    else {
+      var h = Math.round((Date.now() - last) / 3600000);
+      syncNote("영화의전당 시간표 · " + (h < 1 ? "방금" : h + "시간 전") + " 갱신됨");
+    }
+  })();
 
   function renderTravel(){
     var vs = [];
@@ -9251,12 +9255,12 @@ function film(id) { return FILM_BY_ID[id]; }
      방법 3 — "저장" 체크박스를 켜두면 브라우저에 보관됩니다.
      파일에는 남지 않으니 공유하기 안전하지만, 브라우저를 바꾸면 다시 넣어야 합니다.
      ══════════════════════════════════════════════════════════════ */
-  var MY_TMDB_KEY = "03d13268fd8493feaf306767a3791f7a";
-  var MY_OMDB_KEY = "b81b71a0";        /* 선택 — 메타스코어 · 로튼토마토용 */
+  var MY_TMDB_KEY = "";
+  var MY_OMDB_KEY = "";        /* 선택 — 메타스코어 · 로튼토마토용 */
 
   /* 시간표 CSV 를 파일에 심어 두는 자리입니다.
      "이 키를 심은 파일 내려받기" 를 누르면 지금 넣어둔 CSV 가 여기에 들어갑니다. */
-  var MY_KOBIS_KEY = "e91d7d802d4b9e63837814f0f06ae312";       /* 선택 — 개봉 달력(영진위) */
+  var MY_KOBIS_KEY = "";       /* 선택 — 개봉 달력(영진위) */
   var MY_CINEMA_CSV = "";
   var MY_SCHEDULE_CSV = "";
 
@@ -10726,4 +10730,6 @@ function film(id) { return FILM_BY_ID[id]; }
 
   show(KEYS[0]);
 })();
-</script></div></body></html>
+</script>
+</body>
+</html>
