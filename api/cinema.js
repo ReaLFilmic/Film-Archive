@@ -22,10 +22,15 @@ const THEATER = "영화의전당";
 const UA = "Mozilla/5.0 (compatible; personal-archive/1.0)";
 const MAX_DAYS = 21;
 
+/* Vercel 서버는 UTC 로 돕니다. 한국보다 9시간 느려서, 한국 새벽에 열면
+   어제부터 받아오게 됩니다. 그래서 한국 시각으로 계산합니다. */
+const KST = 9 * 60 * 60 * 1000;
+
 function ymd(d) {
-  return d.getFullYear() + "-" +
-    String(d.getMonth() + 1).padStart(2, "0") + "-" +
-    String(d.getDate()).padStart(2, "0");
+  const k = new Date(d.getTime() + KST);
+  return k.getUTCFullYear() + "-" +
+    String(k.getUTCMonth() + 1).padStart(2, "0") + "-" +
+    String(k.getUTCDate()).padStart(2, "0");
 }
 
 async function getDay(day) {
@@ -78,8 +83,10 @@ export default async function handler(req, res) {
 
   const q = req.query || {};
   const days = Math.min(MAX_DAYS, Math.max(1, parseInt(q.days, 10) || 7));
+  /* 시작일도 한국 시각 기준입니다. 지정하면 그날 정오(KST)를 기준점으로 삼아
+     시간대 계산에서 하루가 밀리지 않게 합니다. */
   const start = /^\d{4}-\d{2}-\d{2}$/.test(q.start || "")
-    ? new Date(q.start + "T00:00:00")
+    ? new Date(q.start + "T12:00:00+09:00")
     : new Date();
 
   const all = [];
