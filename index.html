@@ -973,6 +973,7 @@ var APP = (function () {
     kobisKey: "",
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -2245,6 +2246,7 @@ var APP = (function () {
     kobisKey: "",
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -3012,10 +3014,15 @@ window.addEventListener("message", function (e) {
      목록은 입력할 때마다 다시 그려지는데, 그때마다 버튼에 새로 걸면
      아직 안 걸린 버튼을 누르는 순간이 생겨 한 번에 안 열립니다.
      위임하면 언제 만들어진 버튼이든 첫 번에 반응합니다. */
-  res.addEventListener("pointerdown", function(e){
+  /* pointerdown 만 듣던 때 한 번에 안 열리는 환경이 있었습니다.
+     click 도 함께 받고, 짧은 시간 안에 두 번 들어오면 뒤엣것은 무시합니다. */
+  var lastHit = 0;
+  function pickResult(e){
+    if (Date.now() - lastHit < 500) return;      // 같은 누름이 두 번 들어온 경우
     var lib = e.target.closest && e.target.closest("[data-id]");
     if (lib) {
       e.preventDefault(); e.stopPropagation();
+      lastHit = Date.now();
       cur = FILMS.filter(function(f){ return f.id === lib.dataset.id; })[0];
       q.value = ""; res.className = "res"; q.setAttribute("aria-expanded","false");
       renderDetail();
@@ -3026,6 +3033,7 @@ window.addEventListener("message", function (e) {
     var out = e.target.closest && e.target.closest("[data-tmdb]");
     if (out) {
       e.preventDefault(); e.stopPropagation();
+      lastHit = Date.now();
       var plus = out.querySelector(".plus");
       if (plus) plus.textContent = "…";
       APP.addByTmdbId(parseInt(out.dataset.tmdb, 10)).then(function(f){
@@ -3035,7 +3043,9 @@ window.addEventListener("message", function (e) {
         say(f.ko + " 을 담고 열었습니다.");
       }).catch(function(){ if (plus) plus.textContent = "실패"; });
     }
-  });
+  }
+  res.addEventListener("pointerdown", pickResult);
+  res.addEventListener("click", pickResult);
   document.addEventListener("pointerdown", function(e){
     if (!e.target.closest(".searchbox")){ res.className="res"; q.setAttribute("aria-expanded","false"); }
   });
@@ -3239,6 +3249,7 @@ var APP = (function () {
     kobisKey: "",
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -4526,6 +4537,7 @@ var APP = (function () {
     kobisKey: "",
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -5420,6 +5432,7 @@ var APP = (function () {
     kobisKey: "",
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -6158,6 +6171,14 @@ window.addEventListener("message", function (e) {
   .info .acts a:hover,.info .acts button:hover{background:var(--lamp);
     border-color:var(--lamp);color:#2A1C08}
   .info .load{font-size:12px;color:var(--dim)}
+  .info .warn{font-size:11.5px;line-height:1.7;margin:0 0 9px;padding:8px 11px;
+    border-radius:0 5px 5px 0;background:#2A1E1A;border-left:2px solid #A8564E;color:#D4A8A2}
+  .info .warn b{color:#F0E6DC;font-weight:500}
+  .altrow{margin:0 0 5px}
+  .altrow button{font-family:var(--sans);font-size:12px;cursor:pointer;text-align:left;
+    border-radius:4px;padding:6px 11px;border:1px solid var(--edge);
+    background:#2C2317;color:#C9BDA8;width:100%}
+  .altrow button:hover{background:var(--lamp);border-color:var(--lamp);color:#2A1C08}
   .tip{position:absolute;left:0;bottom:100%;margin-bottom:6px;z-index:20;
     background:#26261F;border:1px solid var(--edge);border-radius:5px;
     padding:9px 12px;min-width:230px;max-width:340px;
@@ -6281,6 +6302,7 @@ var APP = (function () {
     kobisKey: "",
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -6643,6 +6665,46 @@ window.addEventListener("message", function (e) {
     });
   }
 
+  function norm(x) { return String(x || "").replace(/[\s·.]/g, "").toLowerCase(); }
+
+  /* 같은 제목의 다른 영화가 잡히는 일이 있습니다.
+     시트에 적힌 감독과 맞는 후보를 찾을 때까지 차례로 확인하고,
+     끝내 못 찾으면 아무것도 보여주지 않습니다. */
+  function pickByDirector(list, wantDir) {
+    /* 이름 문자열만 대조하면 "Hirokazu Kore-eda" 와 "고레에다 히로카즈" 가 다른 사람이 됩니다.
+       그래서 이름으로 TMDB 인물 번호를 먼저 찾아, 번호끼리 맞춥니다.
+       번호를 못 찾으면 예전처럼 이름으로 대조합니다. */
+    return APP.searchPeople(wantDir).then(function (ids) {
+      var i = 0;
+      function step() {
+        if (i >= list.length) {
+          throw new Error(wantDir
+            ? wantDir + " 의 이 작품을 TMDB 에서 찾지 못했습니다"
+            : "TMDB 에 아직 없는 작품입니다");
+        }
+        return APP.preview(list[i++].id).then(function (d) {
+          if (!wantDir) return d;
+
+          if (ids.length && (d.dirIds || []).length) {
+            var hit = (d.dirIds || []).some(function (x) { return ids.indexOf(x) >= 0; });
+            if (hit) return d;
+            return step();
+          }
+
+          var dir = (d.crew.filter(function (c) { return c[0] === "감독"; })[0] || [])[1] || "";
+          if (!dir) return step();
+          var a = norm(dir), b = norm(wantDir);
+          if (a.indexOf(b) >= 0 || b.indexOf(a) >= 0) return d;
+          return step();
+        }).catch(function (e) {
+          if (i < list.length) return step();
+          throw e;
+        });
+      }
+      return step();
+    });
+  }
+
   /* 제목을 누르면 그 줄 아래에 정보를 펼칩니다. 담지 않고 보기만 합니다. */
   function showInfo(f, el) {
     var row = el.closest(".row");
@@ -6660,14 +6722,21 @@ window.addEventListener("message", function (e) {
       return;
     }
 
+    var cands = [];
     APP.searchMovies(f.ko).then(function (hits) {
       if (hits && hits.length) return hits;
       return f.en ? APP.searchMovies(f.en) : [];
     }).then(function (hits) {
       if (!hits || !hits.length) throw new Error("TMDB 에 아직 없는 작품입니다");
-      return APP.preview(hits[0].id);
-    }).then(function (d) {
+      cands = hits.slice(0, 4);
+      return pickByDirector(cands, f.d);
+    }).then(show).catch(function (e) {
+      box.innerHTML = '<span class="load">' + e.message + "</span>";
+    });
+
+    function show(d) {
       var have = inLib(f);
+
       box.innerHTML =
         (d.poster ? '<img class="p" src="' + d.poster + '" alt="">' : "") +
         '<div class="txt"><h3>' + d.ko + "</h3>" +
@@ -6687,17 +6756,7 @@ window.addEventListener("message", function (e) {
         (have ? "<button disabled>담김</button>"
               : '<button data-add="' + d.tmdbId + '">서재에 담기</button>') +
         "</div></div>";
-
-      var ab = box.querySelector("[data-add]");
-      if (ab) ab.addEventListener("click", function () {
-        ab.disabled = true; ab.textContent = "…";
-        APP.addByTmdbId(d.tmdbId).then(function () {
-          ab.textContent = "담김"; say(d.ko + " 을 담았습니다.");
-        }).catch(function () { ab.disabled = false; ab.textContent = "실패"; });
-      });
-    }).catch(function (e) {
-      box.innerHTML = '<span class="load">' + e.message + "</span>";
-    });
+    }
   }
 
   /* TMDB 에서 제목으로 찾아 담습니다. 한제로 먼저, 안 되면 영제로. */
@@ -7081,6 +7140,7 @@ var APP = (function () {
     kobisKey: "",
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -8194,6 +8254,7 @@ var APP = (function () {
     kobisKey: "",
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -9264,7 +9325,7 @@ function film(id) { return FILM_BY_ID[id]; }
   /* 시간표 CSV 를 파일에 심어 두는 자리입니다.
      "이 키를 심은 파일 내려받기" 를 누르면 지금 넣어둔 CSV 가 여기에 들어갑니다. */
   var MY_KOBIS_KEY = "e91d7d802d4b9e63837814f0f06ae312";       /* 선택 — 개봉 달력(영진위) */
-  var MY_CINEMA_CSV = "title,venue,date,start,runtime,priority\n제5회 하나뿐인 지구영상제,영화의전당 시네마테크,09-06,09:00,120,3\n제5회 하나뿐인 지구영상제,영화의전당 소극장,09-06,09:00,120,3\n비광,영화의전당 중극장,09-06,09:30,109,3\n오디세이(SCOPE),영화의전당 중극장,09-06,11:40,172,3\n수련,영화의전당 인디플러스,09-06,11:40,119,3\n(제22회 미쟝센단편영화제 수상작 특별전)섹션2,영화의전당 인디플러스,09-06,14:00,72,3\n오크 스트리트의 마지막 날,영화의전당 중극장,09-06,15:00,99,3\n(제22회 미쟝센단편영화제 수상작 특별전)섹션1,영화의전당 인디플러스,09-06,15:40,83,3\n경주기행,영화의전당 중극장,09-06,17:00,110,3\n빈집의 연인들,영화의전당 인디플러스,09-06,17:30,94,3\n오케이 마담2,영화의전당 중극장,09-06,19:10,108,3\n사진의 얼굴,영화의전당 인디플러스,09-06,19:30,99,3\n제5회 하나뿐인 지구영상제,영화의전당 소극장,09-07,09:00,120,3\n제5회 하나뿐인 지구영상제,영화의전당 시네마테크,09-07,09:00,120,3\n오크 스트리트의 마지막 날,영화의전당 중극장,09-07,09:30,99,3\n비광,영화의전당 중극장,09-07,11:30,109,3\n빈집의 연인들,영화의전당 인디플러스,09-07,11:30,94,3\n숨어드는 산,영화의전당 인디플러스,09-07,13:30,106,3\n경주기행,영화의전당 중극장,09-07,13:40,110,3\n수련,영화의전당 인디플러스,09-07,15:40,119,3\n오디세이(FLAT),영화의전당 중극장,09-07,16:00,172,3\n콘크리트 녹색섬,영화의전당 인디플러스,09-07,18:00,104,3\n오크 스트리트의 마지막 날,영화의전당 중극장,09-07,19:30,99,3\n오디세이(SCOPE),영화의전당 중극장,09-08,09:30,172,3\n위커 맨: 파이널 컷(테크),영화의전당 시네마테크,09-08,09:30,95,3\n하나 코리아(소극장),영화의전당 소극장,09-08,09:40,106,3\n(리플레이)몽상가들,영화의전당 시네마테크,09-08,11:30,114,3\n캐리어를 끄는 소녀,영화의전당 인디플러스,09-08,11:30,107,3\n지느러미(소극장),영화의전당 소극장,09-08,11:50,84,3\n경주기행,영화의전당 중극장,09-08,13:00,110,3\n산양들(소극장),영화의전당 소극장,09-08,13:40,107,3\n숨어드는 산,영화의전당 인디플러스,09-08,13:40,106,3\n싱 어게인(테크),영화의전당 시네마테크,09-08,13:50,98,3\n오크 스트리트의 마지막 날,영화의전당 중극장,09-08,15:10,99,3\n지느러미(소극장),영화의전당 소극장,09-08,15:50,84,3\n드라큘라: 러브 테일(테크),영화의전당 시네마테크,09-08,15:50,129,3\n수련,영화의전당 인디플러스,09-08,15:50,119,3\n비광,영화의전당 중극장,09-08,17:10,109,3\n산양들(소극장),영화의전당 소극장,09-08,17:40,107,3\n지난 여름,영화의전당 인디플러스,09-08,18:10,76,3\n고양이를 놓아줘(테크),영화의전당 시네마테크,09-08,18:20,102,3\n오디세이(FLAT),영화의전당 중극장,09-08,19:30,172,3\n하나 코리아(소극장),영화의전당 소극장,09-08,19:50,106,3\n트루먼의 사랑,영화의전당 인디플러스,09-08,19:50,146,3\n(리플레이)애정만세,영화의전당 시네마테크,09-08,20:30,118,3\n경주기행,영화의전당 중극장,09-09,09:30,110,3\n고양이를 놓아줘(테크),영화의전당 시네마테크,09-09,09:30,102,3\n싱 어게인,영화의전당 소극장,09-09,09:40,98,3\n지난 여름,영화의전당 인디플러스,09-09,11:30,76,3\n불멸의 존재들. 이집트 박물관의 경이들,영화의전당 소극장,09-09,11:40,86,3\n드라큘라: 러브 테일(테크),영화의전당 시네마테크,09-09,11:40,129,3\n오디세이(FLAT),영화의전당 중극장,09-09,11:50,172,3\n숨어드는 산,영화의전당 인디플러스,09-09,13:10,106,3\n더 드라마,영화의전당 소극장,09-09,13:30,106,3\n(리플레이)애정만세,영화의전당 시네마테크,09-09,14:10,118,3\n비광,영화의전당 중극장,09-09,15:10,109,3\n아가미,영화의전당 인디플러스,09-09,15:20,106,3\n어떻게 해야 했을까?,영화의전당 소극장,09-09,15:40,101,3\n위커 맨: 파이널 컷(테크),영화의전당 시네마테크,09-09,16:30,95,3\n오크 스트리트의 마지막 날,영화의전당 중극장,09-09,17:20,99,3\n담요를 입은 사람,영화의전당 인디플러스,09-09,17:30,117,3\n워페어,영화의전당 소극장,09-09,17:40,96,3\n경멸(테크),영화의전당 시네마테크,09-09,18:30,104,3\n오디세이(SCOPE),영화의전당 중극장,09-09,19:30,172,3\n더 드라마,영화의전당 소극장,09-09,19:40,106,3\n환희의 얼굴,영화의전당 인디플러스,09-09,19:50,126,3\n(리플레이)몽상가들,영화의전당 시네마테크,09-09,20:40,114,3\n워페어,영화의전당 소극장,09-10,09:30,96,3\n(리플레이)애정만세,영화의전당 시네마테크,09-10,09:30,118,3\n고양이를 놓아줘,영화의전당 소극장,09-10,11:30,102,3\n사진의 얼굴,영화의전당 인디플러스,09-10,11:30,99,3\n위커 맨: 파이널 컷(테크),영화의전당 시네마테크,09-10,11:50,95,3\n더 드라마,영화의전당 소극장,09-10,13:30,106,3\n숨어드는 산,영화의전당 인디플러스,09-10,13:30,106,3\n(리플레이)몽상가들,영화의전당 시네마테크,09-10,13:50,114,3\n싱 어게인,영화의전당 소극장,09-10,15:40,98,3\n빈집의 연인들,영화의전당 인디플러스,09-10,15:40,94,3\n불멸의 존재들. 이집트 박물관의 경이들,영화의전당 소극장,09-10,17:40,86,3\n캐리어를 끄는 소녀,영화의전당 인디플러스,09-10,17:40,107,3\n[개막식]세븐 스텝,영화의전당 시네마테크,09-10,19:00,118,3\n콘크리트 녹색섬,영화의전당 인디플러스,09-10,19:50,104,3\n비광,영화의전당 중극장,09-10,20:20,109,3\n오디세이(SCOPE),영화의전당 중극장,09-11,09:30,172,3\n위커 맨: 파이널 컷,영화의전당 소극장,09-11,09:40,95,3\n댄스클럽 & 인터뷰 영상,영화의전당 시네마테크,09-11,10:30,100,3\n드라큘라: 러브 테일,영화의전당 소극장,09-11,11:40,129,3\n트루먼의 사랑,영화의전당 인디플러스,09-11,11:40,146,3\n오크 스트리트의 마지막 날,영화의전당 중극장,09-11,13:00,99,3\n다이얼로그 폴리스,영화의전당 시네마테크,09-11,13:10,90,3\n어떻게 해야 했을까?,영화의전당 소극장,09-11,14:10,101,3\n경주기행,영화의전당 중극장,09-11,15:00,110,3\n[GV]아름다운 그해,영화의전당 시네마테크,09-11,15:00,95,3\n더 드라마,영화의전당 소극장,09-11,16:10,106,3\n비광,영화의전당 중극장,09-11,17:10,109,3\n[GV]세븐 스텝,영화의전당 시네마테크,09-11,18:00,118,3\n고양이를 놓아줘,영화의전당 소극장,09-11,18:20,102,3\n오디세이(FLAT),영화의전당 중극장,09-11,19:30,172,3\n2026 BISFF 순회상영회,영화의전당 인디플러스,09-11,19:30,61,3\n싱 어게인,영화의전당 소극장,09-11,20:30,98,3\n오디세이(FLAT),영화의전당 중극장,09-12,09:30,172,3\n어떻게 해야 했을까?,영화의전당 소극장,09-12,09:40,101,3\n베르트가 다 망쳤어,영화의전당 시네마테크,09-12,10:30,83,3\n위커 맨: 파이널 컷,영화의전당 소극장,09-12,11:40,95,3\n아가미,영화의전당 인디플러스,09-12,11:40,106,3\n리브 어 리틀,영화의전당 시네마테크,09-12,12:20,98,3\n더 드라마,영화의전당 소극장,09-12,13:40,106,3\n사진의 얼굴,영화의전당 인디플러스,09-12,13:50,99,3\n이스라엘-팔레스타인 인 스웨덴,영화의전당 시네마테크,09-12,14:20,206,3\n싱 어게인,영화의전당 소극장,09-12,15:50,98,3\n빈집의 연인들,영화의전당 인디플러스,09-12,15:50,94,3\n고양이를 놓아줘,영화의전당 소극장,09-12,17:50,102,3\n리틀 드리머즈,영화의전당 인디플러스,09-12,17:50,96,3\n도거랜드,영화의전당 시네마테크,09-12,18:10,76,3\n지붕 위의 사나이,영화의전당 시네마테크,09-12,19:50,110,3\n환희의 얼굴,영화의전당 인디플러스,09-12,19:50,126,3\n워페어,영화의전당 소극장,09-12,20:00,96,3";
+  var MY_CINEMA_CSV = "";
   var MY_SCHEDULE_CSV = "";
 
   /* ══════════ TMDB 불러오기 ══════════ */
@@ -9995,6 +10056,8 @@ function film(id) { return FILM_BY_ID[id]; }
             stills: (d.images && d.images.backdrops || []).slice(0, 3)
                       .map(function (b) { return IMG + "w780" + b.file_path; }),
             trailer: vid ? vid.key : null,
+            dirIds: crew.filter(function (x) { return x.job === "Director"; })
+                        .map(function (x) { return x.id; }),
             crew: [["감독", role("Director")], ["각본", role("Screenplay") || role("Writer")],
                    ["촬영", role("Director of Photography")],
                    ["음악", role("Original Music Composer")], ["편집", role("Editor")]]
@@ -10003,6 +10066,18 @@ function film(id) { return FILM_BY_ID[id]; }
           };
         });
     });
+  };
+
+  /* 이름으로 인물 번호를 찾습니다. 한글·영문 표기가 달라도 같은 사람을 가리키게 하려는 것입니다. */
+  APP.searchPeople = function (q) {
+    var key = ($("key").value || "").replace(/\s+/g, "");
+    if (key.length < 20 || !q) return Promise.resolve([]);
+    return retry(function () {
+      return tmdb("/search/person", auth(key),
+        "&query=" + encodeURIComponent(q) + "&include_adult=false");
+    }, 2).then(function (r) {
+      return (r.results || []).slice(0, 4).map(function (p) { return p.id; });
+    }).catch(function () { return []; });
   };
 
   APP.clearLibrary = function () {
