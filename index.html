@@ -7710,12 +7710,22 @@ window.addEventListener("message", function (e) {
   function syncNote(t) { var el = $("syncLog"); if (el) el.innerHTML = t || ""; }
 
   function syncCinema() {
-    if (!(location.protocol === "http:" || location.protocol === "https:")) {
+    var proto = location.protocol;
+    try { if (window.parent) proto = window.parent.location.protocol; } catch (e) {}
+    if (!(proto === "http:" || proto === "https:")) {
       syncNote("파일을 직접 열면 자동 갱신이 되지 않습니다. 웹에 올린 주소로 들어오세요.");
       return;
     }
-    syncNote("영화의전당에서 " + SYNC_DAYS + "일치를 받는 중…");
-    fetch("/api/cinema?days=" + SYNC_DAYS, { cache: "no-store" })
+    /* 이 화면은 iframe 안에서 돕니다. 그 안에서는 기준 주소가 사이트가 아니라
+       about:srcdoc 이라, "/api/cinema" 같은 상대 주소가 엉뚱한 곳을 가리킵니다.
+       바깥 창의 주소를 가져와 절대 주소로 만듭니다. */
+    var origin = "";
+    try { origin = (window.parent && window.parent.location.origin) || location.origin; }
+    catch (e) { origin = location.origin; }
+    if (!origin || origin === "null") origin = "";
+
+    syncNote("영화의전당에서 " + SYNC_DAYS + "일치를 받는 중… 15초쯤 걸립니다.");
+    fetch(origin + "/api/cinema?days=" + SYNC_DAYS, { cache: "no-store" })
       .then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status);
         return r.text();
