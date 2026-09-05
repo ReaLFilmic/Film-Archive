@@ -495,6 +495,15 @@
 
   .warnbtn { margin-left: auto; }
   .warnbtn[data-armed="1"] { background: #3A211E; border-color: #6E3A36; color: #DFA9A2; }
+  #clearAll { margin-left: 6px; }
+  body.removing .case::before {
+    content: "빼기"; position: absolute; z-index: 6;
+    left: 50%; top: 50%; transform: translate(-50%,-50%);
+    background: rgba(168,86,78,.92); color: #fff; font-size: 11px;
+    padding: 4px 12px; border-radius: 999px; opacity: 0; transition: opacity .14s;
+  }
+  body.removing .case:hover::before { opacity: 1; }
+  body.removing .case:hover { outline: 2px solid #A8564E; outline-offset: -2px; }
   .count { margin-left: 10px; font-size: 12.5px; color: #6E6455; }
   .count b { color: #A3957F; font-weight: 500; }
 
@@ -968,6 +977,7 @@ var APP = (function () {
     critLoad: function () { return Promise.reject(new Error("연결 없음")); },
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
+    removeFilm: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -986,7 +996,8 @@ var APP = (function () {
 })();
 
 /* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
-var FILMS = (APP.library && APP.library.length) ? APP.library : [];
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
 var FILM_BY_ID = {};
 FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
 function film(id) { return FILM_BY_ID[id]; }
@@ -1225,7 +1236,8 @@ window.addEventListener("message", function (e) {
     <span class="bar-label">진열</span>
     <button data-filt="all" aria-pressed="true">전체</button>
     <button data-filt="seen" aria-pressed="false">본 것만</button>
-    <button id="reset" class="warnbtn">넣은 영화 비우기</button>
+    <button id="reset" class="warnbtn">영화 빼기</button>
+    <button id="clearAll" class="warnbtn" hidden>전부 비우기</button>
     <span class="count"><b id="n">0</b>편 진열 중</span>
   </div>
 
@@ -1630,6 +1642,12 @@ window.addEventListener("message", function (e) {
 
       btn.addEventListener("click", function () {
         if (skipClick) { skipClick = false; return; }   // 방금 끈 것이면 열지 않습니다
+        if (window.pickMode === "remove") {
+          order = order.filter(function (x) { return x !== f.id; });
+          APP.removeFilm(f.id);
+          say(f.ko + "을 서재에서 뺐습니다.");
+          return;
+        }
         pick(f.id);
       });
       btn.addEventListener("pointerdown", function (e) {
@@ -1760,11 +1778,14 @@ window.addEventListener("message", function (e) {
     /* 자리를 옮길 때 대상의 위치를 "빼기 전에" 기억해야 합니다.
        빼고 나면 뒤쪽 항목들이 한 칸씩 당겨져서, 뒤로 옮기면 제자리로 돌아갑니다.
        ▶(뒤로) 버튼이 먹지 않던 원인이 이것입니다. */
+    /* 끼워넣기가 아니라 두 자리를 맞바꿉니다.
+       끼워넣으면 사이에 있는 작품이 한 칸씩 밀려서, 위아래로 옮겼는데도
+       아랫줄 전체가 옆으로 움직인 것처럼 보입니다. 맞바꾸면 둘만 바뀝니다. */
     var from = order.indexOf(fromId);
     var to = order.indexOf(toId);
     if (from < 0 || to < 0 || from === to) return;
-    order.splice(from, 1);
-    order.splice(to, 0, fromId);
+    order[from] = toId;
+    order[to] = fromId;
     saveOrder();
     renderShelf();
     var f = byId(fromId);
@@ -1945,26 +1966,42 @@ window.addEventListener("message", function (e) {
   /* 넣은 영화 비우기 — 실수로 누르는 일이 없게 두 번 눌러야 실행됩니다. */
   (function () {
     var btn = document.getElementById("reset"), armed = false, timer = null;
-    function disarm() {
-      armed = false; btn.dataset.armed = "0";
-      btn.textContent = "넣은 영화 비우기";
-      clearTimeout(timer);
+    var allBtn = document.getElementById("clearAll");
+
+    /* 표지를 눌러 한 편씩 빼는 모드입니다. 전부 비우기는 이 모드 안에만 나옵니다. */
+    function setRemove(on) {
+      window.pickMode = on ? "remove" : "";
+      btn.dataset.armed = on ? "1" : "0";
+      btn.textContent = on ? "빼기 끝내기" : "영화 빼기";
+      if (allBtn) allBtn.hidden = !on;
+      document.body.classList.toggle("removing", on);
+      selected = null;
+      renderShelf(); renderSleeve();
+      say(on ? "표지를 누르면 그 영화가 서재에서 빠집니다." : "빼기를 끝냈습니다.");
     }
+
     btn.addEventListener("click", function () {
+      if (!FILMS.length && window.pickMode !== "remove") {
+        say("서재가 이미 비어 있습니다."); return;
+      }
+      setRemove(window.pickMode !== "remove");
+    });
+
+    if (allBtn) allBtn.addEventListener("click", function () {
       if (!FILMS.length) { say("서재가 이미 비어 있습니다."); return; }
       if (!armed) {
-        armed = true; btn.dataset.armed = "1";
-        btn.textContent = "한 번 더 — " + FILMS.length + "편 전부 빼기";
-        timer = setTimeout(disarm, 4000);
+        armed = true;
+        allBtn.textContent = "한 번 더 — " + FILMS.length + "편 전부";
+        timer = setTimeout(function () {
+          armed = false; allBtn.textContent = "전부 비우기";
+        }, 4000);
         return;
       }
-      disarm();
+      armed = false; allBtn.textContent = "전부 비우기"; clearTimeout(timer);
       var n = FILMS.length;
       order = [];
-      selected = null;
-      /* 서재는 부모 창이 들고 있습니다. 비우면 다섯 화면이 함께 갱신됩니다.
-         별점과 코멘트는 지우지 않습니다 — 같은 영화를 다시 담으면 되살아납니다. */
       APP.clearLibrary();
+      setRemove(false);
       say(n + "편을 서재에서 뺐습니다. 별점과 코멘트는 남아 있습니다.");
     });
   })();
@@ -2046,6 +2083,10 @@ window.addEventListener("message", function (e) {
   .wide{border-top:1px solid #332A1C}
   .wl{display:block;font-size:10.5px;color:var(--dim);padding:7px 10px 4px}
   .res .plus{margin-left:8px;font-size:10.5px;color:var(--lamp);flex:none}
+  .loading{padding:46px 22px;text-align:center;border:1px dashed var(--edge);
+    border-radius:6px;color:var(--dim);font-size:13px}
+  .loading b{display:block;font-family:var(--serif);font-size:18px;color:var(--paper);
+    font-weight:700;margin-bottom:6px}
   .res .sw{width:20px;height:28px;border-radius:1px;flex:none}
   .res .yr{color:var(--dim);font-size:11.5px;margin-left:auto}
 
@@ -2241,6 +2282,7 @@ var APP = (function () {
     critLoad: function () { return Promise.reject(new Error("연결 없음")); },
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
+    removeFilm: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -2259,7 +2301,8 @@ var APP = (function () {
 })();
 
 /* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
-var FILMS = (APP.library && APP.library.length) ? APP.library : [];
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
 var FILM_BY_ID = {};
 FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
 function film(id) { return FILM_BY_ID[id]; }
@@ -2774,7 +2817,10 @@ window.addEventListener("message", function (e) {
 
   // ---------- 상세 ----------
   function renderDetail(){
-    if (!FILMS.length || !cur) {
+    /* 방금 담은 영화는 부모 창의 서재에 들어가지만, 이 화면이 들고 있는 목록은
+       화면이 새로 만들어질 때까지 그대로입니다. 그래서 서재가 비었는지로 판단하면
+       담자마자 안내문이 떠버립니다. 열어야 할 작품이 있으면 그것을 먼저 봅니다. */
+    if (!cur) {
       $("detail").innerHTML = EMPTY_HTML;
       renderLogs();
       return;
@@ -3034,14 +3080,23 @@ window.addEventListener("message", function (e) {
     if (out) {
       e.preventDefault(); e.stopPropagation();
       lastHit = Date.now();
-      var plus = out.querySelector(".plus");
-      if (plus) plus.textContent = "…";
+
+      /* TMDB 에서 받아오는 데 1~2초 걸립니다. 그동안 아무 반응이 없으면
+         안 눌린 줄 알고 다시 누르게 됩니다. 누르는 즉시 화면을 바꿔 줍니다. */
+      var name = (out.textContent || "").replace(/담기|…/g, "").trim();
+      q.value = ""; res.className = "res"; q.setAttribute("aria-expanded","false");
+      $("detail").innerHTML =
+        '<div class="loading"><b>' + name + '</b><span>정보를 받아오는 중…</span></div>';
+
       APP.addByTmdbId(parseInt(out.dataset.tmdb, 10)).then(function(f){
-        q.value = ""; res.className = "res"; q.setAttribute("aria-expanded","false");
         cur = f;
         renderDetail();
         say(f.ko + " 을 담고 열었습니다.");
-      }).catch(function(){ if (plus) plus.textContent = "실패"; });
+      }).catch(function(e){
+        $("detail").innerHTML =
+          '<div class="loading"><b>담지 못했습니다</b><span>' +
+          (e && e.message ? e.message : "다시 시도해보세요") + "</span></div>";
+      });
     }
   }
   res.addEventListener("pointerdown", pickResult);
@@ -3244,6 +3299,7 @@ var APP = (function () {
     critLoad: function () { return Promise.reject(new Error("연결 없음")); },
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
+    removeFilm: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -3262,7 +3318,8 @@ var APP = (function () {
 })();
 
 /* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
-var FILMS = (APP.library && APP.library.length) ? APP.library : [];
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
 var FILM_BY_ID = {};
 FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
 function film(id) { return FILM_BY_ID[id]; }
@@ -3870,8 +3927,8 @@ window.addEventListener("message", function (e) {
       if (a && b){
         /* 대상 위치를 빼기 전에 기억합니다 (뒤로 옮길 때 제자리로 돌아가는 문제) */
         var oi = order.indexOf(a.id), oj = order.indexOf(b.id);
-        order.splice(oi, 1);
-        order.splice(oj, 0, a.id);
+        order[oi] = b.id;                      // 끼워넣지 않고 두 자리만 맞바꿉니다
+        order[oj] = a.id;
         renderPool(); render();
         say(a.ko + " 를 " + (to+1) + "번째로 옮겼습니다.");
         return;
@@ -4031,8 +4088,9 @@ window.addEventListener("message", function (e) {
           var d = parseInt(e.target.dataset.mv, 10);
           var i = order.indexOf(f.id), j = i + d;
           if (j >= 0 && j < order.length) {
-            order.splice(i, 1);
-            order.splice(j, 0, f.id);
+            var tmp = order[j];
+            order[j] = f.id;
+            order[i] = tmp;
             renderPool(); render();
             say(f.ko + "을 " + (j + 1) + "번째로 옮겼습니다.");
           }
@@ -4052,10 +4110,11 @@ window.addEventListener("message", function (e) {
       li.addEventListener("drop", function(e){
         e.preventDefault(); if(!dragId||dragId===f.id) return;
         /* 대상 위치를 빼기 전에 기억합니다. 안 그러면 뒤로 옮길 때 제자리로 돌아갑니다. */
+        /* 끼워넣으면 사이의 작품이 다 밀립니다. 두 자리만 맞바꿉니다. */
         var from = order.indexOf(dragId), to = order.indexOf(f.id);
         if (from < 0 || to < 0 || from === to) return;
-        order.splice(from,1);
-        order.splice(to,0,dragId);
+        order[from] = f.id;
+        order[to] = dragId;
         renderPool(); render();
         say(byId(dragId).ko+"의 순위를 옮겼습니다.");
       });
@@ -4532,6 +4591,7 @@ var APP = (function () {
     critLoad: function () { return Promise.reject(new Error("연결 없음")); },
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
+    removeFilm: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -4550,7 +4610,8 @@ var APP = (function () {
 })();
 
 /* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
-var FILMS = (APP.library && APP.library.length) ? APP.library : [];
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
 var FILM_BY_ID = {};
 FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
 function film(id) { return FILM_BY_ID[id]; }
@@ -5427,6 +5488,7 @@ var APP = (function () {
     critLoad: function () { return Promise.reject(new Error("연결 없음")); },
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
+    removeFilm: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -5445,7 +5507,8 @@ var APP = (function () {
 })();
 
 /* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
-var FILMS = (APP.library && APP.library.length) ? APP.library : [];
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
 var FILM_BY_ID = {};
 FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
 function film(id) { return FILM_BY_ID[id]; }
@@ -6297,6 +6360,7 @@ var APP = (function () {
     critLoad: function () { return Promise.reject(new Error("연결 없음")); },
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
+    removeFilm: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -6315,7 +6379,8 @@ var APP = (function () {
 })();
 
 /* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
-var FILMS = (APP.library && APP.library.length) ? APP.library : [];
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
 var FILM_BY_ID = {};
 FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
 function film(id) { return FILM_BY_ID[id]; }
@@ -7022,6 +7087,7 @@ window.addEventListener("message", function (e) {
     font-family:ui-monospace,monospace;font-size:10.5px;line-height:1.6;resize:vertical}
   .paste textarea:focus{outline:none;border-color:var(--lamp-deep)}
   .paste #pOut{height:74px}
+  .boardout{display:flex;align-items:center;gap:9px;margin:10px 0 0;flex-wrap:wrap}
   .plan{list-style:none;padding:0;margin:0;font-size:12.5px}
   .plan li{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #2E251A}
   .plan li:last-child{border-bottom:0}
@@ -7135,6 +7201,7 @@ var APP = (function () {
     critLoad: function () { return Promise.reject(new Error("연결 없음")); },
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
+    removeFilm: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -7153,7 +7220,8 @@ var APP = (function () {
 })();
 
 /* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
-var FILMS = (APP.library && APP.library.length) ? APP.library : [];
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
 var FILM_BY_ID = {};
 FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
 function film(id) { return FILM_BY_ID[id]; }
@@ -7380,6 +7448,10 @@ window.addEventListener("message", function (e) {
     <div>
       <div class="tabs" id="tabs"></div>
       <div class="board" id="board"></div>
+  <div class="boardout">
+    <button class="tinyb" id="dlday">이 날 시간표 PNG로 저장</button>
+    <span class="tnote" id="dllog" style="margin:0"></span>
+  </div>
       <div class="legend">
         <span><i style="background:#2E2718"></i>선택 가능</span>
         <span><i style="background:#E3B168"></i>내 시간표</span>
@@ -7811,6 +7883,28 @@ window.addEventListener("message", function (e) {
     }
   })();
 
+  /* 하루치 표를 그림으로 저장합니다.
+     표는 캔버스가 아니라 화면 요소라 그림으로 바꿀 수 없어서, 화면 캡처로 그 영역만 잘라냅니다. */
+  $("dlday").addEventListener("click", function () {
+    var btn = $("dlday");
+    if (typeof askCapture !== "function") {
+      $("dllog").textContent = "이 환경에서는 저장할 수 없습니다.";
+      return;
+    }
+    var board = $("board");
+    if (!board || !board.innerHTML.trim()) {
+      $("dllog").textContent = "표가 비어 있습니다.";
+      return;
+    }
+    btn.disabled = true;
+    $("dllog").innerHTML = "브라우저가 물어보면 <b>이 탭</b>을 골라주세요…";
+    askCapture(board, "시간표-" + (day || "오늘") + ".png", function (ok, msg) {
+      btn.disabled = false;
+      $("dllog").innerHTML = msg;
+      say(String(msg).replace(/<[^>]+>/g, ""));
+    });
+  });
+
   function renderTravel(){
     var vs = [];
     S.forEach(function(x){ if (vs.indexOf(x.venue) < 0) vs.push(x.venue); });
@@ -8136,6 +8230,7 @@ window.addEventListener("message", function (e) {
     font-family:ui-monospace,monospace;font-size:10.5px;line-height:1.6;resize:vertical}
   .paste textarea:focus{outline:none;border-color:var(--lamp-deep)}
   .paste #pOut{height:74px}
+  .boardout{display:flex;align-items:center;gap:9px;margin:10px 0 0;flex-wrap:wrap}
   .plan{list-style:none;padding:0;margin:0;font-size:12.5px}
   .plan li{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #2E251A}
   .plan li:last-child{border-bottom:0}
@@ -8249,6 +8344,7 @@ var APP = (function () {
     critLoad: function () { return Promise.reject(new Error("연결 없음")); },
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
+    removeFilm: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -8267,7 +8363,8 @@ var APP = (function () {
 })();
 
 /* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
-var FILMS = (APP.library && APP.library.length) ? APP.library : [];
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
 var FILM_BY_ID = {};
 FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
 function film(id) { return FILM_BY_ID[id]; }
@@ -8494,6 +8591,10 @@ window.addEventListener("message", function (e) {
     <div>
       <div class="tabs" id="tabs"></div>
       <div class="board" id="board"></div>
+  <div class="boardout">
+    <button class="tinyb" id="dlday">이 날 시간표 PNG로 저장</button>
+    <span class="tnote" id="dllog" style="margin:0"></span>
+  </div>
       <div class="legend">
         <span><i style="background:#2E2718"></i>선택 가능</span>
         <span><i style="background:#E3B168"></i>내 시간표</span>
@@ -8840,6 +8941,28 @@ window.addEventListener("message", function (e) {
     try { APP.setCSV(MODKEY, $("csv").value); } catch (e) {}
     $("pLog").innerHTML = "<b>" + rows.length + "회차</b>를 시간표에 넣었습니다.";
     say(rows.length + "회차를 시간표에 넣었습니다.");
+  });
+
+  /* 하루치 표를 그림으로 저장합니다.
+     표는 캔버스가 아니라 화면 요소라 그림으로 바꿀 수 없어서, 화면 캡처로 그 영역만 잘라냅니다. */
+  $("dlday").addEventListener("click", function () {
+    var btn = $("dlday");
+    if (typeof askCapture !== "function") {
+      $("dllog").textContent = "이 환경에서는 저장할 수 없습니다.";
+      return;
+    }
+    var board = $("board");
+    if (!board || !board.innerHTML.trim()) {
+      $("dllog").textContent = "표가 비어 있습니다.";
+      return;
+    }
+    btn.disabled = true;
+    $("dllog").innerHTML = "브라우저가 물어보면 <b>이 탭</b>을 골라주세요…";
+    askCapture(board, "시간표-" + (day || "오늘") + ".png", function (ok, msg) {
+      btn.disabled = false;
+      $("dllog").innerHTML = msg;
+      say(String(msg).replace(/<[^>]+>/g, ""));
+    });
   });
 
   function renderTravel(){
@@ -9854,7 +9977,10 @@ function film(id) { return FILM_BY_ID[id]; }
               poster: IMG + "w500" + d.poster_path, stills: backs,
               trailer: vid ? vid.key : null };
           }
-          libSave(); libRefresh(); reloadAll();
+          libSave(); libRefresh();
+          /* reloadAll 은 화면을 통째로 다시 만듭니다.
+             담기를 요청한 화면이 그리던 상세까지 버려지므로, 여기서는 알림만 보냅니다. */
+          APP.notify();
           return f;
         });
     });
@@ -10078,6 +10204,13 @@ function film(id) { return FILM_BY_ID[id]; }
     }, 2).then(function (r) {
       return (r.results || []).slice(0, 4).map(function (p) { return p.id; });
     }).catch(function () { return []; });
+  };
+
+  /* 한 편만 서재에서 뺍니다. 별점·코멘트는 남겨둡니다. */
+  APP.removeFilm = function (id) {
+    APP.library = APP.library.filter(function (f) { return f.id !== id; });
+    delete APP.media[id];
+    libSave(); libRefresh(); reloadAll();
   };
 
   APP.clearLibrary = function () {
