@@ -7888,26 +7888,139 @@ window.addEventListener("message", function (e) {
     }
   })();
 
-  /* 하루치 표를 그림으로 저장합니다.
-     표는 캔버스가 아니라 화면 요소라 그림으로 바꿀 수 없어서, 화면 캡처로 그 영역만 잘라냅니다. */
-  $("dlday").addEventListener("click", function () {
-    var btn = $("dlday");
-    if (typeof askCapture !== "function") {
-      $("dllog").textContent = "이 환경에서는 저장할 수 없습니다.";
-      return;
-    }
-    var board = $("board");
-    if (!board || !board.innerHTML.trim()) {
-      $("dllog").textContent = "표가 비어 있습니다.";
-      return;
-    }
-    btn.disabled = true;
-    $("dllog").innerHTML = "브라우저가 물어보면 <b>이 탭</b>을 골라주세요…";
-    askCapture(board, "시간표-" + (day || "오늘") + ".png", function (ok, msg) {
-      btn.disabled = false;
-      $("dllog").innerHTML = msg;
-      say(String(msg).replace(/<[^>]+>/g, ""));
+  /* ── 하루치 표를 그림으로 ──
+     화면의 표는 HTML 요소라 그대로 그림이 되지 않습니다.
+     같은 내용을 캔버스에 다시 그려 PNG 로 만듭니다.
+     외부 이미지를 쓰지 않으므로 어디서 열든 저장이 됩니다. */
+  function drawDay() {
+    var todays = S.filter(function (s) { return s.date === day; });
+    if (!todays.length) return null;
+
+    var venues = ORDER.filter(function (v) {
+      return todays.some(function (s) { return s.venue === v; });
     });
+    var others = todays.map(function (s) { return s.venue; })
+      .filter(function (v) { return venues.indexOf(v) < 0; });
+    venues = venues.concat(others.filter(function (v, i) { return others.indexOf(v) === i; }));
+
+    var lo = Math.min.apply(null, todays.map(function (s) { return s.start; })) - 30;
+    var hi = Math.max.apply(null, todays.map(function (s) { return endOf(s); })) + 30;
+    lo = Math.floor(lo / 60) * 60; hi = Math.ceil(hi / 60) * 60;
+
+    var R = 2;                                  // 화면 배율 — 글자가 또렷하게
+    var GUT = 56, COL = 188, GAP = 8;
+    var TOP = 96, PAD = 22, PPM = 1.05;
+    var W = PAD * 2 + GUT + venues.length * COL + (venues.length - 1) * GAP;
+    var BODY = (hi - lo) * PPM;
+    var H = TOP + BODY + 46;
+
+    var cv = document.createElement("canvas");
+    cv.width = W * R; cv.height = H * R;
+    var x = cv.getContext("2d");
+    x.scale(R, R);
+
+    var INK = "#F2EFE3", DIM = "#8C8B7E", LAMP = "#E3B168", LINE = "#2E2B24";
+
+    x.fillStyle = "#141210"; x.fillRect(0, 0, W, H);
+
+    /* 머리말 */
+    x.fillStyle = INK;
+    x.font = "700 20px 'Gowun Batang', serif";
+    x.fillText(day.replace("-", "월 ") + "일 상영 시간표", PAD, 34);
+    x.fillStyle = DIM;
+    x.font = "12px 'Noto Sans KR', sans-serif";
+    var picks = todays.filter(function (s) { return picked[s.id]; }).length;
+    x.fillText(todays.length + "회차" + (picks ? " · 담은 " + picks + "편" : "") +
+               " · 이동 여유 " + BUF + "분", PAD, 54);
+
+    /* 극장 이름과 사이 이동시간 */
+    x.font = "500 12px 'Noto Sans KR', sans-serif";
+    venues.forEach(function (v, i) {
+      var cx = PAD + GUT + i * (COL + GAP);
+      x.fillStyle = INK;
+      x.fillText(v.length > 15 ? v.slice(0, 14) + "…" : v, cx + 4, TOP - 26);
+      if (i > 0) {
+        var m = travel(venues[i - 1], v);
+        x.fillStyle = m >= 30 ? "#D9A09E" : DIM;
+        x.font = "10px 'Noto Sans KR', sans-serif";
+        x.fillText(m + "분", cx - GAP - 14, TOP - 10);
+        x.font = "500 12px 'Noto Sans KR', sans-serif";
+      }
+    });
+
+    /* 시각 눈금 */
+    for (var t = lo; t <= hi; t += 60) {
+      var y = TOP + (t - lo) * PPM;
+      x.strokeStyle = LINE; x.lineWidth = 1;
+      x.beginPath(); x.moveTo(PAD + GUT - 8, y + 0.5); x.lineTo(W - PAD, y + 0.5); x.stroke();
+      x.fillStyle = DIM;
+      x.font = "11px 'Noto Sans KR', sans-serif";
+      x.fillText(hhmm(t), PAD, y + 4);
+    }
+
+    /* 회차 */
+    todays.forEach(function (s) {
+      var ci = venues.indexOf(s.venue);
+      if (ci < 0) return;
+      var cx = PAD + GUT + ci * (COL + GAP);
+      var y = TOP + (s.start - lo) * PPM;
+      var h = Math.max((endOf(s) - s.start) * PPM, 34);
+      var on = !!picked[s.id];
+
+      x.fillStyle = on ? LAMP : "#241F17";
+      x.beginPath();
+      if (x.roundRect) x.roundRect(cx, y, COL, h - 3, 4);
+      else x.rect(cx, y, COL, h - 3);
+      x.fill();
+
+      if (!on) {
+        x.strokeStyle = "#3A3227"; x.lineWidth = 1;
+        x.stroke();
+      }
+
+      x.fillStyle = on ? "#2A1C08" : INK;
+      x.font = "500 12.5px 'Noto Sans KR', sans-serif";
+      var title = s.title;
+      while (x.measureText(title).width > COL - 20 && title.length > 4) {
+        title = title.slice(0, -2);
+      }
+      if (title !== s.title) title += "…";
+      x.fillText(title, cx + 9, y + 20);
+
+      x.fillStyle = on ? "rgba(42,28,8,.72)" : DIM;
+      x.font = "10.5px 'Noto Sans KR', sans-serif";
+      x.fillText(hhmm(s.start) + "–" + hhmm(endOf(s)) + " · " + s.runtime + "분 · ★" + s.priority,
+                 cx + 9, y + 36);
+    });
+
+    /* 꼬리말 */
+    x.fillStyle = DIM;
+    x.font = "10px 'Noto Sans KR', sans-serif";
+    x.fillText("개인 영화 기록 서비스 · 이동시간을 반영한 관람 계획", PAD, H - 18);
+
+    return cv;
+  }
+
+  $("dlday").addEventListener("click", function () {
+    var out = $("dllog");
+    var cv = drawDay();
+    if (!cv) { out.textContent = "이 날 회차가 없습니다."; return; }
+
+    if (!cv.toBlob) { out.textContent = "이 브라우저는 저장을 지원하지 않습니다."; return; }
+    cv.toBlob(function (blob) {
+      if (!blob) { out.textContent = "이미지를 만들지 못했습니다."; return; }
+      var name = "시간표-" + day + ".png";
+      if (!(typeof askDownload === "function" && askDownload(name, blob))) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 6000);
+      }
+      out.innerHTML = "<b>" + name + "</b> 를 저장했습니다 · " +
+        cv.width + "×" + cv.height + "px";
+      say("시간표를 저장했습니다.");
+    }, "image/png");
   });
 
   function renderTravel(){
@@ -8968,26 +9081,139 @@ window.addEventListener("message", function (e) {
     say(rows.length + "회차를 시간표에 넣었습니다.");
   });
 
-  /* 하루치 표를 그림으로 저장합니다.
-     표는 캔버스가 아니라 화면 요소라 그림으로 바꿀 수 없어서, 화면 캡처로 그 영역만 잘라냅니다. */
-  $("dlday").addEventListener("click", function () {
-    var btn = $("dlday");
-    if (typeof askCapture !== "function") {
-      $("dllog").textContent = "이 환경에서는 저장할 수 없습니다.";
-      return;
-    }
-    var board = $("board");
-    if (!board || !board.innerHTML.trim()) {
-      $("dllog").textContent = "표가 비어 있습니다.";
-      return;
-    }
-    btn.disabled = true;
-    $("dllog").innerHTML = "브라우저가 물어보면 <b>이 탭</b>을 골라주세요…";
-    askCapture(board, "시간표-" + (day || "오늘") + ".png", function (ok, msg) {
-      btn.disabled = false;
-      $("dllog").innerHTML = msg;
-      say(String(msg).replace(/<[^>]+>/g, ""));
+  /* ── 하루치 표를 그림으로 ──
+     화면의 표는 HTML 요소라 그대로 그림이 되지 않습니다.
+     같은 내용을 캔버스에 다시 그려 PNG 로 만듭니다.
+     외부 이미지를 쓰지 않으므로 어디서 열든 저장이 됩니다. */
+  function drawDay() {
+    var todays = S.filter(function (s) { return s.date === day; });
+    if (!todays.length) return null;
+
+    var venues = ORDER.filter(function (v) {
+      return todays.some(function (s) { return s.venue === v; });
     });
+    var others = todays.map(function (s) { return s.venue; })
+      .filter(function (v) { return venues.indexOf(v) < 0; });
+    venues = venues.concat(others.filter(function (v, i) { return others.indexOf(v) === i; }));
+
+    var lo = Math.min.apply(null, todays.map(function (s) { return s.start; })) - 30;
+    var hi = Math.max.apply(null, todays.map(function (s) { return endOf(s); })) + 30;
+    lo = Math.floor(lo / 60) * 60; hi = Math.ceil(hi / 60) * 60;
+
+    var R = 2;                                  // 화면 배율 — 글자가 또렷하게
+    var GUT = 56, COL = 188, GAP = 8;
+    var TOP = 96, PAD = 22, PPM = 1.05;
+    var W = PAD * 2 + GUT + venues.length * COL + (venues.length - 1) * GAP;
+    var BODY = (hi - lo) * PPM;
+    var H = TOP + BODY + 46;
+
+    var cv = document.createElement("canvas");
+    cv.width = W * R; cv.height = H * R;
+    var x = cv.getContext("2d");
+    x.scale(R, R);
+
+    var INK = "#F2EFE3", DIM = "#8C8B7E", LAMP = "#E3B168", LINE = "#2E2B24";
+
+    x.fillStyle = "#141210"; x.fillRect(0, 0, W, H);
+
+    /* 머리말 */
+    x.fillStyle = INK;
+    x.font = "700 20px 'Gowun Batang', serif";
+    x.fillText(day.replace("-", "월 ") + "일 상영 시간표", PAD, 34);
+    x.fillStyle = DIM;
+    x.font = "12px 'Noto Sans KR', sans-serif";
+    var picks = todays.filter(function (s) { return picked[s.id]; }).length;
+    x.fillText(todays.length + "회차" + (picks ? " · 담은 " + picks + "편" : "") +
+               " · 이동 여유 " + BUF + "분", PAD, 54);
+
+    /* 극장 이름과 사이 이동시간 */
+    x.font = "500 12px 'Noto Sans KR', sans-serif";
+    venues.forEach(function (v, i) {
+      var cx = PAD + GUT + i * (COL + GAP);
+      x.fillStyle = INK;
+      x.fillText(v.length > 15 ? v.slice(0, 14) + "…" : v, cx + 4, TOP - 26);
+      if (i > 0) {
+        var m = travel(venues[i - 1], v);
+        x.fillStyle = m >= 30 ? "#D9A09E" : DIM;
+        x.font = "10px 'Noto Sans KR', sans-serif";
+        x.fillText(m + "분", cx - GAP - 14, TOP - 10);
+        x.font = "500 12px 'Noto Sans KR', sans-serif";
+      }
+    });
+
+    /* 시각 눈금 */
+    for (var t = lo; t <= hi; t += 60) {
+      var y = TOP + (t - lo) * PPM;
+      x.strokeStyle = LINE; x.lineWidth = 1;
+      x.beginPath(); x.moveTo(PAD + GUT - 8, y + 0.5); x.lineTo(W - PAD, y + 0.5); x.stroke();
+      x.fillStyle = DIM;
+      x.font = "11px 'Noto Sans KR', sans-serif";
+      x.fillText(hhmm(t), PAD, y + 4);
+    }
+
+    /* 회차 */
+    todays.forEach(function (s) {
+      var ci = venues.indexOf(s.venue);
+      if (ci < 0) return;
+      var cx = PAD + GUT + ci * (COL + GAP);
+      var y = TOP + (s.start - lo) * PPM;
+      var h = Math.max((endOf(s) - s.start) * PPM, 34);
+      var on = !!picked[s.id];
+
+      x.fillStyle = on ? LAMP : "#241F17";
+      x.beginPath();
+      if (x.roundRect) x.roundRect(cx, y, COL, h - 3, 4);
+      else x.rect(cx, y, COL, h - 3);
+      x.fill();
+
+      if (!on) {
+        x.strokeStyle = "#3A3227"; x.lineWidth = 1;
+        x.stroke();
+      }
+
+      x.fillStyle = on ? "#2A1C08" : INK;
+      x.font = "500 12.5px 'Noto Sans KR', sans-serif";
+      var title = s.title;
+      while (x.measureText(title).width > COL - 20 && title.length > 4) {
+        title = title.slice(0, -2);
+      }
+      if (title !== s.title) title += "…";
+      x.fillText(title, cx + 9, y + 20);
+
+      x.fillStyle = on ? "rgba(42,28,8,.72)" : DIM;
+      x.font = "10.5px 'Noto Sans KR', sans-serif";
+      x.fillText(hhmm(s.start) + "–" + hhmm(endOf(s)) + " · " + s.runtime + "분 · ★" + s.priority,
+                 cx + 9, y + 36);
+    });
+
+    /* 꼬리말 */
+    x.fillStyle = DIM;
+    x.font = "10px 'Noto Sans KR', sans-serif";
+    x.fillText("개인 영화 기록 서비스 · 이동시간을 반영한 관람 계획", PAD, H - 18);
+
+    return cv;
+  }
+
+  $("dlday").addEventListener("click", function () {
+    var out = $("dllog");
+    var cv = drawDay();
+    if (!cv) { out.textContent = "이 날 회차가 없습니다."; return; }
+
+    if (!cv.toBlob) { out.textContent = "이 브라우저는 저장을 지원하지 않습니다."; return; }
+    cv.toBlob(function (blob) {
+      if (!blob) { out.textContent = "이미지를 만들지 못했습니다."; return; }
+      var name = "시간표-" + day + ".png";
+      if (!(typeof askDownload === "function" && askDownload(name, blob))) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 6000);
+      }
+      out.innerHTML = "<b>" + name + "</b> 를 저장했습니다 · " +
+        cv.width + "×" + cv.height + "px";
+      say("시간표를 저장했습니다.");
+    }, "image/png");
   });
 
   function renderTravel(){
