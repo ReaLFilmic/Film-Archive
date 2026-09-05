@@ -22,6 +22,9 @@ const THEATER = "영화의전당";
 const UA = "Mozilla/5.0 (compatible; personal-archive/1.0)";
 const MAX_DAYS = 21;
 
+/* 서버 함수 실행 시간 여유 */
+export const config = { maxDuration: 60 };
+
 /* Vercel 서버는 UTC 로 돕니다. 한국보다 9시간 느려서, 한국 새벽에 열면
    어제부터 받아오게 됩니다. 그래서 한국 시각으로 계산합니다. */
 const KST = 9 * 60 * 60 * 1000;
@@ -89,22 +92,32 @@ export default async function handler(req, res) {
     ? new Date(q.start + "T12:00:00+09:00")
     : new Date();
 
-  const all = [];
-  const failed = [];
-
+  /* 하루씩 1초 쉬며 받으면 7일에 14초가 걸려 브라우저가 오래 기다립니다.
+     동시에 3건씩만 받아 시간을 줄이되, 상대 서버에 몰아치지는 않게 합니다. */
+  const dayList = [];
   for (let i = 0; i < days; i++) {
     const d = new Date(start.getTime());
     d.setDate(d.getDate() + i);
-    const day = ymd(d);
-    try {
-      const rows = await getDay(day);
-      all.push(...rows);
-    } catch (e) {
-      failed.push(day);
-    }
-    /* 예의: 요청 사이에 쉽니다 */
-    if (i < days - 1) await new Promise(go => setTimeout(go, 1000));
+    dayList.push(ymd(d));
   }
+
+  const all = [];
+  const failed = [];
+  const queue = dayList.slice();
+
+  async function worker() {
+    while (queue.length) {
+      const day = queue.shift();
+      try {
+        all.push(...await getDay(day));
+      } catch (e) {
+        failed.push(day);
+      }
+      await new Promise(go => setTimeout(go, 250));
+    }
+  }
+  await Promise.all([worker(), worker(), worker()]);
+  all.sort((a, b) => (a[2] + a[3]).localeCompare(b[2] + b[3]));
 
   if (!all.length) {
     res.status(502).json({
