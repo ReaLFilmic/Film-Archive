@@ -7088,6 +7088,10 @@ window.addEventListener("message", function (e) {
   .paste textarea:focus{outline:none;border-color:var(--lamp-deep)}
   .paste #pOut{height:74px}
   .boardout{display:flex;align-items:center;gap:9px;margin:10px 0 0;flex-wrap:wrap}
+  .loadwrap{padding:64px 22px;text-align:center;border:1px dashed var(--edge);
+    border-radius:6px;color:var(--dim);font-size:13px;line-height:1.9}
+  .loadwrap b{display:block;font-family:var(--serif);font-size:19px;color:var(--paper);
+    font-weight:700;margin-bottom:4px}
   .plan{list-style:none;padding:0;margin:0;font-size:12.5px}
   .plan li{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #2E251A}
   .plan li:last-child{border-bottom:0}
@@ -7866,7 +7870,8 @@ window.addEventListener("message", function (e) {
         say(n + "회차를 받았습니다.");
       })
       .catch(function (e) {
-        syncNote("자동 갱신 실패 — " + e.message + " · 저장해둔 시간표를 그대로 씁니다.");
+        syncNote("자동 갱신 실패 — " + e.message + " · 저장해둔 시간표를 씁니다.");
+        boot($("csv").value);            // 받지 못했으면 그때 저장분을 그립니다
       });
   }
 
@@ -8122,7 +8127,27 @@ window.addEventListener("message", function (e) {
   var startCSV = "";
   try { startCSV = (APP.savedCSV && APP.savedCSV[MODKEY]) || ""; } catch (e) {}
   $("csv").value = startCSV || SAMPLE;
-  boot($("csv").value);
+
+  /* 곧 새로 받아올 참이면 표본(며칠 전 날짜)을 먼저 그리지 않습니다.
+     엉뚱한 날짜가 잠깐 보였다가 바뀌면 잘못 읽기 쉽습니다. */
+  var willSync = (function () {
+    var pr = location.protocol;
+    try { if (window.parent) pr = window.parent.location.protocol; } catch (e) {}
+    if (!(pr === "http:" || pr === "https:")) return false;
+    var last = 0;
+    try { last = parseInt(window.localStorage.getItem("cinema-synced"), 10) || 0; } catch (e) {}
+    var cur = (startCSV || "").trim();
+    return (Date.now() - last) > 24 * 60 * 60 * 1000 || !cur || cur.split("\n").length < 3;
+  })();
+
+  if (willSync) {
+    $("tabs").innerHTML = "";
+    $("board").innerHTML =
+      '<div class="loadwrap"><b>영화의전당 시간표를 받아오는 중</b>' +
+      "<span>7일치를 받아옵니다. 5초쯤 걸립니다.</span></div>";
+  } else {
+    boot($("csv").value);
+  }
 })();
 <\/script>
 </body>
