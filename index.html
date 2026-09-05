@@ -853,6 +853,15 @@
     transition: transform .15s;
   }
   .stills div:hover { transform: scale(1.05); }
+  .pbtn { font-family: var(--sans); font-size: 10.5px; cursor: pointer;
+    margin-left: 8px; padding: 2px 9px; border-radius: 999px;
+    border: 1px solid var(--rule); background: #fff; color: var(--ink-soft); }
+  .pbtn:hover { background: var(--lamp); border-color: var(--lamp); color: #2A1C08; }
+  .pnote { font-size: 11px; color: var(--ink-soft); margin: 6px 0; }
+  .pgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .pgrid img { width: 100%; aspect-ratio: 27/40; object-fit: cover; border-radius: 3px;
+    cursor: pointer; border: 2px solid transparent; display: block; }
+  .pgrid img:hover { border-color: var(--lamp); }
 
   table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
   th, td { text-align: left; padding: 4px 0; vertical-align: top; }
@@ -978,6 +987,8 @@ var APP = (function () {
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
     removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -1847,6 +1858,9 @@ window.addEventListener("message", function (e) {
       "</div>" +
 
       trailerHTML(f, "trailer") +
+      '<div class="block"><h3>표지 <button class="pbtn" id="pmore">바꾸기</button></h3>' +
+        '<div id="pbox"></div></div>' +
+
       '<div class="block"><h3>스틸컷</h3><div class="stills">' +
         stillsHTML(f, 3) +
       "</div></div>" +
@@ -1867,6 +1881,33 @@ window.addEventListener("message", function (e) {
       "실제 서비스에서는 TMDB 포스터·스틸컷과 유튜브 예고편이 들어갑니다.</p>";
 
     critFill(sleeve, renderSleeve);
+
+    /* 표지 고르기 — TMDB 는 같은 영화의 포스터를 여러 장 갖고 있습니다. */
+    (function () {
+      var pm = document.getElementById("pmore");
+      if (!pm) return;
+      pm.addEventListener("click", function () {
+        var box = document.getElementById("pbox");
+        if (box.innerHTML.trim()) { box.innerHTML = ""; return; }
+        box.innerHTML = '<p class="pnote">표지를 찾는 중…</p>';
+        APP.posters(f.id).then(function (list) {
+          if (!list.length) { box.innerHTML = '<p class="pnote">다른 표지가 없습니다.</p>'; return; }
+          box.innerHTML = '<p class="pnote">' + list.length + '장 중에서 고르세요.</p>' +
+            '<div class="pgrid">' + list.map(function (p) {
+              return '<img src="' + p.thumb + '" alt="표지 후보" data-full="' + p.full + '">';
+            }).join("") + "</div>";
+          Array.prototype.forEach.call(box.querySelectorAll("[data-full]"), function (im) {
+            im.addEventListener("click", function () {
+              APP.setPoster(f.id, im.dataset.full);
+              renderShelf(); renderSleeve();
+              say(f.ko + " 표지를 바꿨습니다.");
+            });
+          });
+        }).catch(function (e) {
+          box.innerHTML = '<p class="pnote">' + e.message + "</p>";
+        });
+      });
+    })();
 
     /* 끌어서 옮기는 게 기기마다 다르게 동작하므로, 버튼으로도 옮길 수 있게 둡니다.
        한 칸씩 확실하게 움직입니다. */
@@ -2283,6 +2324,8 @@ var APP = (function () {
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
     removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -3300,6 +3343,8 @@ var APP = (function () {
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
     removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -4592,6 +4637,8 @@ var APP = (function () {
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
     removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -5489,6 +5536,8 @@ var APP = (function () {
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
     removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -6361,6 +6410,8 @@ var APP = (function () {
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
     removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -7206,6 +7257,8 @@ var APP = (function () {
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
     removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -8483,6 +8536,8 @@ var APP = (function () {
     findByTmdb: function () { return null; },
     dedupe: function () { return 0; },
     removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
     savedCSV: { cinema: "", schedule: "" },
     setCSV: function () {},
     kobisKey: "",
@@ -10462,6 +10517,34 @@ function film(id) { return FILM_BY_ID[id]; }
     APP.library = APP.library.filter(function (f) { return f.id !== id; });
     delete APP.media[id];
     libSave(); libRefresh(); reloadAll();
+  };
+
+  /* 한 작품의 포스터 후보를 모두 가져옵니다. TMDB 는 나라별·판본별로 여러 장을 갖고 있습니다. */
+  APP.posters = function (filmId) {
+    var f = APP.library.filter(function (x) { return x.id === filmId; })[0];
+    var tid = (f && f.tmdbId) || (APP.media[filmId] && APP.media[filmId].tmdbId);
+    var key = ($("key").value || "").replace(/\s+/g, "");
+    if (!tid || key.length < 20) return Promise.reject(new Error("TMDB 연결이 필요합니다"));
+    return retry(function () {
+      return tmdb("/movie/" + tid + "/images", auth(key), "&include_image_language=ko,en,null");
+    }, 2).then(function (d) {
+      return (d.posters || []).slice(0, 12).map(function (p) {
+        return { thumb: IMG + "w154" + p.file_path, full: IMG + "w500" + p.file_path,
+                 lang: p.iso_639_1 || "—" };
+      });
+    });
+  };
+
+  /* 고른 표지를 그 작품에 물려 둡니다. */
+  APP.setPoster = function (filmId, url) {
+    if (!APP.media[filmId]) APP.media[filmId] = { id: filmId };
+    APP.media[filmId].poster = url;
+    try {
+      if ($("remember") && $("remember").checked) {
+        Store.set("tmdb-media", JSON.stringify({ v: CACHE_VER, list: mediaList() }));
+      }
+    } catch (e) {}
+    APP.notify();
   };
 
   APP.clearLibrary = function () {
