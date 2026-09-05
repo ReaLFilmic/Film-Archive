@@ -7357,7 +7357,14 @@ window.addEventListener("message", function (e) {
       </div>
 
       <div class="grp">
-        <details class="paste" id="pasteBox" open>
+        <div class="lab">영화의전당 자동 받기 <span id="syncNote" style="color:var(--dim)"></span></div>
+        <div class="prow">
+          <input type="number" id="syncDays" value="7" min="1" max="21" aria-label="며칠치">
+          <button class="go" id="syncGo">지금 받기</button>
+        </div>
+        <p class="tnote" id="syncLog">웹으로 올린 주소에서만 됩니다. 서버가 대신 받아오기 때문입니다.</p>
+
+        <details class="paste" id="pasteBox">
           <summary>시간표 붙여넣기 도우미</summary>
           <p class="tnote">극장 시간표 페이지를 <b>직접 보고 복사</b>해서 아래에 붙여넣으면
             CSV 로 정리해 줍니다. 자동으로 긁어오는 것이 아니라, 본인이 본 화면을 옮기는 방식입니다.<br>
@@ -7689,6 +7696,52 @@ window.addEventListener("message", function (e) {
     try { APP.setCSV(MODKEY, $("csv").value); } catch (e) {}
     $("pLog").innerHTML = "<b>" + rows.length + "회차</b>를 시간표에 넣었습니다.";
     say(rows.length + "회차를 시간표에 넣었습니다.");
+  });
+
+  /* 서버 함수로 영화의전당 시간표를 받아옵니다.
+     브라우저는 다른 사이트를 직접 못 읽으므로(CORS) 내 서버가 대신 읽습니다.
+     그래서 이 기능은 웹에 올린 주소에서만 동작합니다. */
+  var canSync = (location.protocol === "http:" || location.protocol === "https:");
+  (function () {
+    var note = $("syncNote");
+    if (!canSync) {
+      if (note) note.textContent = "· 파일로 열면 쓸 수 없습니다";
+      $("syncGo").disabled = true;
+    }
+  })();
+
+  $("syncGo").addEventListener("click", function () {
+    if (!canSync) {
+      $("syncLog").innerHTML = "이 기능은 <b>웹에 올린 주소</b>에서만 됩니다. " +
+        "지금처럼 파일을 직접 열었을 때는 아래 <b>붙여넣기 도우미</b>를 쓰세요.";
+      return;
+    }
+    var days = parseInt($("syncDays").value, 10) || 7;
+    var btn = $("syncGo");
+    btn.disabled = true;
+    $("syncLog").innerHTML = "영화의전당에서 " + days + "일치를 받는 중… " +
+      "하루에 1초씩 쉬며 받으므로 " + days + "초쯤 걸립니다.";
+
+    fetch("/api/cinema?days=" + days, { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (j) {
+          throw new Error(j.error || ("HTTP " + r.status));
+        }).catch(function () { throw new Error("HTTP " + r.status); });
+        return r.text();
+      })
+      .then(function (csv) {
+        $("csv").value = csv;
+        boot(csv);
+        try { APP.setCSV(MODKEY, csv); } catch (e) {}
+        var n = csv.split("\n").length - 1;
+        $("syncLog").innerHTML = "<b>" + n + "회차</b>를 받아 시간표에 넣었습니다. 이 내용은 저장됩니다.";
+        say(n + "회차를 받았습니다.");
+      })
+      .catch(function (e) {
+        $("syncLog").innerHTML = "받지 못했습니다 — " + e.message +
+          "<br><code>api/cinema.js</code> 가 함께 올라가 있는지 확인해보세요.";
+      })
+      .then(function () { btn.disabled = false; });
   });
 
   function renderTravel(){
