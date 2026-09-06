@@ -10575,7 +10575,10 @@ window.addEventListener("message", function (e) {
         $("csv").value = csv;
         boot(csv);
         try { APP.setCSV(MODKEY, csv); } catch (e) {}
-        try { window.localStorage.setItem("cinema-synced", String(Date.now())); } catch (e) {}
+        try {
+          window.localStorage.setItem("cinema-synced", String(Date.now()));
+          window.localStorage.setItem("cinema-day", todayKST());
+        } catch (e) {}
         var n = csv.split("\n").length - 1;
         syncNote("영화의전당 " + SYNC_DAYS + "일치 " + n + "회차 · 방금 갱신");
         say(n + "회차를 받았습니다.");
@@ -10586,17 +10589,36 @@ window.addEventListener("message", function (e) {
       });
   }
 
-  /* 하루에 한 번만 받습니다. 그 사이에는 저장해둔 것을 씁니다. */
+  /* 한국 날짜(YYYY-MM-DD). 자정을 넘기면 값이 바뀝니다. */
+  function todayKST() {
+    var k = new Date(Date.now() + 9 * 3600000);
+    return k.getUTCFullYear() + "-" +
+      String(k.getUTCMonth() + 1).padStart(2, "0") + "-" +
+      String(k.getUTCDate()).padStart(2, "0");
+  }
+
+  /* "24시간마다"가 아니라 "날짜가 바뀌면" 받습니다.
+     그래야 자정이 지나는 순간 어제 시간표가 사라지고 오늘이 맨 앞에 옵니다. */
   (function autoSync() {
-    var last = 0;
-    try { last = parseInt(window.localStorage.getItem("cinema-synced"), 10) || 0; } catch (e) {}
+    var day = "", last = 0;
+    try {
+      day = window.localStorage.getItem("cinema-day") || "";
+      last = parseInt(window.localStorage.getItem("cinema-synced"), 10) || 0;
+    } catch (e) {}
     var cur = ($("csv").value || "").trim();
     var empty = !cur || cur.split("\n").length < 3;
-    if ((Date.now() - last) > SYNC_EVERY || empty) setTimeout(syncCinema, 500);
-    else {
-      var h = Math.round((Date.now() - last) / 3600000);
-      syncNote("영화의전당 시간표 · " + (h < 1 ? "방금" : h + "시간 전") + " 갱신됨");
-    }
+
+    if (day !== todayKST() || empty) { setTimeout(syncCinema, 500); return; }
+
+    var h = Math.round((Date.now() - last) / 3600000);
+    syncNote("영화의전당 시간표 · " + (h < 1 ? "방금" : h + "시간 전") + " 갱신됨");
+
+    /* 화면을 켜둔 채로 자정을 넘길 수도 있습니다. 1분마다 날짜를 살핍니다. */
+    setInterval(function () {
+      var d2 = "";
+      try { d2 = window.localStorage.getItem("cinema-day") || ""; } catch (e) {}
+      if (d2 !== todayKST()) syncCinema();
+    }, 60000);
   })();
 
   /* ── 하루치 표를 그림으로 ──
