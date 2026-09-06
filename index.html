@@ -1047,7 +1047,7 @@ window.addEventListener("message", function (e) {
 <title>진열장 — 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Brush+Script&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --room:      #1B1610;
@@ -1391,16 +1391,27 @@ window.addEventListener("message", function (e) {
   .spine:hover { transform:translateY(-8px); filter:brightness(1.12) }
   .spine.out { transform:translateY(-16px); height:176px; filter:brightness(1.2) }
   .spine:focus-visible { outline:2px solid var(--lamp); outline-offset:2px }
-  .spine .sp-t { position:absolute; inset:12px 0 16px;
-    writing-mode:vertical-rl; text-orientation:mixed;
+  /* 실물 책등은 글자를 하나씩 세워 촘촘히 올립니다. 굵게 잡아야 좁은 폭에서 읽힙니다. */
+  /* 책등 제목 — 26px 폭에서 읽혀야 하므로 획이 굵고 단단한 글씨체를 씁니다.
+     붓글씨(Nanum Brush Script)는 흘림이 많아 이 폭에서는 뭉개집니다. */
+  .spine .sp-t { position:absolute; inset:12px 0 26px;
+    writing-mode:vertical-rl; text-orientation:upright;
     display:flex; align-items:center; justify-content:center;
-    font-family:var(--sans); font-size:10px; font-weight:500; line-height:1.1;
-    letter-spacing:-.02em; overflow:hidden; padding:0 1px }
+    font-family:"Black Han Sans", var(--sans); font-size:12px; font-weight:400;
+    line-height:1.0; letter-spacing:.02em; overflow:hidden; padding:0 1px }
   .spine .sp-cap { position:absolute; left:0; right:0; top:0; height:9px;
     background:rgba(255,255,255,.16) }
-  .spine .sp-foot { position:absolute; left:2px; right:2px; bottom:4px; height:6px;
-    border-radius:1px; background:rgba(0,0,0,.3); font-size:5px;
-    color:rgba(255,255,255,.7); display:flex; align-items:center; justify-content:center }
+  /* 아래 규격 띠 — 실물 케이스의 유통사·등급 표시 자리 */
+  .spine .sp-band { position:absolute; left:0; right:0; bottom:0; height:22px;
+    background:linear-gradient(180deg,rgba(10,10,14,.55),#0B1B3A 55%,#08142C);
+    display:flex; align-items:center; justify-content:center }
+  .spine .sp-band i { font-style:normal; font-size:7px; font-weight:700;
+    letter-spacing:.14em; color:rgba(255,255,255,.9) }
+  /* 사진 위에 얹히므로 그림자와 얇은 테두리로 또렷하게 만듭니다. */
+  .spine.art .sp-t { color:#FFFFFF;
+    text-shadow:0 1px 2px rgba(0,0,0,.95), 0 0 8px rgba(0,0,0,.75),
+      -0.5px 0 0 rgba(0,0,0,.5), 0.5px 0 0 rgba(0,0,0,.5) }
+  .spine .sp-t { inset:12px 0 26px }
   .spine.star::before { content:""; position:absolute; left:3px; right:3px; top:12px;
     height:3px; border-radius:2px; background:var(--lamp) }
   @media (max-width:760px){ .spine{ width:22px; height:140px } .rack{ min-height:150px } }
@@ -2311,13 +2322,24 @@ window.addEventListener("message", function (e) {
     for (var i = 0; i < all.length; i += per) {
       html += '<div class="rack">' + all.slice(i, i + per).map(function (f) {
         var sc = APP.score(f.id);
-        return '<button class="spine' + (sc ? " star" : "") +
+        var md = MED(f);
+        var art = md && md.poster;
+        /* 실제 책등은 포스터의 색과 이미지를 이어받습니다.
+           포스터를 배경으로 깔고 어둡게 덮어 세로 제목이 읽히게 합니다.
+           인물만 오려내는 것은 배경 제거가 필요해 브라우저에서는 못 합니다. */
+        var bg = art
+          ? "linear-gradient(90deg,rgba(0,0,0,.62) 0%,rgba(0,0,0,.28) 45%,rgba(0,0,0,.68) 100%)," +
+            "url(" + art + ") center/cover"
+          : "linear-gradient(90deg," + f.bg + " 0%," + shade(f.bg, 18) + " 46%," + f.bg + " 100%)";
+
+        return '<button class="spine' + (sc ? " star" : "") + (art ? " art" : "") +
           (f.id === selected ? " out" : "") + '" data-id="' + f.id + '" ' +
-          'style="background:linear-gradient(90deg,' + f.bg + ' 0%,' +
-          shade(f.bg, 18) + ' 46%,' + f.bg + ' 100%);color:' + f.fg + '" ' +
+          'style="background:' + bg + ';color:' + (art ? "#F4F2E7" : f.fg) + '" ' +
           'title="' + f.ko + " · " + f.year + '" aria-label="' + f.ko + '">' +
-          '<span class="sp-cap"></span><span class="sp-t">' + f.ko + "</span>" +
-          '<span class="sp-foot">DVD</span></button>';
+          '<span class="sp-cap"></span>' +
+          '<span class="sp-t">' + f.ko + "</span>" +
+          '<span class="sp-band"><i>DVD</i></span>' +
+          "</button>";
       }).join("") + '</div><div class="rackboard"></div>';
     }
     host.innerHTML = html;
