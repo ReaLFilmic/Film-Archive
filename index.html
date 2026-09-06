@@ -4071,6 +4071,10 @@ window.addEventListener("message", function (e) {
   .chip.on{background:#33291A;border-color:var(--lamp-deep);color:var(--paper)}
   .chip.drag{opacity:.35}
   .chip .sw{width:14px;height:20px;border-radius:1px;flex:none}
+  .chip .rmv{font-family:var(--sans);font-size:12px;cursor:pointer;width:18px;height:18px;
+    margin-left:4px;border-radius:3px;border:1px solid #5A3A34;
+    background:#3A211E;color:#DFA9A2;line-height:1;padding:0}
+  .chip .rmv:hover{background:#A8564E;border-color:#A8564E;color:#fff}
   .chip .mv{font-family:var(--sans);font-size:10px;cursor:pointer;width:18px;height:18px;
     margin-left:3px;border-radius:3px;border:1px solid var(--edge);
     background:#1F1A12;color:#A99B84;line-height:1;padding:0}
@@ -4162,6 +4166,21 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+  .findrow2{display:flex;gap:7px;margin:0 0 11px;flex-wrap:wrap}
+  .findrow2 input{flex:1;min-width:200px;background:#111110;color:var(--paper);
+    border:1px solid var(--edge);border-radius:3px;padding:9px 12px;
+    font-family:var(--sans);font-size:13px}
+  .findrow2 input:focus{outline:none;border-color:var(--lamp-deep)}
+  #hits{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 12px}
+  .hit{display:flex;align-items:center;gap:8px;font-family:var(--sans);font-size:12.5px;
+    cursor:pointer;border-radius:6px;padding:6px 12px 6px 6px;
+    border:1px solid var(--edge);background:#1F1A12;color:var(--paper)}
+  .hit:hover{background:var(--lamp);border-color:var(--lamp);color:#2A1C08}
+  .hit img,.hit .noimg{width:26px;height:38px;object-fit:cover;border-radius:2px;
+    background:#2C2317;display:block;flex:none}
+  .hit .hy{color:var(--dim);font-size:11px}
+  .hit:hover .hy{color:rgba(42,28,8,.7)}
+  .hnone{font-size:12px;color:var(--dim);margin:0}
 </style>
 
 <script>
@@ -4434,7 +4453,19 @@ window.addEventListener("message", function (e) {
 <div class="wrap">
 
   <h1>콜라주 생성기</h1>
-  <p class="sub">아래 목록에서 넣을 작품을 눌러 고르세요. 앞에 올수록 크게 배치되고, 표지를 끌어 자리를 바꿀 수 있습니다.</p>
+  <p class="sub">검색해서 넣고, 목록에서 눌러 빼세요. 앞에 올수록 크게 배치되고 표지를 끌어 자리를 바꿀 수 있습니다.</p>
+
+  <div class="pickhead">
+    <h2>콜라주에 넣을 영화</h2>
+    <span id="cnt"></span>
+  </div>
+  <div class="findrow2">
+    <input type="text" id="q2" placeholder="TMDB 에서 검색해 넣기 — 제목을 입력하세요"
+           autocomplete="off" aria-label="영화 검색">
+    <button class="tinyb" id="clearAll">전부 지우기</button>
+  </div>
+  <div id="hits"></div>
+  <ul class="pool" id="pool"></ul>
 
   <div class="cols">
     <div class="stagebox"><canvas id="cv" width="1500" height="1000"></canvas></div>
@@ -4502,7 +4533,6 @@ window.addEventListener("message", function (e) {
 
       <div class="grp">
         <button class="primary" id="dl">PNG로 내보내기</button>
-        <button class="ghost" id="cap" style="margin-top:7px">화면 캡처로 저장</button>
         <div id="dlout"></div>
       </div>
 
@@ -4510,18 +4540,6 @@ window.addEventListener("message", function (e) {
     </div>
   </div>
 
-  <div class="pickhead">
-    <h2>넣을 작품 고르기</h2>
-    <span id="cnt"></span>
-  </div>
-  <div class="findrow">
-    <input type="text" id="find" placeholder="영화 찾기 — 서재에 없으면 TMDB 전체에서"
-           autocomplete="off" aria-label="작품 찾기">
-    <button id="onlyseen">본 것만</button>
-    <button id="allf" aria-pressed="true">전체</button>
-  </div>
-  <div id="wide"></div>
-  <ul class="pool" id="pool"></ul>
 
   <p aria-live="polite" class="sr" id="live"></p>
 </div>
@@ -4769,6 +4787,16 @@ window.addEventListener("message", function (e) {
 (function(){
   "use strict";
 
+  /* 옛 찾기 줄을 없앴습니다. 그 요소를 참조하던 코드가 남아 있어도 죽지 않도록
+     화면에 붙지 않는 대체 요소를 미리 만들어 둡니다. */
+  ["find", "onlyseen", "allf", "wide"].forEach(function (id) {
+    if (document.getElementById(id)) return;
+    var el = document.createElement(id === "find" ? "input" : "div");
+    el.id = id; el.hidden = true;
+    document.body.appendChild(el);
+  });
+
+
   var order = FILMS.slice().sort(function(a,b){return a.rank-b.rank;})
                    .map(function(f){return f.id;});
   var ON = {};   // 콜라주에 넣을 작품. 처음에는 비어 있고, 눌러서 고릅니다.
@@ -4845,6 +4873,62 @@ window.addEventListener("message", function (e) {
     return order.map(byId).filter(function(f){ return ON[f.id]; });
   }
   function capacity(){ return brows*cols + srows*(cols*2-1); }
+
+  /* ── TMDB 에서 바로 넣기 ── 진열장에 담지 않아도 콜라주에만 넣을 수 있습니다. */
+  var IMG2 = "https://image.tmdb.org/t/p/";
+
+  function addHit(h) {
+    var id = "c" + h.id;
+    if (byId(id)) { ON[id] = true; renderPool(); render(); return; }
+    var f = { id: id, tmdbId: h.id,
+      ko: h.title || h.original_title, en: h.original_title || "",
+      year: parseInt(String(h.release_date || "").slice(0, 4), 10) || 0,
+      bg: "#1A1A18", fg: "#E9E4D6" };
+    FILMS.push(f);
+    try { APP.media[id] = { id: id, tmdbId: h.id,
+      poster: h.poster_path ? IMG2 + "w500" + h.poster_path : null }; } catch (e) {}
+    order.push(id); ON[id] = true;
+    var u = h.poster_path ? IMG2 + "w500" + h.poster_path : null;
+    (u ? preloadPosters([u]) : Promise.resolve()).then(function () { renderPool(); render(); });
+    say(f.ko + " 을 콜라주에 넣었습니다.");
+  }
+
+  var qT = null;
+  document.getElementById("q2").addEventListener("input", function () {
+    var t = this.value.trim();
+    clearTimeout(qT);
+    if (t.length < 2) { document.getElementById("hits").innerHTML = ""; return; }
+    qT = setTimeout(function () {
+      APP.searchMovies(t).then(function (hits) {
+        var box = document.getElementById("hits");
+        if (!hits || !hits.length) { box.innerHTML = '<p class="hnone">결과가 없습니다.</p>'; return; }
+        box.innerHTML = hits.slice(0, 6).map(function (h) {
+          return '<button class="hit" data-add="' + h.id + '">' +
+            (h.poster_path ? '<img src="' + IMG2 + "w92" + h.poster_path + '" alt="">'
+                           : '<span class="noimg"></span>') +
+            "<b>" + (h.title || h.original_title) + "</b>" +
+            '<span class="hy">' + String(h.release_date || "").slice(0, 4) + "</span></button>";
+        }).join("");
+        Array.prototype.forEach.call(box.querySelectorAll("[data-add]"), function (b) {
+          b.addEventListener("click", function () {
+            var hh = hits.filter(function (x) { return x.id === parseInt(b.dataset.add, 10); })[0];
+            if (hh) addHit(hh);
+          });
+        });
+      }).catch(function () {
+        document.getElementById("hits").innerHTML =
+          '<p class="hnone">위쪽 <b>TMDB 연결</b>에서 키를 넣어주세요.</p>';
+      });
+    }, 420);
+  });
+
+  document.getElementById("clearAll").addEventListener("click", function () {
+    ON = {}; order = [];
+    document.getElementById("hits").innerHTML = "";
+    document.getElementById("q2").value = "";
+    renderPool(); render();
+    say("콜라주를 비웠습니다.");
+  });
 
   // ---------- 콜라주 렌더 ----------
   function render(){
@@ -4977,8 +5061,18 @@ window.addEventListener("message", function (e) {
                      '<span class="sw" style="background:'+f.bg+'"></span>' + f.ko +
                      '<span style="color:var(--dim);font-size:10.5px;margin-left:2px">'+f.year+'</span>'+
                      '<button class="mv" data-mv="-1" data-id="'+f.id+'" title="앞으로">◀</button>'+
-                     '<button class="mv" data-mv="1" data-id="'+f.id+'" title="뒤로">▶</button>';
+                     '<button class="mv" data-mv="1" data-id="'+f.id+'" title="뒤로">▶</button>'+
+                     '<button class="rmv" data-rmv="'+f.id+'" title="빼기">×</button>';
       li.addEventListener("click", function(e){
+        if (e.target.classList && e.target.classList.contains("rmv")) {
+          /* 목록에서 아예 빼냅니다. 넣고 빼기 토글과는 다릅니다. */
+          delete ON[f.id];
+          order = order.filter(function(x){ return x !== f.id; });
+          FILMS = FILMS.filter(function(x){ return x.id !== f.id; });
+          renderPool(); render();
+          say(f.ko + " 을 콜라주에서 뺐습니다.");
+          return;
+        }
         if (e.target.classList && e.target.classList.contains("mv")) {
           /* 앞/뒤 버튼은 순서만 바꿉니다. 넣고 빼기와 섞이지 않게 합니다. */
           var d = parseInt(e.target.dataset.mv, 10);
@@ -5068,6 +5162,17 @@ window.addEventListener("message", function (e) {
     if (!FILMS.length) { say("서재가 비어 있습니다."); return; }
 
     var cap = capacity();
+
+    /* 진열장(서재)에 있는 작품을 콜라주 후보로 가져옵니다.
+       검색해서 넣은 것과 섞이지 않게, 아직 없는 것만 더합니다. */
+    try {
+      APP.library.forEach(function (lf) {
+        if (byId(lf.id)) return;
+        FILMS.push(lf);
+        if (order.indexOf(lf.id) < 0) order.push(lf.id);
+      });
+    } catch (e) {}
+
     var rated = FILMS.filter(function(f){ return APP.score(f.id) > 0; })
       .sort(function(a,b){ return APP.score(b.id) - APP.score(a.id); });
     var rest = FILMS.filter(function(f){ return !(APP.score(f.id) > 0); });
@@ -5079,7 +5184,10 @@ window.addEventListener("message", function (e) {
       .concat(FILMS.filter(function(f){ return !ON[f.id]; })
                    .map(function(f){ return f.id; }));
 
-    renderPool(); render();
+    var urls = pick.map(function(f){ var md = MED(f); return md && md.poster; }).filter(Boolean);
+    (urls.length ? preloadPosters(urls) : Promise.resolve()).then(function(){
+      renderPool(); render();
+    });
     say(pick.length + "편을 자동으로 배치했습니다." +
         (rated.length ? " 별점 매긴 " + Math.min(rated.length, cap) + "편이 앞에 옵니다." : ""));
   });
