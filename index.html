@@ -252,6 +252,15 @@
   html[data-mode="light"] #impFile::file-selector-button{background:#F2EFE2;
     border-color:#DDDBC9;color:#3A382E}
 
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:99;
+    background:#17140E;color:#F4F2E7;border:1px solid #3A3228;border-radius:10px;
+    padding:13px 20px;min-width:262px;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+  .toast b{display:block;font-size:13px;font-weight:700;margin-bottom:3px}
+  .toast span{display:block;font-size:11.5px;color:#A99B84}
+  .toast .tbar{display:block;height:4px;background:#2C2317;border-radius:2px;
+    overflow:hidden;margin-top:9px}
+  .toast .tbar em{display:block;height:4px;background:#E3B168;width:0%;
+    border-radius:2px;transition:width .25s}
   .foot{max-width:1280px;margin:0 auto;padding:26px 22px 60px;font-size:11.5px;
     color:var(--dim);line-height:1.75}
   .foot b{color:var(--ink);font-weight:600}
@@ -390,6 +399,9 @@
 
   <div class="frame" id="frame"></div>
 </div>
+
+<div class="toast" id="toast" hidden=""><b id="toastT"></b><span id="toastS"></span>
+  <i class="tbar"><em id="toastB"></em></i></div>
 
 <div class="foot">
   <b>출처 표기</b> — This product uses the TMDB API but is not endorsed or certified by TMDB.<br>
@@ -5823,7 +5835,7 @@ window.addEventListener("message", function (e) {
 /* 4대 영화제 수상작 — 2000년 이후
    a: 아카데미 작품상 (시상식 연도)
    c: 칸 황금종려상   v: 베니스 황금사자상   b: 베를린 황금곰상
-   [연도, 한글제목, 원제, 감독] */
+   [연도, 한글제목, 원제, 감독, TMDB번호(선택)] */
 var AWARDS = {
   a: {
     name: "아카데미 작품상", short: "아카데미", color: "#C9A227",
@@ -5848,7 +5860,7 @@ var AWARDS = {
       [2017, "문라이트", "Moonlight", "배리 젠킨스"],
       [2018, "셰이프 오브 워터", "The Shape of Water", "기예르모 델 토로"],
       [2019, "그린 북", "Green Book", "피터 패럴리"],
-      [2020, "기생충", "Parasite", "봉준호"],
+      [2020, "기생충", "Parasite", "봉준호", 496243],
       [2021, "노매드랜드", "Nomadland", "클로이 자오"],
       [2022, "코다", "CODA", "션 헤이더"],
       [2023, "에브리씽 에브리웨어 올 앳 원스", "Everything Everywhere All at Once", "다니엘 콴, 다니엘 쉐이너트"],
@@ -5878,7 +5890,7 @@ var AWARDS = {
       [2016, "나, 다니엘 블레이크", "I, Daniel Blake", "켄 로치"],
       [2017, "더 스퀘어", "The Square", "루벤 외스틀룬드"],
       [2018, "어느 가족", "万引き家族", "고레에다 히로카즈"],
-      [2019, "기생충", "Parasite", "봉준호"],
+      [2019, "기생충", "Parasite", "봉준호", 496243],
       [2021, "티탄", "Titane", "쥘리아 뒤쿠르노"],
       [2022, "슬픔의 삼각형", "Triangle of Sadness", "루벤 외스틀룬드"],
       [2023, "추락의 해부", "Anatomie d'une chute", "쥐스틴 트리에"],
@@ -6256,6 +6268,10 @@ window.addEventListener("message", function (e) {
   /* 같은 제목의 다른 영화가 많습니다. 제작기 다큐("Making Parasite")까지 걸립니다.
      연도만 보지 않고 제목이 정확히 맞는지, 얼마나 알려진 작품인지 함께 따집니다. */
   function bestHit(hits, r){
+    if (r[4]) {                                   // 목록에 번호가 적혀 있으면 그대로 씁니다
+      var m = (hits || []).filter(function(h){ return h.id === r[4]; })[0];
+      if (m) return m;
+    }
     var lo = r[0] - 3, hi = r[0];
     var want = [norm(r[2]), norm(r[1])].filter(Boolean);
     var best = null, bs = -1e9;
@@ -6351,7 +6367,7 @@ window.addEventListener("message", function (e) {
       var r = q.shift();
       /* 원제로 먼저 찾습니다. 한글 제목은 같은 이름이 여럿이고,
          아카데미는 시상식 연도라 영화 개봉 연도와 한 해 차이가 납니다. */
-      APP.searchMovies(r[2] || r[1]).then(function (hits) {
+      APP.searchMovies(r[2] || r[1], r[0] - 1).then(function (hits) {
         if (hits && hits.length) return hits;
         return APP.searchMovies(r[1]);
       }).then(function (hits) {
@@ -6406,8 +6422,9 @@ window.addEventListener("message", function (e) {
     /* 표지 찾을 때와 같은 방식으로 골라야 합니다.
        같은 제목의 다른 영화가 잡히던 원인이 여기였습니다. */
     function findId() {
+      if (r[4]) return Promise.resolve(r[4]);
       if (TMDBID[key(r)]) return Promise.resolve(TMDBID[key(r)]);
-      return APP.searchMovies(r[2] || r[1]).then(function (hits) {
+      return APP.searchMovies(r[2] || r[1], r[0] - 1).then(function (hits) {
         if (!hits || !hits.length) return APP.searchMovies(r[1]);
         return hits;
       }).then(function (hits) {
@@ -11002,7 +11019,7 @@ var FILMS = [
   crew:[["감독","미야자키 하야오"],["각본","미야자키 하야오"],["음악","히사이시 조"],["편집","세야마 다케시"]],
   cast:[["히라기 루미","치히로"],["이리노 미유","하쿠"],["나쓰키 마리","유바바"]] },
 
-{ id:"f28", rank:28, ko:"기생충", en:"Parasite", year:2019, runtime:132,
+{ id:"f28", rank:28, ko:"기생충", en:"Parasite", year:2019, runtime:132, tmdbId:496243,
   dir:"봉준호", genres:["드라마","스릴러"], imdb:8.5, bg:"#2A2E28", fg:"#C4C8B0",
   crew:[["감독","봉준호"],["각본","봉준호"],["촬영","홍경표"],["음악","정재일"],["편집","양진모"]],
   cast:[["송강호","기택"],["이선균","동익"],["조여정","연교"],["최우식","기우"],["박소담","기정"]] },
@@ -11147,6 +11164,16 @@ function film(id) { return FILM_BY_ID[id]; }
   })();
   var $ = function (id) { return document.getElementById(id); };
 
+  function toast(title, sub, pct) {
+    var t = $("toast");
+    if (!t) return;
+    if (title === null) { t.hidden = true; return; }
+    t.hidden = false;
+    $("toastT").textContent = title;
+    $("toastS").textContent = sub || "";
+    $("toastB").style.width = (pct == null ? 0 : pct) + "%";
+  }
+
   function log(m) { $("log").innerHTML = m; }
 
   /* TMDB 는 두 가지 인증을 씁니다.
@@ -11253,6 +11280,7 @@ function film(id) { return FILM_BY_ID[id]; }
         });
 
     return find.then(function (hit) {
+        if (!hit && f.tmdbId) hit = { id: f.tmdbId, _how: "번호 직접" };
         if (!hit) return { id: f.id, miss: "세 방법 모두 검색 결과 없음" };
         how = hit._how;
         return detail(hit.id, a).then(function (d) {
@@ -11293,6 +11321,8 @@ function film(id) { return FILM_BY_ID[id]; }
         out.push(r); done++;
         $("fill").style.width = (done / total * 100) + "%";
         log("불러오는 중… " + done + " / " + total + "편");
+        toast("포스터를 불러오는 중", done + " / " + total + "편",
+              Math.round(done / total * 100));
         return new Promise(function (go) { setTimeout(go, 120); }).then(worker);
       });
     }
@@ -11329,6 +11359,8 @@ function film(id) { return FILM_BY_ID[id]; }
       log("실패했습니다.");
       return;
     }
+    toast("포스터 " + ok + "편을 불러왔습니다", "곧 사라집니다", 100);
+    setTimeout(function () { toast(null); }, 2200);
     $("hookState").textContent = ok + "편 불러왔습니다" +
       (merged ? " · 겹친 " + merged + "편 정리" : "");
     $("hookLabel").textContent = "포스터 · 예고편 · 스틸컷 연결됨";
@@ -11607,13 +11639,24 @@ function film(id) { return FILM_BY_ID[id]; }
   APP.canSearch = function () {
     return (($("key") && $("key").value) || "").replace(/\s+/g, "").length >= 20;
   };
-  APP.searchMovies = function (q) {
+  APP.searchMovies = function (q, year) {
     var key = ($("key").value || "").replace(/\s+/g, "");
     if (key.length < 20) return Promise.reject(new Error("TMDB 키가 없습니다"));
     var a = auth(key);
+    /* 같은 제목이 많은 작품은 연도를 함께 주면 훨씬 정확해집니다. */
+    var extra = "&query=" + encodeURIComponent(q) + "&include_adult=false";
+    if (year) extra += "&primary_release_year=" + year;
     return retry(function () {
-      return tmdb("/search/movie", a, "&query=" + encodeURIComponent(q) + "&include_adult=false");
-    }, 2).then(function (r) { return (r.results || []).slice(0, 10); });
+      return tmdb("/search/movie", a, extra);
+    }, 2).then(function (r) {
+      var list = (r.results || []).slice(0, 10);
+      if (list.length || !year) return list;
+      /* 연도를 붙여 못 찾으면 연도 없이 한 번 더 */
+      return retry(function () {
+        return tmdb("/search/movie", a,
+          "&query=" + encodeURIComponent(q) + "&include_adult=false");
+      }, 2).then(function (r2) { return (r2.results || []).slice(0, 10); });
+    });
   };
   APP.addByTmdbId = function (tmdbId) {
     var key = ($("key").value || "").replace(/\s+/g, "");
