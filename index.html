@@ -278,6 +278,9 @@
     overflow:hidden;margin-top:9px}
   .toast .tbar em{display:block;height:4px;background:#E3B168;width:0%;
     border-radius:2px;transition:width .25s}
+  .tmdblogo{height:15px;vertical-align:-2px;margin:0 8px}
+  html[data-mode="dark"] .tmdblogo{filter:brightness(1.15)}
+  .credit{opacity:.75}
   .foot{max-width:1280px;margin:0 auto;padding:26px 22px 60px;font-size:11.5px;
     color:var(--dim);line-height:1.75}
   .foot b{color:var(--ink);font-weight:600}
@@ -423,13 +426,9 @@
 
 <div class="foot">
   <span style="float:right;opacity:.55" id="buildStamp"></span>
-  <b>출처 표기</b> — This product uses the TMDB API but is not endorsed or certified by TMDB.<br>
-  이미지·예고편을 불러온 경우 TMDB 약관에 따라 위 문구와 함께 <b>공식 TMDB 로고</b>도 표시해야 합니다.
-  themoviedb.org/about/logos-attribution 에서 내려받아 이 문단 옆에 넣으세요.<br>
-  <b>표지 안내</b> — TMDB 를 연결하지 않으면 제목을 얹은 타이포그래피 표지가 그려집니다.
-  포스터 파일을 프로젝트에 담지 않고 TMDB 이미지 서버 주소를 참조하는 방식입니다.<br>
-  <b>데이터</b> — IMDb Top 250에서 고른 36편. 제목 · 연도 · 상영시간 · 감독 · 출연은 사실 정보이고,
-  IMDb 평점은 2026년 9월 기준 근사치를 5점 만점으로 환산해 대중 평균으로 씁니다.
+  <b>DATA CREDITS</b>
+  <img src="tmdb.svg" alt="TMDB" class="tmdblogo">
+  <span class="credit">This product uses the TMDB API but is not endorsed or certified by TMDB.</span>
 </div>
 
 <p aria-live="polite" class="sr" id="live"></p>
