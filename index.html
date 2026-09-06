@@ -277,12 +277,13 @@
 <div class="card">
   <div class="cardtop">
     <div class="tabs" role="tablist" aria-label="모듈">
-    <button class="tab" data-k="shelf" data-desc="선반에서 꺼내 보기" aria-pressed="true">진열장</button>
+    <button class="tab" data-k="rate" data-desc="별점 매기면 바로 진열" aria-pressed="true">평가</button>
+    <button class="tab" data-k="shelf" data-desc="선반에서 꺼내 보기" aria-pressed="false">진열장</button>
     <button class="tab" data-k="record" data-desc="별점 · 코멘트 · 크레딧" aria-pressed="false">기록</button>
     <button class="tab" data-k="collage" data-desc="베스트 목록 이미지" aria-pressed="false">콜라주</button>
     <button class="tab" data-k="taste" data-desc="내 별점으로 만드는 통계" aria-pressed="false">취향 분석</button>
     <button class="tab" data-k="collection" data-desc="4대 영화제 수상작" aria-pressed="false">컬렉션</button>
-    <button class="tab" data-k="calendar" data-desc="1980년부터 월별 개봉작" aria-pressed="false">개봉 달력</button>
+    <button class="tab" data-k="calendar" data-desc="월별 개봉작 포스터" aria-pressed="false">개봉 달력</button>
     <button class="tab" data-k="biff" data-desc="상영작 165편 · 10섹션" aria-pressed="false">부산국제영화제</button>
     <button class="tab" data-k="cinema" data-desc="붙여넣어 관람 계획" aria-pressed="false">극장 시간표</button>
     <button class="tab" data-k="schedule" data-desc="충돌 없는 관람 편성" aria-pressed="false">영화제 시간표</button>
@@ -415,6 +416,629 @@
 
 <p aria-live="polite" class="sr" id="live"></p>
 
+<script type="text/html" id="src-rate"><!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평가 — 프로토타입</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --panel:#1B1B18; --edge:#32322D; --lamp:#E3B168; --lamp-deep:#B07B32;
+    --paper:#F4F2E7; --mut:#8C8B7E; --dim:#6A6A5F;
+    --sans:"Noto Sans KR",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:transparent;color:var(--paper);
+    font-family:var(--sans);font-size:14px;line-height:1.7}
+  .wrap{max-width:760px;margin:0 auto;padding:4px 22px 40px}
+  h1{font-size:24px;font-weight:700;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:13px;margin:0 0 16px}
+
+  button{font-family:var(--sans);cursor:pointer}
+  .chipbtn{font-size:12.5px;color:#C9BDA8;background:#2C2317;border:1px solid var(--edge);
+    border-radius:999px;padding:6px 14px;min-height:34px}
+  .chipbtn:hover{background:#382C1C;color:var(--paper)}
+  .chipbtn[aria-pressed="true"]{background:var(--lamp);border-color:var(--lamp);
+    color:#2A1C08;font-weight:700}
+
+  .bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+  .done{margin-left:auto;font-size:12px;color:var(--dim)}
+  .done b{color:var(--lamp);font-weight:700}
+
+  .list{list-style:none;padding:0;margin:0}
+  .it{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #24231E}
+  .it:last-child{border-bottom:0}
+  .it .cov{width:78px;flex:none;aspect-ratio:27/40;border-radius:3px;overflow:hidden;
+    background:#241F17;cursor:pointer;border:0;padding:0;display:block}
+  .it .cov img{width:100%;height:100%;object-fit:cover;display:block}
+  .it .m{flex:1;min-width:0}
+  .it .t{font-size:15px;font-weight:700;color:var(--paper);line-height:1.4;
+    cursor:pointer;display:inline-block}
+  .it .t:hover{color:var(--lamp)}
+  .it .meta{font-size:12px;color:var(--dim);margin:1px 0 8px}
+  .it .meta em{font-style:normal;color:var(--mut)}
+
+  .stars{display:flex;gap:2px;align-items:center}
+  .st{position:relative;width:32px;height:32px;border:0;background:none;padding:0;
+    cursor:pointer;flex:none}
+  .st svg{width:30px;height:30px;display:block}
+  .st .half{position:absolute;left:0;top:0;width:50%;height:100%;cursor:pointer}
+  .clr{margin-left:8px;font-size:11.5px;color:var(--dim);background:none;border:0;
+    cursor:pointer;padding:4px 6px}
+  .clr:hover{color:var(--lamp)}
+  .mine{margin-left:6px;font-size:12.5px;color:var(--lamp);font-weight:700;min-width:26px}
+
+  .more{display:block;width:100%;margin:18px 0 0;padding:13px;border-radius:8px;
+    border:1px solid var(--edge);background:#221C14;color:#C9BDA8;font-size:13px}
+  .more:hover{background:#2C2317;color:var(--paper)}
+  .more[disabled]{opacity:.5;cursor:default}
+
+  .info{margin:10px 0 0;padding:13px;border-radius:6px;background:var(--panel);
+    border:1px solid var(--edge);font-size:12px;color:#B5AC97;line-height:1.75}
+  .info b{color:var(--paper);font-weight:500}
+  .load{font-size:13px;color:var(--dim);padding:40px 0;text-align:center}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  @media (max-width:760px){
+    .wrap{padding:4px 16px 40px}
+    .it .cov{width:66px}
+    .it .t{font-size:14.5px}
+    .st{width:30px;height:30px}
+    .st svg{width:28px;height:28px}
+  }
+
+  /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
+     따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
+  :root{
+    --room:#121210; --panel:#1B1B18; --panel2:#232320; --edge:#32322D;
+    --paper:#F4F2E7; --mut:#8C8B7E; --dim:#6A6A5F;
+    --lamp:#E3B168; --lamp-deep:#B07B32;
+    --sleeve:#F4F2E7; --sleeve-2:#E7E4D6; --ink:#17170F; --ink-soft:#65645A;
+    --rule:#CFCCBB;
+  }
+  body{background:transparent}
+
+  /* ── 라이트 모드 ──
+     화면마다 흩어진 색을 하나하나 고치는 대신, 변수 값을 뒤집습니다.
+     변수로 안 쓰인 어두운 색만 아래에서 따로 덧칠합니다. */
+  html[data-mode="light"]{
+    --room:transparent; --panel:#FFFDF4; --panel2:#F2EFE2; --edge:#DDD9C8;
+    --paper:#22221C; --mut:#6E6C60; --dim:#8E8C7E;
+    --lamp:#8A5A20; --lamp-deep:#6E4416;
+    --sleeve:#FFFDF4; --sleeve-2:#F2EFE2; --ink:#22221C; --ink-soft:#6E6C60;
+    --rule:#DDD9C8;
+  }
+  html[data-mode="light"] input,
+  html[data-mode="light"] textarea{background:#FFFDF4;color:#22221C;border-color:#DDD9C8}
+  html[data-mode="light"] input::placeholder,
+  html[data-mode="light"] textarea::placeholder{color:#9A9788}
+  html[data-mode="light"] button{background:#F2EFE2;border-color:#DDD9C8;color:#3A382E}
+  html[data-mode="light"] button:hover{background:#E7E4D3;color:#22221C}
+  html[data-mode="light"] button[aria-pressed="true"],
+  html[data-mode="light"] .primary,
+  html[data-mode="light"] .go{background:#22221C;border-color:#22221C;color:#F4F2E7}
+  html[data-mode="light"] .board,
+  html[data-mode="light"] .stagebox{background:#FFFDF4;border-color:#DDD9C8}
+  html[data-mode="light"] .hr{border-top-color:#E7E4D3}
+  html[data-mode="light"] .lane{border-left-color:#E7E4D3}
+  html[data-mode="light"] .s-free{background:#EDE9D8;color:#4A483C}
+  html[data-mode="light"] .s-dim{background:#F2EFE2;color:#9A9788}
+  html[data-mode="light"] .cb{background:#EDE9D8;color:#3A382E}
+  html[data-mode="light"] .cnote{color:#8E8C7E}
+  html[data-mode="light"] .emptybox{border-color:#DDD9C8}
+  html[data-mode="light"] .emptybox>b:first-child{color:#22221C}
+  html[data-mode="light"] .zoomwrap{background:rgba(240,238,226,.95)}
+  html[data-mode="light"] .zoomclose{color:#6E6C60}
+
+  .zoomwrap{position:absolute;z-index:9999;background:rgba(10,8,6,.94);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    gap:14px;padding:26px;cursor:zoom-out}
+  .zoomwrap img{max-width:100%;max-height:82vh;border-radius:3px;
+    box-shadow:0 24px 60px rgba(0,0,0,.7)}
+  .zoomclose{font-size:12px;color:#8E8271}
+  .ytout{position:absolute;right:8px;bottom:7px;z-index:3;font-size:10.5px;
+    color:#EFE9DD;background:rgba(0,0,0,.62);padding:3px 9px;border-radius:3px;
+    text-decoration:none}
+  .ytout:hover{background:rgba(0,0,0,.85)}
+  .tw{cursor:pointer}
+  .crit{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:9px 0 0;min-height:22px}
+  .cb{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;
+    padding:2px 9px 2px 3px;border-radius:999px;background:#26261F;color:#C6C5B6}
+  .cb b{display:inline-flex;align-items:center;justify-content:center;
+    min-width:26px;height:18px;border-radius:999px;font-size:11px;font-weight:700;color:#12120E}
+  .cb.g b{background:#6FB84A} .cb.y b{background:#E0C452} .cb.r b{background:#D4604E}
+  .cb.fresh b{background:#E0472F;color:#FFF} .cb.rotten b{background:#4E9A4E;color:#FFF}
+  .cnote{font-size:10.5px;color:#6A6A5F}
+  .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
+    line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
+    color:#EFE9DD;font-weight:700;margin-bottom:6px}
+  .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
+    background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+</style>
+
+<script>
+/* 부모 창의 공유 저장소에 연결합니다. 단독으로 열었을 때도 동작하도록 대비합니다. */
+var APP = (function () {
+  try { if (window.parent && window.parent !== window && window.parent.APP) return window.parent.APP; }
+  catch (e) {}
+  var recs = {}, subs = [];
+  return {
+    records: recs,
+    rec: function (id) {
+      return recs[id] || (recs[id] = { score: 0, status: "", comment: "", spoiler: false, at: "" });
+    },
+    score: function (id) { return recs[id] ? (recs[id].score || 0) : 0; },
+    setScore: function (id, v) { this.rec(id).score = v || 0; this.notify(); },
+    library: [],
+    clearLibrary: function () { this.library = []; this.notify(); return 0; },
+    canSearch: function () { return false; },
+    searchMovies: function () { return Promise.reject(new Error("연결 없음")); },
+    addByTmdbId: function () { return Promise.reject(new Error("연결 없음")); },
+    directorFilms: function () { return Promise.reject(new Error("연결 없음")); },
+    similarTo: function () { return Promise.reject(new Error("연결 없음")); },
+    crit: {},
+    critOf: function () { return null; },
+    critLoad: function () { return Promise.reject(new Error("연결 없음")); },
+    findByTmdb: function () { return null; },
+    dedupe: function () { return 0; },
+    removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
+    savedCSV: { cinema: "", schedule: "" },
+    setCSV: function () {},
+    kobisKey: "",
+    setKobis: function () {},
+    preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
+    keysBaked: false,
+    subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
+    notify: function (from) {
+      subs.forEach(function (s) {
+        if (s.name === from) return;
+        try { s.fn(); } catch (e) {}
+      });
+    }
+  };
+})();
+
+/* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
+var FILM_BY_ID = {};
+FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
+function film(id) { return FILM_BY_ID[id]; }
+
+var EMPTY_HTML = "<div class='emptybox'><b>서재가 비어 있습니다</b>위쪽 <b>영화 추가</b>에서 제목을 검색해 담아보세요.<br>TMDB 에 등록된 거의 모든 영화를 넣을 수 있습니다.</div>";
+
+/* 메타스코어 · 로튼토마토 배지.
+   메타스코어는 61 이상 초록 · 40~60 노랑 · 그 아래 빨강 (메타크리틱 기준).
+   로튼토마토는 60% 이상이 신선(빨강 토마토) 입니다. */
+function critHTML(f) {
+  var c = APP.critOf(f.id);
+  if (!c) return '<div class="crit" data-crit="' + f.id + '"></div>';
+  var out = [];
+  if (c.meta !== null && c.meta !== undefined) {
+    var mc = c.meta >= 61 ? "g" : (c.meta >= 40 ? "y" : "r");
+    out.push('<span class="cb ' + mc + '"><b>' + c.meta + '</b>메타스코어</span>');
+  }
+  if (c.rt !== null && c.rt !== undefined) {
+    out.push('<span class="cb ' + (c.rt >= 60 ? "fresh" : "rotten") + '"><b>' +
+             c.rt + '%</b>' + (c.rt >= 60 ? "신선" : "썩음") + '</span>');
+  }
+  if (!out.length) out.push('<span class="cnote">평론 점수 없음</span>');
+  return '<div class="crit">' + out.join("") + "</div>";
+}
+
+/* 아직 안 받아온 자리를 채웁니다. 꺼낼 때 그 작품만 한 번 요청합니다. */
+function critFill(root, redraw) {
+  var slots = (root || document).querySelectorAll("[data-crit]");
+  Array.prototype.forEach.call(slots, function (el) {
+    var id = el.getAttribute("data-crit");
+    el.removeAttribute("data-crit");
+    el.innerHTML = '<span class="cnote">평론 점수 불러오는 중…</span>';
+    APP.critLoad(id).then(function () {
+      if (typeof redraw === "function") redraw();
+    }).catch(function (e) {
+      el.innerHTML = '<span class="cnote">' + e.message + "</span>";
+    });
+  });
+}
+
+/* 예고편 · 스틸컷: TMDB 에서 받아온 것이 있으면 실물로, 없으면 자리 표시로 */
+function MED(f) {
+  try { return (APP.media || {})[f.id] || null; } catch (e) { return null; }
+}
+function canEmbed() {
+  /* 유튜브는 페이지 출처를 확인할 수 없으면 "동영상 플레이어 구성 오류 153" 을 냅니다.
+     내려받은 파일을 그냥 열면(file://) 출처가 없어 어떤 방법으로도 재생되지 않습니다.
+     주소가 http/https 일 때만 그 자리 재생을 시도합니다. */
+  try {
+    var p = (window.top && window.top.location && window.top.location.protocol) || location.protocol;
+    return p === "http:" || p === "https:";
+  } catch (e) { return location.protocol === "http:" || location.protocol === "https:"; }
+}
+
+function trailerHTML(f, cls) {
+  var md = MED(f);
+  var tag = (cls === "trailer") ? "tt" : "trailer-tag";
+  if (md && md.trailer) {
+    var thumb = (md.stills && md.stills[0]) || md.poster || "";
+    var embed = canEmbed();
+    return '<div class="' + cls + ' tw" data-key="' + md.trailer + '" data-embed="' + embed + '" ' +
+      'role="button" tabindex="0" aria-label="' + f.ko + ' 예고편" style="background:#000">' +
+      (thumb ? '<img src="' + thumb + '" alt="" style="position:absolute;inset:0;' +
+               'width:100%;height:100%;object-fit:cover;opacity:.5">' : "") +
+      '<span class="play"></span>' +
+      '<span class="' + tag + '">' +
+        (embed ? "눌러서 재생" : "눌러서 유튜브에서 보기") + "</span>" +
+      '<a class="ytout" href="https://www.youtube.com/watch?v=' + md.trailer +
+        '" target="_blank" rel="noopener">유튜브</a>' +
+      (embed ? "" : '<span class="whyout">파일을 직접 열면 유튜브가 재생을 막습니다</span>') +
+      "</div>";
+  }
+  return '<div class="' + cls + '" role="button" tabindex="0" aria-label="예고편 자리">' +
+    '<span class="glow" style="background:radial-gradient(circle at 50% 50%,' +
+      f.fg + '55,' + f.bg + ' 70%)"></span><span class="play"></span>' +
+    '<span class="' + (cls === "trailer" ? "tt" : "trailer-tag") + '">' +
+    (md ? "예고편 없음" : "예고편 자리 — 위에서 TMDB 를 연결하세요") + '</span></div>';
+}
+function stillsHTML(f, n) {
+  var md = MED(f);
+  if (md && md.stills && md.stills.length) {
+    return md.stills.slice(0, n).map(function (u) {
+      return '<div data-zoom="' + u + '" role="button" tabindex="0" aria-label="스틸컷 확대" ' +
+             'style="background-image:url(' + u + ');background-size:cover;' +
+             'background-position:center;cursor:zoom-in"></div>';
+    }).join("");
+  }
+  return f.stills.slice(0, n).map(function (c) {
+    return '<div style="background:' + c + '"></div>';
+  }).join("");
+}
+
+/* 눌렀을 때의 동작을 문서 하나에 몰아 둡니다. 모듈마다 따로 붙이지 않아도 됩니다. */
+document.addEventListener("click", function (e) {
+  var t = e.target;
+
+  var out = t.closest && t.closest(".ytout");
+  if (out) return;                                  // 유튜브 링크는 그대로 열리게
+
+  var tw = t.closest && t.closest(".tw");
+  if (tw && tw.dataset.key) {
+    if (tw.dataset.embed !== "true") {
+      window.open("https://www.youtube.com/watch?v=" + tw.dataset.key, "_blank", "noopener");
+      return;
+    }
+    tw.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + tw.dataset.key +
+      '?autoplay=1&rel=0" title="예고편" allowfullscreen allow="autoplay; encrypted-media" ' +
+      'style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>' +
+      '<a class="ytout" href="https://www.youtube.com/watch?v=' + tw.dataset.key +
+      '" target="_blank" rel="noopener">유튜브</a>';
+    tw.classList.remove("tw");
+    return;
+  }
+
+  var zm = t.closest && t.closest("[data-zoom]");
+  if (zm) { openZoom(zm.getAttribute("data-zoom")); return; }
+});
+
+/* 스틸컷 확대 */
+function openZoom(src) {
+  var o = document.createElement("div");
+  o.className = "zoomwrap";
+  /* iframe 안에서는 fixed 가 화면 기준이 아니라 iframe 상자 기준입니다.
+     그래서 바깥 스크롤 위치를 받아 "지금 눈에 보이는 자리" 에 놓습니다. */
+  var vh = (OUTER && OUTER.vh) || window.innerHeight || 700;
+  var top = Math.max(0, (OUTER && OUTER.top) || 0);
+  o.style.position = "absolute";
+  o.style.top = top + "px";
+  o.style.left = "0";
+  o.style.right = "0";
+  o.style.height = vh + "px";
+  o.innerHTML = '<img src="' + src + '" alt="스틸컷 확대">' +
+                '<span class="zoomclose">닫기 · 아무 곳이나 누르세요</span>';
+  o.addEventListener("click", function () { o.remove(); });
+  document.addEventListener("keydown", function esc(ev) {
+    if (ev.key === "Escape") { o.remove(); document.removeEventListener("keydown", esc); }
+  });
+  document.body.appendChild(o);
+}
+
+var MODKEY = "rate";
+
+/* 화면 안쪽에서 바깥 페이지를 특정 위치로 스크롤시킵니다.
+   iframe 자체에는 스크롤이 없으므로 바깥에 부탁해야 합니다. */
+function askDownload(name, blob) {
+  try { parent.postMessage({ tag: "proto-download", name: name, blob: blob }, "*"); return true; }
+  catch (e) { return false; }
+}
+function askOpen(blob) {
+  try { parent.postMessage({ tag: "proto-open", blob: blob }, "*"); return true; }
+  catch (e) { return false; }
+}
+
+function askCapture(el, name, onResult) {
+  try {
+    var r = el.getBoundingClientRect();
+    var once = function (e) {
+      if (!e.data || e.data.tag !== "proto-capture-result") return;
+      window.removeEventListener("message", once);
+      onResult(e.data.ok, e.data.msg);
+    };
+    window.addEventListener("message", once);
+    parent.postMessage({
+      tag: "proto-capture",
+      name: name,
+      rect: { x: r.left, y: r.top, w: r.width, h: r.height }
+    }, "*");
+    return true;
+  } catch (e) { return false; }
+}
+
+function askScroll(y) {
+  try { parent.postMessage({ tag: "proto-scrollto", y: y }, "*"); } catch (e) {}
+}
+
+/* 바깥 스크롤 위치. 진열장 정보 패널이 이 값을 보고 따라 내려갑니다. */
+var OUTER = { top: 0, vh: 800 };
+var scrollSubs = [];
+function onOuterScroll(fn) { scrollSubs.push(fn); }
+window.addEventListener("message", function (e) {
+  var d = e.data;
+  if (d && d.tag === "proto-mode") {
+    document.documentElement.setAttribute("data-mode", d.mode || "dark");
+    return;
+  }
+  if (!d || d.tag !== "proto-scroll") return;
+  OUTER.top = d.top; OUTER.vh = d.vh;
+  scrollSubs.forEach(function (f) { try { f(OUTER); } catch (x) {} });
+});
+
+/* 내용 높이를 부모에게 알려, 안쪽에 또 스크롤바가 생기지 않게 합니다.
+   postMessage 는 file:// 로 열어도 막히지 않습니다. */
+(function () {
+  var KEY = MODKEY, last = 0;
+  function report() {
+    try {
+      /* body.scrollHeight 를 재면 안 됩니다. body 는 iframe 높이보다 작아질 수 없어서
+         부모가 iframe 을 키울 때마다 측정값도 같이 커지는 되먹임이 생깁니다.
+         내용이 담긴 .wrap 만 재면 iframe 높이와 무관한 값이 나옵니다. */
+      /* 진열장은 최상위 컨테이너 이름이 .room 입니다.
+         .wrap 만 찾으면 못 찾아 높이가 늘어나지 않고 화면이 잘립니다. */
+      var el = document.querySelector(".wrap, .room") || document.body.firstElementChild;
+      var h = el ? Math.ceil(el.offsetTop + el.offsetHeight + 24)
+                 : document.documentElement.scrollHeight;
+      if (Math.abs(h - last) < 8) return;
+      last = h;
+      parent.postMessage({ tag: "proto-height", k: KEY, h: h }, "*");
+    } catch (e) {}
+  }
+  window.addEventListener("load", report);
+  setInterval(report, 350);
+})();
+<\/script>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>평가</h1>
+  <p class="sub">본 영화에 별점을 매겨보세요. 매기는 순간 진열장에 꽂힙니다.</p>
+
+  <div class="bar" id="bar"></div>
+  <ul class="list" id="list"><li class="load">불러오는 중…</li></ul>
+  <button class="more" id="more" hidden>더 보기</button>
+
+  <p aria-live="polite" class="sr" id="live"></p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function say(m) { $("live").textContent = m; }
+
+  var IMG = "https://image.tmdb.org/t/p/w185";
+  var LANG = { ko:"한국", en:"영미", ja:"일본", fr:"프랑스", zh:"중화권", cn:"중화권",
+    it:"이탈리아", es:"스페인어권", de:"독일", ru:"러시아", hi:"인도", th:"태국",
+    da:"덴마크", sv:"스웨덴", pt:"포르투갈어권", tr:"터키", fa:"이란", pl:"폴란드" };
+
+  var MODES = [
+    { k:"all",  label:"전체",   o:{} },
+    { k:"ko",   label:"한국영화", o:{ lang:"ko", minVotes:80 } },
+    { k:"new",  label:"최신 화제작", o:{ sort:"popularity.desc", minVotes:150 } },
+  ];
+  var mode = "all", page = 1, seen = {}, rows = [];
+
+  /* 이미 서재에 있는 작품이면 그 별점을 그대로 보여줍니다. */
+  function mine(tmdbId) {
+    try {
+      var f = APP.findByTmdb(tmdbId);
+      return f ? APP.score(f.id) : 0;
+    } catch (e) { return 0; }
+  }
+
+  function starSVG(fill) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+      '<defs><linearGradient id="g' + fill + '">' +
+      '<stop offset="' + fill + '%" stop-color="#E3B168"/>' +
+      '<stop offset="' + fill + '%" stop-color="#3A352C"/>' +
+      "</linearGradient></defs>" +
+      '<path fill="url(#g' + fill + ')" d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.4 ' +
+      '6.2 20.4l1.1-6.4L2.6 9.4l6.5-.9z"/></svg>';
+  }
+
+  function starsHTML(id, score) {
+    var out = "";
+    for (var i = 1; i <= 5; i++) {
+      var fill = score >= i ? 100 : (score >= i - 0.5 ? 50 : 0);
+      out += '<button class="st" data-r="' + id + '" data-v="' + i + '" ' +
+        'aria-label="' + i + '점">' + starSVG(fill) +
+        '<span class="half" data-r="' + id + '" data-v="' + (i - 0.5) + '"></span></button>';
+    }
+    out += '<span class="mine">' + (score ? score.toFixed(1) : "") + "</span>";
+    if (score) out += '<button class="clr" data-r="' + id + '" data-v="0">지우기</button>';
+    return out;
+  }
+
+  function renderBar() {
+    var n = rows.filter(function (r) { return mine(r.id) > 0; }).length;
+    $("bar").innerHTML = MODES.map(function (m) {
+      return '<button class="chipbtn" data-m="' + m.k + '" aria-pressed="' +
+        (m.k === mode) + '">' + m.label + "</button>";
+    }).join("") + '<span class="done">이 목록에서 <b>' + n + "</b>편 평가함</span>";
+
+    Array.prototype.forEach.call($("bar").querySelectorAll("[data-m]"), function (b) {
+      b.addEventListener("click", function () {
+        if (mode === b.dataset.m) return;
+        mode = b.dataset.m; page = 1; seen = {}; rows = [];
+        $("list").innerHTML = '<li class="load">불러오는 중…</li>';
+        load();
+      });
+    });
+  }
+
+  function render() {
+    if (!rows.length) {
+      $("list").innerHTML = '<li class="load">가져온 작품이 없습니다.</li>';
+      return;
+    }
+    $("list").innerHTML = rows.map(function (r) {
+      var sc = mine(r.id);
+      return '<li class="it">' +
+        '<button class="cov" data-open="' + r.id + '" aria-label="' + r.ko + '">' +
+        (r.poster ? '<img src="' + r.poster + '" alt="">' : "") + "</button>" +
+        '<span class="m">' +
+          '<span class="t" data-open="' + r.id + '">' + r.ko + "</span>" +
+          '<div class="meta" data-meta="' + r.id + '">' + (r.year || "—") +
+            (r.dir ? " · <em>" + r.dir + "</em>" : "") +
+            (r.pub ? " · 대중 ★" + r.pub.toFixed(1) : "") + "</div>" +
+          '<div class="stars">' + starsHTML(r.id, sc) + "</div>" +
+        "</span></li>";
+    }).join("");
+    renderBar();
+    fillDirectors();
+  }
+
+  /* 감독은 목록 조회에 들어 있지 않아 따로 가져옵니다.
+     한꺼번에 부르면 느리니 넷씩 나눠 받고, 오는 대로 그 줄만 고쳐 씁니다. */
+  function fillDirectors() {
+    var todo = rows.filter(function (r) { return r.dir === undefined; });
+    if (!todo.length) return;
+    var q = todo.slice();
+
+    function worker() {
+      if (!q.length) return;
+      var r = q.shift();
+      r.dir = "";
+      APP.director(r.id).then(function (name) {
+        r.dir = name || "";
+        var el = document.querySelector('[data-meta="' + r.id + '"]');
+        if (el) {
+          el.innerHTML = (r.year || "—") +
+            (r.dir ? " · <em>" + r.dir + "</em>" : "") +
+            (r.pub ? " · 대중 ★" + r.pub.toFixed(1) : "");
+        }
+      }).then(function () { setTimeout(worker, 40); });
+    }
+    worker(); worker(); worker(); worker();
+  }
+
+  /* 별점을 매기면 서재에 없던 작품은 그 자리에서 담깁니다. */
+  function rate(tmdbId, value) {
+    var r = rows.filter(function (x) { return x.id === tmdbId; })[0];
+    var f = APP.findByTmdb(tmdbId);
+
+    function apply(film) {
+      APP.setScore(film.id, value);
+      render();
+      say(film.ko + (value ? " " + value + "점" : " 별점을 지웠습니다"));
+    }
+
+    if (f) { apply(f); return; }
+    if (!value) return;
+
+    say((r ? r.ko : "작품") + " 을 담는 중…");
+    APP.addByTmdbId(tmdbId).then(apply).catch(function () {
+      say("담지 못했습니다.");
+    });
+  }
+
+  function load() {
+    var m = MODES.filter(function (x) { return x.k === mode; })[0] || MODES[0];
+    $("more").disabled = true;
+    $("more").textContent = "불러오는 중…";
+
+    APP.popular(page, m.o).then(function (list) {
+      list.forEach(function (d) {
+        if (seen[d.id] || !d.poster_path) return;
+        seen[d.id] = 1;
+        rows.push({
+          id: d.id,
+          ko: d.title || d.original_title,
+          year: parseInt(String(d.release_date || "").slice(0, 4), 10) || 0,
+          where: LANG[d.original_language] || (d.original_language || "").toUpperCase(),
+          pub: Math.round((d.vote_average || 0) / 2 * 10) / 10,
+          poster: IMG + d.poster_path
+        });
+      });
+      render();
+      $("more").hidden = false;
+      $("more").disabled = false;
+      $("more").textContent = "더 보기";
+    }).catch(function (e) {
+      $("list").innerHTML = '<li class="load">' + e.message +
+        "<br>위쪽 <b>TMDB 연결</b>에서 키를 넣어주세요.</li>";
+      $("more").hidden = true;
+    });
+  }
+
+  $("more").addEventListener("click", function () { page++; load(); });
+
+  $("list").addEventListener("click", function (e) {
+    var st = e.target.closest && e.target.closest("[data-r]");
+    if (st) {
+      e.preventDefault();
+      rate(parseInt(st.dataset.r, 10), parseFloat(st.dataset.v));
+      return;
+    }
+    var op = e.target.closest && e.target.closest("[data-open]");
+    if (op) {
+      e.preventDefault();
+      var id = parseInt(op.dataset.open, 10);
+      var host = op.closest(".it");
+      var open = host.querySelector(".info");
+      if (open) { open.remove(); return; }
+      var box = document.createElement("div");
+      box.className = "info";
+      box.textContent = "정보를 불러오는 중…";
+      host.querySelector(".m").appendChild(box);
+      APP.preview(id).then(function (d) {
+        box.innerHTML = "<b>" + d.ko + "</b> · " +
+          [d.en, d.runtime && (d.runtime + "분"), d.genres].filter(Boolean).join(" · ") +
+          (d.crew.length ? "<br>" + d.crew.map(function (c) {
+            return c[0] + " " + c[1]; }).join(" · ") : "") +
+          (d.overview ? "<br>" + d.overview.slice(0, 160) +
+            (d.overview.length > 160 ? "…" : "") : "");
+      }).catch(function (er) { box.textContent = er.message; });
+    }
+  });
+
+  try { APP.subscribe("rate", function () { render(); }); } catch (e) {}
+
+  renderBar();
+  load();
+})();
+<\/script>
+</body>
+</html>
+</script>
 <script type="text/html" id="src-shelf"><!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1066,6 +1690,9 @@ var APP = (function () {
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
     reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -2465,6 +3092,9 @@ var APP = (function () {
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
     reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -3531,6 +4161,9 @@ var APP = (function () {
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
     reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -4864,6 +5497,9 @@ var APP = (function () {
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
     reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -5998,6 +6634,9 @@ var APP = (function () {
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
     reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -6516,109 +7155,77 @@ window.addEventListener("message", function (e) {
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --room:#121210; --panel:#1B1B18; --edge:#32322D;
-    --lamp:#E3B168; --lamp-deep:#B07B32;
+    --panel:#1B1B18; --edge:#32322D; --lamp:#E3B168; --lamp-deep:#B07B32;
     --paper:#F4F2E7; --mut:#8C8B7E; --dim:#6A6A5F;
-    --serif:"Noto Sans KR",system-ui,sans-serif; --sans:"Noto Sans KR",system-ui,sans-serif;
+    --sans:"Noto Sans KR",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:transparent;color:var(--paper);
     font-family:var(--sans);font-size:14px;line-height:1.7}
   .wrap{max-width:1180px;margin:0 auto;padding:4px 22px 40px}
-  h1{font-family:var(--serif);font-size:26px;font-weight:700;margin:0 0 4px}
+  h1{font-size:24px;font-weight:700;margin:0 0 4px}
   .sub{color:var(--mut);font-size:13px;margin:0 0 16px}
 
   button{font-family:var(--sans);cursor:pointer}
-  .chipbtn{font-size:12px;color:#C9BDA8;background:#2C2317;border:1px solid var(--edge);
-    border-radius:999px;padding:4px 11px}
+  .chipbtn{font-size:12.5px;color:#C9BDA8;background:#2C2317;border:1px solid var(--edge);
+    border-radius:999px;padding:5px 12px;min-height:32px}
   .chipbtn:hover{background:#382C1C;color:var(--paper)}
   .chipbtn[aria-pressed="true"]{background:var(--lamp);border-color:var(--lamp);
-    color:#2A1C08;font-weight:500}
-
-  .load{background:var(--panel);border:1px solid var(--edge);border-radius:6px;
-    padding:13px 15px;margin:0 0 16px}
-  .load summary{cursor:pointer;font-size:12.5px;color:var(--lamp);list-style:none}
-  .load summary::-webkit-details-marker{display:none}
-  .krow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-  .krow input{background:#111110;color:var(--paper);border:1px solid var(--edge);
-    border-radius:3px;padding:7px 11px;font-family:var(--sans);font-size:12px}
-  .krow #kkey{flex:1;min-width:180px}
-  .krow input[type=number]{width:74px}
-  .krow input:focus{outline:none;border-color:var(--lamp-deep)}
-  .pbar{height:4px;background:#1C1710;border-radius:2px;overflow:hidden;margin:10px 0 0}
-  .pbar i{display:block;height:4px;background:var(--lamp);border-radius:2px;transition:width .2s}
-  .load .go{background:var(--lamp);border-color:var(--lamp);color:#2A1C08;font-weight:700;
-    margin-top:8px}
-  .tnote{font-size:11px;color:var(--dim);line-height:1.7;margin:8px 0 0}
-  .tnote b{color:#A99B84;font-weight:500}
+    color:#2A1C08;font-weight:700}
 
   .years{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 10px}
-  .months{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 16px;
+  .months{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 8px;
     padding-top:11px;border-top:1px solid #2A2A24}
-  .mb{position:relative}
-  .mb .bar{position:absolute;left:8px;right:8px;bottom:3px;height:2px;
-    background:var(--lamp-deep);border-radius:2px;opacity:.75}
 
-  .head{display:flex;align-items:baseline;gap:10px;margin:0 0 8px;flex-wrap:wrap}
-  .head h2{font-family:var(--serif);font-size:19px;font-weight:700;margin:0}
+  .head{display:flex;align-items:baseline;gap:10px;margin:14px 0 10px;flex-wrap:wrap}
+  .head h2{font-size:18px;font-weight:700;margin:0}
   .head span{font-size:12px;color:var(--dim)}
 
-  .row{display:flex;align-items:center;gap:10px;padding:7px 0;
-    border-bottom:1px solid #2A2A24;font-size:12.5px}
-  .row:last-child{border-bottom:0}
-  .row .d{flex:none;width:34px;font-size:11px;color:var(--lamp);text-align:right}
-  .row .m{flex:1;min-width:0}
-  .row{flex-wrap:wrap}
-  .row .m b{display:block;font-weight:500;font-size:13.5px;color:var(--paper)}
-  .row .m b.pt{cursor:pointer;display:inline-block}
-  .row .m b.pt:hover{color:var(--lamp);text-decoration:underline}
-  .info{flex:1 1 100%;margin:8px 0 4px;padding:13px;border-radius:6px;
-    background:var(--panel);border:1px solid var(--edge);
-    display:flex;gap:14px;flex-wrap:wrap}
-  .info img.p{width:104px;border-radius:3px;flex:none;display:block}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px 12px;
+    list-style:none;padding:0;margin:0}
+  @media (max-width:900px){ .grid{grid-template-columns:repeat(4,1fr)} }
+  @media (max-width:600px){ .grid{grid-template-columns:repeat(3,1fr)} }
+
+  .it .cov{position:relative;width:100%;aspect-ratio:27/40;border-radius:3px;
+    overflow:hidden;background:#241F17;border:0;padding:0;cursor:pointer;display:block;
+    box-shadow:0 8px 18px -12px rgba(0,0,0,.9)}
+  .it .cov img{width:100%;height:100%;object-fit:cover;display:block}
+  .it .cov:hover{outline:2px solid var(--lamp);outline-offset:1px}
+  .it .d{position:absolute;left:5px;top:5px;z-index:2;font-size:10px;font-weight:700;
+    padding:2px 7px;border-radius:999px;background:rgba(18,16,12,.85);color:var(--paper)}
+  .it .seen{position:absolute;right:5px;top:5px;z-index:2;width:18px;height:18px;
+    border-radius:50%;background:var(--lamp);color:#2A1C08;font-size:11px;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+  .it .t{display:block;font-size:11.5px;line-height:1.4;margin:6px 2px 0;color:var(--paper)}
+
+  .more{display:block;width:100%;margin:16px 0 0;padding:12px;border-radius:8px;
+    border:1px solid var(--edge);background:#221C14;color:#C9BDA8;font-size:13px}
+  .more:hover{background:#2C2317;color:var(--paper)}
+
+  .info{margin:14px 0 0;padding:14px;border-radius:6px;background:var(--panel);
+    border:1px solid var(--edge);display:flex;gap:14px;flex-wrap:wrap}
+  .info img.p{width:100px;border-radius:3px;flex:none;display:block}
   .info .txt{flex:1;min-width:220px}
-  .info h3{font-family:var(--serif);font-size:16px;margin:0 0 2px;font-weight:700}
+  .info h3{font-size:16px;margin:0 0 2px;font-weight:700}
   .info .meta{font-size:11.5px;color:var(--dim);margin:0 0 8px}
   .info .ov{font-size:11.5px;color:#B5AC97;line-height:1.65;margin:0 0 9px}
   .info table{border-collapse:collapse;font-size:11.5px;margin:0 0 8px}
   .info th{text-align:left;color:var(--dim);font-weight:400;padding:1px 12px 1px 0;width:44px}
-  .info td{padding:1px 0;color:var(--paper)}
   .info .sts{display:flex;gap:5px;flex-wrap:wrap;margin:0 0 8px}
-  .info .sts i{width:106px;height:60px;border-radius:3px;background-size:cover;
-    background-position:center;display:block;cursor:zoom-in}
-  .info .acts{display:flex;gap:6px;flex-wrap:wrap}
+  .info .sts i{width:100px;height:56px;border-radius:3px;background-size:cover;
+    background-position:center;display:block}
   .info .acts a,.info .acts button{font-family:var(--sans);font-size:11.5px;
     border-radius:999px;padding:5px 13px;border:1px solid var(--edge);
-    background:#2C2317;color:#C9BDA8;text-decoration:none;cursor:pointer}
+    background:#2C2317;color:#C9BDA8;text-decoration:none;cursor:pointer;margin-right:6px}
   .info .acts a:hover,.info .acts button:hover{background:var(--lamp);
     border-color:var(--lamp);color:#2A1C08}
   .info .load{font-size:12px;color:var(--dim)}
-  .row .m span{display:block;color:var(--dim);font-size:11px;margin-top:1px}
-  .row .add{flex:none;font-size:11.5px;border-radius:999px;padding:5px 13px;
-    border:1px solid var(--edge);background:#2C2317;color:#C9BDA8}
-  .row .add:hover{background:var(--lamp);border-color:var(--lamp);color:#2A1C08}
-  .row .add[disabled]{opacity:.5;cursor:default}
 
-  .empty{font-size:13px;color:var(--dim);padding:30px 0;text-align:center}
-  .note{font-size:11.5px;color:var(--dim);line-height:1.7;margin:16px 0 0;
+  .empty{font-size:13px;color:var(--dim);padding:34px 0;text-align:center}
+  .note{font-size:11.5px;color:var(--dim);line-height:1.7;margin:18px 0 0;
     padding-top:12px;border-top:1px solid #2A2A24}
   .note b{color:#A99B84;font-weight:500}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-
-  /* ── 좁은 화면 가독성 ──
-     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
-     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
-  @media (max-width: 760px) {
-    body { font-size: 15px; }
-    button, input, textarea, select { font-size: 13px; }
-    button { min-height: 38px; }
-    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
-    h1 { font-size: 21px; }
-    h2 { font-size: 16px; }
-    h3 { font-size: 14px; }
-    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
-    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
-  }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
@@ -6725,6 +7332,9 @@ var APP = (function () {
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
     reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -6957,41 +7567,19 @@ window.addEventListener("message", function (e) {
 <div class="wrap">
 
   <h1>개봉 달력</h1>
-  <p class="sub">한국 개봉일 기준으로 어느 달에 무엇이 나왔는지 훑어봅니다. <b>제목을 누르면</b> 예고편·스틸컷·크레딧이 펼쳐집니다.</p>
-
-  <details class="load" id="loadBox">
-    <summary>영진위에서 개봉작 받아오기</summary>
-    <p class="tnote">
-      <b>키 받는 법</b> — kobis.or.kr → 오픈API → 키 발급. 무료이고 바로 나옵니다.<br>
-      키를 넣고 <b>받아오기</b>를 누르면 연도별로 차례로 받아옵니다.
-      한 번 받으면 저장되니 다음에는 바로 뜹니다.<br>
-      <b>2002년부터</b>가 기본입니다. 그 이전은 영진위 목록에 개봉일이 빠진 작품이 많아
-      달력에 놓을 수 없는 경우가 잦습니다. 특정 해가 실패해도 그 해만 건너뛰고 계속합니다.
-    </p>
-    <div class="krow">
-      <input type="password" id="kkey" placeholder="영진위 오픈API 키" autocomplete="off"
-             spellcheck="false" aria-label="영진위 오픈API 키">
-      <input type="number" id="y0" value="2002" min="1900" max="2100" aria-label="시작 연도">
-      <input type="number" id="y1" value="2026" min="1900" max="2100" aria-label="끝 연도">
-      <button class="chipbtn go" id="go">받아오기</button>
-      <button class="chipbtn" id="stop" disabled>멈춤</button>
-    </div>
-    <div class="pbar"><i id="fill" style="width:0%"></i></div>
-    <p class="tnote" id="log"></p>
-    <p class="tnote">받은 자료는 파일로도 받을 수 있습니다
-      <button class="chipbtn" id="dl" style="margin-left:3px">releases.csv 내려받기</button></p>
-  </details>
+  <p class="sub">한국 개봉일 기준으로 그 달에 무엇이 나왔는지 봅니다. 포스터를 누르면 정보가 열립니다.</p>
 
   <div class="years" id="years"></div>
   <div class="months" id="months"></div>
 
-  <div class="head"><h2 id="title">자료를 먼저 불러오세요</h2><span id="cnt"></span></div>
-  <div id="list"></div>
+  <div class="head"><h2 id="title"></h2><span id="cnt"></span></div>
+  <ul class="grid" id="grid"></ul>
+  <button class="more" id="more" hidden>더 보기</button>
+  <div id="detail"></div>
 
   <p class="note">
-    <b>관객수가 없는 이유</b> — 전국 관객수를 제대로 집계한 것은 통합전산망 가입률이 99% 가 된
-    2011년 이후입니다. 그 이전 숫자는 서울 지역 추산치라 1980년대 작품과 같은 자로 비교할 수 없습니다.
-    그래서 이 화면은 <b>무엇이 언제 나왔는가</b>만 다룹니다.
+    <b>자료</b> — TMDB 의 한국 개봉일(극장·프리미어)로 조회합니다.
+    인기순으로 나오며, 한 달에 개봉작이 많으면 <b>더 보기</b>로 이어집니다.
   </p>
 
   <p aria-live="polite" class="sr" id="live"></p>
@@ -7003,394 +7591,153 @@ window.addEventListener("message", function (e) {
   var $ = function (id) { return document.getElementById(id); };
   function say(m) { $("live").textContent = m; }
 
-  var DATA = [];              // {d:"1987-05-09", t, dir, n, g}
-  var byYM = {};              // "1987-05" → [항목]
-  var years = [], year = null, month = null;
+  var IMG = "https://image.tmdb.org/t/p/w342";
+  var NOW = new Date();
+  var Y0 = 2002, Y1 = NOW.getFullYear();
+  var year = Y1, month = NOW.getMonth() + 1;
+  var page = 1, rows = [], total = 0, pages = 1;
 
-  function index() {
-    byYM = {}; years = [];
-    DATA.forEach(function (f) {
-      var ym = f.d.slice(0, 7), y = f.d.slice(0, 4);
-      (byYM[ym] = byYM[ym] || []).push(f);
-      if (years.indexOf(y) < 0) years.push(y);
-    });
-    years.sort();
-    Object.keys(byYM).forEach(function (k) {
-      byYM[k].sort(function (a, b) { return a.d.localeCompare(b.d); });
-    });
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function lastDay(y, m) { return new Date(y, m, 0).getDate(); }
+
+  function owned(id) {
+    try { return !!APP.findByTmdb(id); } catch (e) { return false; }
   }
 
-  function parseCSV(text) {
-    text = text.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-    var rows = [], row = [], cell = "", q = false;
-    for (var i = 0; i < text.length; i++) {
-      var c = text[i];
-      if (q) { if (c === '"') { if (text[i+1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
-      else if (c === '"') q = true;
-      else if (c === ",") { row.push(cell); cell = ""; }
-      else if (c === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
-      else cell += c;
-    }
-    if (cell.length || row.length) { row.push(cell); rows.push(row); }
-    return rows.filter(function (r) { return r.some(function (x) { return x.trim(); }); });
-  }
-
-  function load(text) {
-    var rows = parseCSV(text);
-    if (!rows.length) { $("log").innerHTML = "읽을 내용이 없습니다."; return; }
-    var head = rows[0].map(function (x) { return x.trim().toLowerCase(); });
-    var ix = {}; head.forEach(function (h, i) { ix[h] = i; });
-    if (!("date" in ix) || !("title" in ix)) {
-      $("log").innerHTML = "첫 줄에 <b>date,title</b> 이 있어야 합니다.";
-      return;
-    }
-    var out = [];
-    rows.slice(1).forEach(function (r) {
-      function g(k) { return (k in ix && r[ix[k]] !== undefined) ? String(r[ix[k]]).trim() : ""; }
-      var d = g("date");
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
-      out.push({ d: d, t: g("title"), dir: g("dir"), n: g("nation"), g: g("genre") });
-    });
-    if (!out.length) { $("log").innerHTML = "개봉일이 있는 줄을 찾지 못했습니다."; return; }
-
-    DATA = out; index();
-    try { window.localStorage.setItem("releases", JSON.stringify(out)); } catch (e) {}
-    year = years[years.length - 1]; month = null;
-    $("log").innerHTML = "<b>" + out.length + "편</b>을 불러왔습니다 (" +
-      years[0] + " ~ " + years[years.length - 1] + "). 저장했으니 다음에는 바로 뜹니다.";
-    $("loadBox").open = false;
-    render();
-    say(out.length + "편을 불러왔습니다.");
-  }
-
-  /* ── 영진위 오픈API 에서 직접 받아옵니다 ──
-     이 API 는 CORS 를 허용해서 브라우저가 바로 부를 수 있습니다.
-     다만 개봉연도 단위로만 조회되므로, 연도별로 받아 개봉일을 보고 월로 나눕니다. */
-  var API = "https://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json";
-  var PER = 100, stopFlag = false;
-
-  function call(key, year, page) {
-    var u = API + "?key=" + encodeURIComponent(key) +
-            "&curPage=" + page + "&itemPerPage=" + PER +
-            "&openStartDt=" + year + "&openEndDt=" + year;
-    return fetch(u).then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    });
-  }
-
-  function yearRows(key, year) {
-    var rows = [];
-    function page(p) {
-      return call(key, year, p).then(function (d) {
-        if (d.faultInfo) {
-          var fe = new Error(d.faultInfo.message || "키가 거부되었습니다");
-          fe.fatal = true;                      // 키 문제는 계속해도 소용없습니다
-          throw fe;
-        }
-        var items = ((d.movieListResult || {}).movieList) || [];
-        items.forEach(function (m) {
-          var o = (m.openDt || "").trim();
-          if (o.length !== 8 || !m.movieNm) return;
-          /* 성인물(에로)은 달력에서 뺍니다. */
-          if (/성인물|에로/.test(m.repGenreNm || "")) return;
-          rows.push({
-            d: o.slice(0,4) + "-" + o.slice(4,6) + "-" + o.slice(6),
-            t: m.movieNm.trim(),
-            dir: (m.directors || []).map(function (x) { return x.peopleNm; }).join(", "),
-            n: (m.repNationNm || "").trim(),
-            g: (m.repGenreNm || "").trim()
-          });
-        });
-        if (items.length < PER || stopFlag) return rows;
-        return new Promise(function (go) { setTimeout(go, 120); }).then(function () { return page(p + 1); });
-      });
-    }
-    return page(1);
-  }
-
-  function run() {
-    var key = ($("kkey").value || "").replace(/\s+/g, "");
-    if (key.length < 10) { $("log").innerHTML = "영진위 오픈API 키를 넣어주세요."; return; }
-    var a = parseInt($("y0").value, 10) || 2002;
-    var b = parseInt($("y1").value, 10) || new Date().getFullYear();
-    if (b < a) { var t = a; a = b; b = t; }
-
-    stopFlag = false;
-    $("go").disabled = true; $("stop").disabled = false;
-    var got = [], y = a, skipped = [];
-
-    function finish() {
-      $("go").disabled = false; $("stop").disabled = true;
-      if (!got.length) { $("fill").style.width = "0%"; return; }
-      got.sort(function (x, z) { return x.d.localeCompare(z.d); });
-      DATA = got; index();
-      try { window.localStorage.setItem("releases", JSON.stringify(got)); } catch (e) {}
-      try { window.localStorage.setItem("kobis-key", key); } catch (e) {}
-      try { APP.setKobis && APP.setKobis(key); } catch (e) {}
-      year = years[years.length - 1]; month = null;
-      $("fill").style.width = "100%";
-      $("log").innerHTML = "<b>" + got.length + "편</b>을 받았습니다 (" +
-        years[0] + " ~ " + years[years.length - 1] + "). 저장했으니 다음에는 바로 뜹니다." +
-        (skipped.length ? "<br>못 받은 해: " + skipped.join(", ") : "");
-      $("loadBox").open = false;
-      render();
-      say(got.length + "편을 받았습니다.");
-    }
-
-    function step() {
-      if (stopFlag || y > b) return finish();
-      $("log").innerHTML = "<b>" + y + "</b>년 받는 중… 지금까지 " + got.length + "편";
-      $("fill").style.width = Math.round((y - a) / (b - a + 1) * 100) + "%";
-      return yearRows(key, y).then(function (rows) {
-        got = got.concat(rows);
-        y++;
-        return new Promise(function (go) { setTimeout(go, 120); }).then(step);
-      }).catch(function (e) {
-        if (e && e.fatal) {                     // 키가 거부된 경우에만 멈춥니다
-          stopFlag = true;
-          $("log").innerHTML = "멈췄습니다 — " + e.message +
-            (got.length ? "<br>그때까지 받은 " + got.length + "편은 그대로 씁니다." : "");
-          return finish();
-        }
-        /* 특정 연도만 실패하는 일이 있습니다. 그 해는 건너뛰고 계속합니다. */
-        skipped.push(y);
-        y++;
-        return new Promise(function (go) { setTimeout(go, 200); }).then(step);
-      });
-    }
-    step();
-  }
-
-  /* 키를 넣는 즉시 저장해 둡니다.
-     받아오기를 실행해야만 저장되면, 키만 넣고 파일을 받았을 때 영진위 키가 빠집니다. */
-  $("kkey").addEventListener("input", function () {
-    var k = (this.value || "").replace(/\s+/g, "");
-    if (k.length < 10) return;
-    try { window.localStorage.setItem("kobis-key", k); } catch (e) {}
-    try { APP.setKobis && APP.setKobis(k); } catch (e) {}
-  });
-
-  $("go").addEventListener("click", run);
-  $("stop").addEventListener("click", function () {
-    stopFlag = true; $("log").innerHTML = "멈추는 중…";
-  });
-
-  $("dl").addEventListener("click", function () {
-    if (!DATA.length) { $("log").innerHTML = "먼저 받아오기를 실행하세요."; return; }
-    var lines = ["date,title,dir,nation,genre"];
-    DATA.forEach(function (f) {
-      lines.push([f.d, f.t, f.dir, f.n, f.g].map(function (x) {
-        x = String(x || "");
-        return /[",\n]/.test(x) ? '"' + x.replace(/"/g, '""') + '"' : x;
-      }).join(","));
-    });
-    var blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
-    if (!(typeof askDownload === "function" && askDownload("releases.csv", blob))) {
-      var url = URL.createObjectURL(blob);
-      var el = document.createElement("a");
-      el.href = url; el.download = "releases.csv";
-      document.body.appendChild(el); el.click(); el.remove();
-      setTimeout(function () { URL.revokeObjectURL(url); }, 6000);
-    }
-    $("log").innerHTML = "releases.csv 를 내려받았습니다 (" + DATA.length + "편).";
-  });
-
-  function render() {
-    if (!DATA.length) {
-      $("years").innerHTML = ""; $("months").innerHTML = "";
-      $("title").textContent = "자료를 먼저 불러오세요";
-      $("list").innerHTML = '<p class="empty">위쪽 <b>개봉작 자료 불러오기</b>를 펼쳐 CSV 를 넣어주세요.</p>';
-      return;
-    }
-
-    $("years").innerHTML = years.map(function (y) {
-      var n = 0;
-      Object.keys(byYM).forEach(function (k) { if (k.slice(0, 4) === y) n += byYM[k].length; });
+  function renderPicker() {
+    var ys = [];
+    for (var y = Y1; y >= Y0; y--) ys.push(y);
+    $("years").innerHTML = ys.map(function (y) {
       return '<button class="chipbtn" data-y="' + y + '" aria-pressed="' +
-             (y === year ? "true" : "false") + '" title="' + n + '편">' + y + "</button>";
+        (y === year) + '">' + y + "</button>";
     }).join("");
 
-    /* 달마다 그 달 편수를 막대 길이로 보여줍니다 — 어느 달에 몰렸는지 한눈에 */
-    var counts = [], max = 1;
+    var ms = "";
     for (var m = 1; m <= 12; m++) {
-      var k = year + "-" + (m < 10 ? "0" : "") + m;
-      var n = (byYM[k] || []).length;
-      counts.push(n); if (n > max) max = n;
+      ms += '<button class="chipbtn" data-m="' + m + '" aria-pressed="' +
+        (m === month) + '">' + m + "월</button>";
     }
-    $("months").innerHTML = counts.map(function (n, i) {
-      var m = i + 1, mm = (m < 10 ? "0" : "") + m;
-      var w = n ? Math.max(8, Math.round(n / max * 100)) : 0;
-      return '<span class="mb"><button class="chipbtn" data-m="' + mm + '" aria-pressed="' +
-             (mm === month ? "true" : "false") + '">' + m + '월 <span style="opacity:.6">' +
-             n + '</span></button>' +
-             (w ? '<i class="bar" style="width:' + w + '%"></i>' : "") + "</span>";
-    }).join("");
+    $("months").innerHTML = ms;
 
     Array.prototype.forEach.call($("years").querySelectorAll("[data-y]"), function (b) {
-      b.addEventListener("click", function () { year = b.dataset.y; month = null; render(); });
+      b.addEventListener("click", function () {
+        year = parseInt(b.dataset.y, 10); reset();
+      });
     });
     Array.prototype.forEach.call($("months").querySelectorAll("[data-m]"), function (b) {
       b.addEventListener("click", function () {
-        month = (month === b.dataset.m) ? null : b.dataset.m;
-        render();
+        month = parseInt(b.dataset.m, 10); reset();
       });
     });
-
-    renderList();
   }
 
-  function inLib(t) {
-    try { return APP.library.some(function (x) { return x.ko === t; }); }
-    catch (e) { return false; }
+  function reset() {
+    page = 1; rows = []; $("detail").innerHTML = "";
+    renderPicker();
+    $("title").textContent = year + "년 " + month + "월";
+    $("grid").innerHTML = '<li class="empty" style="grid-column:1/-1">불러오는 중…</li>';
+    load();
   }
 
-  function renderList() {
-    var list, label;
-    if (month) {
-      list = byYM[year + "-" + month] || [];
-      label = year + "년 " + parseInt(month, 10) + "월";
-    } else {
-      list = [];
-      for (var m = 1; m <= 12; m++) {
-        var k = year + "-" + (m < 10 ? "0" : "") + m;
-        list = list.concat(byYM[k] || []);
-      }
-      label = year + "년 전체";
-    }
+  function load() {
+    var from = year + "-" + pad(month) + "-01";
+    var to = year + "-" + pad(month) + "-" + pad(lastDay(year, month));
+    $("more").disabled = true;
 
-    $("title").textContent = label;
-    $("cnt").textContent = list.length + "편" + (month ? "" : " · 달을 누르면 그 달만 봅니다");
+    APP.releasedIn(from, to, page).then(function (r) {
+      total = r.total; pages = r.pages;
+      r.list.forEach(function (d) {
+        if (!d.poster_path) return;
+        if (rows.some(function (x) { return x.id === d.id; })) return;
+        rows.push({
+          id: d.id,
+          ko: d.title || d.original_title,
+          date: String(d.release_date || ""),
+          poster: IMG + d.poster_path
+        });
+      });
+      render();
+      $("more").hidden = (page >= pages);
+      $("more").disabled = false;
+      $("more").textContent = "더 보기 (" + page + " / " + pages + ")";
+    }).catch(function (e) {
+      $("grid").innerHTML = '<li class="empty" style="grid-column:1/-1">' + e.message +
+        "<br>위쪽 <b>TMDB 연결</b>에서 키를 넣어주세요.</li>";
+      $("more").hidden = true;
+    });
+  }
 
-    if (!list.length) {
-      $("list").innerHTML = '<p class="empty">이 기간에 개봉한 작품이 없습니다.</p>';
+  function render() {
+    $("title").textContent = year + "년 " + month + "월";
+    $("cnt").textContent = total ? total + "편 중 " + rows.length + "편 표시" : "";
+
+    if (!rows.length) {
+      $("grid").innerHTML = '<li class="empty" style="grid-column:1/-1">이 달에 개봉한 작품이 없습니다.</li>';
       return;
     }
 
-    $("list").innerHTML = list.map(function (f, i) {
-      var have = inLib(f.t);
-      return '<div class="row" data-row="' + i + '"><span class="d">' +
-        parseInt(f.d.slice(5, 7), 10) + "." + parseInt(f.d.slice(8, 10), 10) + "</span>" +
-        '<span class="m"><b class="pt" data-info="' + i + '">' + f.t + "</b><span>" +
-        [f.dir && ("감독 " + f.dir), f.n, f.g].filter(Boolean).join(" · ") + "</span></span>" +
-        (have ? '<button class="add" disabled>담김</button>'
-              : '<button class="add" data-i="' + i + '">담기</button>') + "</div>";
+    $("grid").innerHTML = rows.map(function (r, i) {
+      var day = r.date.slice(8, 10);
+      return '<li class="it">' +
+        '<button class="cov" data-i="' + i + '" aria-label="' + r.ko + '">' +
+        (day ? '<span class="d">' + parseInt(day, 10) + "일</span>" : "") +
+        (owned(r.id) ? '<span class="seen">✓</span>' : "") +
+        '<img src="' + r.poster + '" alt=""></button>' +
+        '<span class="t">' + r.ko + "</span></li>";
     }).join("");
 
-    /* 목록에 한 번만 걸어 둡니다 — 다시 그려도 첫 번에 반응합니다 */
-    $("list").onclick = function (e) {
-      var t = e.target.closest && e.target.closest("[data-info]");
-      if (t) { e.preventDefault(); showInfo(list[parseInt(t.dataset.info, 10)], t); return; }
+    $("grid").onclick = function (e) {
       var b = e.target.closest && e.target.closest("[data-i]");
-      if (b) { e.preventDefault(); add(list[parseInt(b.dataset.i, 10)], b); }
+      if (!b) return;
+      showInfo(rows[parseInt(b.dataset.i, 10)]);
     };
   }
 
-  /* 제목을 누르면 그 줄 아래에 정보를 펼칩니다.
-     서재에 담지 않고 TMDB 에서 보기만 합니다. */
-  function showInfo(f, el) {
-    var row = el.closest(".row");
-    var open = row.querySelector(".info");
-    if (open) { open.remove(); return; }
-    Array.prototype.forEach.call($("list").querySelectorAll(".info"), function (n) { n.remove(); });
+  function showInfo(r) {
+    var box = $("detail");
+    box.innerHTML = '<div class="info"><span class="load">' + r.ko + " 정보를 불러오는 중…</span></div>";
+    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
-    var box = document.createElement("div");
-    box.className = "info";
-    box.innerHTML = '<span class="load">' + f.t + " 정보를 불러오는 중…</span>";
-    row.appendChild(box);
-
-    if (!APP.canSearch()) {
-      box.innerHTML = '<span class="load">위쪽 <b>TMDB 연결</b>에서 키를 넣으면 정보가 나옵니다.</span>';
-      return;
-    }
-
-    APP.searchMovies(f.t).then(function (hits) {
-      if (!hits || !hits.length) throw new Error("TMDB 에 이 작품이 없습니다");
-      return APP.preview(hits[0].id);
-    }).then(function (d) {
-      var have = inLib(d.ko) || inLib(f.t);
-      box.innerHTML =
-        (d.poster ? '<img class="p" src="' + d.poster + '" alt="' + d.ko + ' 포스터">' : "") +
+    APP.preview(r.id).then(function (d) {
+      var got = owned(r.id);
+      box.innerHTML = '<div class="info">' +
+        (d.poster ? '<img class="p" src="' + d.poster + '" alt="">' : "") +
         '<div class="txt"><h3>' + d.ko + "</h3>" +
-        '<p class="meta">' + [d.en, d.year, d.runtime && (d.runtime + "분"), d.genres,
-          d.imdb && ("TMDB ★ " + d.imdb)].filter(Boolean).join(" · ") + "</p>" +
+        '<p class="meta">' + [d.en, "한국 개봉 " + r.date, d.runtime && (d.runtime + "분"),
+          d.genres, d.imdb && ("TMDB ★ " + d.imdb)].filter(Boolean).join(" · ") + "</p>" +
         (d.overview ? '<p class="ov">' + d.overview.slice(0, 220) +
-           (d.overview.length > 220 ? "…" : "") + "</p>" : "") +
+          (d.overview.length > 220 ? "…" : "") + "</p>" : "") +
         (d.crew.length ? "<table>" + d.crew.map(function (c) {
-            return "<tr><th>" + c[0] + "</th><td>" + c[1] + "</td></tr>"; }).join("") + "</table>" : "") +
+          return "<tr><th>" + c[0] + "</th><td>" + c[1] + "</td></tr>"; }).join("") + "</table>" : "") +
         (d.cast.length ? '<p class="meta">출연 · ' +
-            d.cast.map(function (c) { return c[0]; }).join(", ") + "</p>" : "") +
+          d.cast.map(function (c) { return c[0]; }).join(", ") + "</p>" : "") +
         (d.stills.length ? '<div class="sts">' + d.stills.map(function (u) {
-            return '<i data-zoom="' + u + '" style="background-image:url(' + u + ')"></i>'; }).join("") + "</div>" : "") +
+          return '<i style="background-image:url(' + u + ')"></i>'; }).join("") + "</div>" : "") +
         '<div class="acts">' +
         (d.trailer ? '<a href="https://www.youtube.com/watch?v=' + d.trailer +
-           '" target="_blank" rel="noopener">예고편 보기</a>' : "") +
-        (have ? "<button disabled>담김</button>"
-              : '<button data-add="' + d.tmdbId + '">서재에 담기</button>') +
-        "</div></div>";
+          '" target="_blank" rel="noopener">예고편 보기</a>' : "") +
+        (got ? "<button disabled>담김</button>"
+             : '<button data-add="' + d.tmdbId + '">서재에 담기</button>') +
+        "</div></div></div>";
 
       var ab = box.querySelector("[data-add]");
       if (ab) ab.addEventListener("click", function () {
         ab.disabled = true; ab.textContent = "…";
         APP.addByTmdbId(d.tmdbId).then(function () {
-          ab.textContent = "담김";
+          ab.textContent = "담김"; render();
           say(d.ko + " 을 담았습니다.");
         }).catch(function () { ab.disabled = false; ab.textContent = "실패"; });
       });
     }).catch(function (e) {
-      box.innerHTML = '<span class="load">' + e.message + "</span>";
+      box.innerHTML = '<div class="info"><span class="load">' + e.message + "</span></div>";
     });
   }
 
-  function add(f, btn) {
-    if (!f) return;
-    if (!APP.canSearch()) { btn.textContent = "키 필요"; say("먼저 TMDB 연결에서 키를 넣어주세요."); return; }
-    btn.disabled = true; btn.textContent = "…";
-    APP.searchMovies(f.t).then(function (hits) {
-      if (!hits || !hits.length) { btn.textContent = "TMDB 없음"; return null; }
-      return APP.addByTmdbId(hits[0].id).then(function (film) {
-        btn.textContent = "담김";
-        say(f.t + " 을 담았습니다.");
-        return film;
-      });
-    }).catch(function () { btn.disabled = false; btn.textContent = "다시"; });
-  }
+  $("more").addEventListener("click", function () { page++; load(); });
 
-  /* 저장해둔 자료가 있으면 바로 씁니다 */
-  (function boot() {
-    try {
-      var raw = window.localStorage.getItem("releases");
-      if (raw) {
-        var o = JSON.parse(raw);
-        if (o && o.length) {
-          DATA = o; index();
-          year = years[years.length - 1];
-        }
-      }
-    } catch (e) {}
-    try { var k = window.localStorage.getItem("kobis-key"); if (k) $("kkey").value = k; } catch (e) {}
-    try { if (!$("kkey").value && APP.kobisKey) $("kkey").value = APP.kobisKey; } catch (e) {}
+  try { APP.subscribe("calendar", function () { render(); }); } catch (e) {}
 
-    /* 키가 파일에 심어져 있으면 넣을 칸을 감추고, 자료가 없으면 알아서 받아옵니다. */
-    var baked = false;
-    try { baked = !!(APP.keysBaked && APP.kobisKey); } catch (e) {}
-    if (baked) {
-      /* 키만 감춥니다. 연도 칸과 받아오기 버튼은 남겨둬야
-         나중에 다른 구간을 다시 조회할 수 있습니다. */
-      $("kkey").style.display = "none";
-      $("loadBox").querySelector("summary").textContent = "개봉작 자료 · 연도 바꿔 다시 받기";
-      $("loadBox").querySelector(".tnote").innerHTML =
-        "키는 이 파일에 심어져 있습니다. <b>연도를 정하고 받아오기</b>를 누르면 그 구간을 받아옵니다.<br>" +
-        "이미 받아둔 자료가 있으면 그대로 쓰고, 새로 받으면 덮어씁니다.";
-      if (!DATA.length) { $("loadBox").open = true; setTimeout(run, 400); }
-      return;
-    }
-
-    if (!DATA.length) $("loadBox").open = true;
-    render();
-  })();
-
-  try { APP.subscribe("calendar", function () { renderList(); }); } catch (e) {}
+  reset();
 })();
 <\/script>
 </body>
@@ -7617,6 +7964,9 @@ var APP = (function () {
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
     reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -8502,6 +8852,9 @@ var APP = (function () {
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
     reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -9416,6 +9769,11 @@ window.addEventListener("message", function (e) {
   function renderBoard(){
     if (narrow()) return renderList();
 
+    /* 목록 보기에서 걸어둔 처리를 지웁니다.
+       표는 회차마다 따로 처리를 거는데, 목록 것이 남아 있으면 한 번 눌러도
+       두 번 처리돼 담았다가 곧바로 빠집니다. */
+    $("board").onclick = null;
+
     var todays = S.filter(function(s){ return s.date === day; });
     var venues = ORDER.filter(function(v){
       return todays.some(function(s){ return s.venue === v; });
@@ -9869,6 +10227,9 @@ var APP = (function () {
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
     reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -10698,6 +11059,11 @@ window.addEventListener("message", function (e) {
 
   function renderBoard(){
     if (narrow()) return renderList();
+
+    /* 목록 보기에서 걸어둔 처리를 지웁니다.
+       표는 회차마다 따로 처리를 거는데, 목록 것이 남아 있으면 한 번 눌러도
+       두 번 처리돼 담았다가 곧바로 빠집니다. */
+    $("board").onclick = null;
 
     var todays = S.filter(function(s){ return s.date === day; });
     var venues = ORDER.filter(function(v){
@@ -11972,6 +12338,48 @@ function film(id) { return FILM_BY_ID[id]; }
     });
   };
 
+  /* 평가 많은 순으로 영화를 가져옵니다. 처음 온 사람이 별점부터 매기게 하려는 것입니다. */
+  APP.popular = function (page, opts) {
+    var key = ($("key").value || "").replace(/\s+/g, "");
+    if (key.length < 20) return Promise.reject(new Error("TMDB 키가 없습니다"));
+    var o = opts || {};
+    var q = "&sort_by=" + (o.sort || "vote_count.desc") +
+            "&page=" + (page || 1) +
+            "&include_adult=false&vote_count.gte=" + (o.minVotes || 300);
+    if (o.lang) q += "&with_original_language=" + o.lang;
+    return retry(function () {
+      return tmdb("/discover/movie", auth(key), q);
+    }, 2).then(function (r) { return r.results || []; });
+  };
+
+  /* 감독 이름만 가볍게 가져옵니다. 상세 전체를 받으면 목록이 느려집니다. */
+  APP.director = function (tmdbId) {
+    var key = ($("key").value || "").replace(/\s+/g, "");
+    if (!tmdbId || key.length < 20) return Promise.resolve("");
+    return retry(function () {
+      return tmdb("/movie/" + tmdbId + "/credits", auth(key), "");
+    }, 2).then(function (c) {
+      var d = (c.crew || []).filter(function (x) { return x.job === "Director"; });
+      return d.slice(0, 2).map(function (x) { return x.name; }).join(", ");
+    }).catch(function () { return ""; });
+  };
+
+  /* 한국 개봉일 기준으로 그 달에 개봉한 작품을 가져옵니다.
+     KOBIS 는 연도 단위라 월별 조회가 안 되는데, TMDB 는 지역별 개봉일을 갖고 있어
+     region=KR 로 물으면 달 단위로 뽑을 수 있고 포스터도 함께 옵니다. */
+  APP.releasedIn = function (from, to, page) {
+    var key = ($("key").value || "").replace(/\s+/g, "");
+    if (key.length < 20) return Promise.reject(new Error("TMDB 키가 없습니다"));
+    var q = "&region=KR&with_release_type=2|3" +
+            "&release_date.gte=" + from + "&release_date.lte=" + to +
+            "&sort_by=popularity.desc&include_adult=false&page=" + (page || 1);
+    return retry(function () {
+      return tmdb("/discover/movie", auth(key), q);
+    }, 2).then(function (r) {
+      return { total: r.total_results || 0, pages: r.total_pages || 1, list: r.results || [] };
+    });
+  };
+
   APP.clearLibrary = function () {
     var n = APP.library.length;
     APP.library = [];
@@ -12471,7 +12879,7 @@ function film(id) { return FILM_BY_ID[id]; }
     Store.get("mode").then(function (m) { applyMode(m === "light" ? "light" : "dark", true); });
   })();
 
-  var KEYS = ["shelf", "record", "collage", "taste", "collection", "calendar", "biff", "cinema", "schedule"];
+  var KEYS = ["rate", "shelf", "record", "collage", "taste", "collection", "calendar", "biff", "cinema", "schedule"];
   var frame = document.getElementById("frame");
   var made = {}, current = KEYS[0];
 
@@ -12694,7 +13102,7 @@ function film(id) { return FILM_BY_ID[id]; }
 
   var home = document.getElementById("goHome");
   if (home) home.addEventListener("click", function () {
-    show(KEYS[0]);                                    // 첫 화면은 진열장
+    show("shelf");                                    // 표제는 언제나 진열장으로
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
