@@ -6355,7 +6355,7 @@ window.addEventListener("message", function (e) {
   .prog{height:5px;background:#211C14;border-radius:3px;overflow:hidden;margin:0 0 18px}
   .prog i{display:block;height:5px;border-radius:3px;transition:width .3s}
 
-  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px 12px;
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 12px;
     list-style:none;padding:0;margin:0}
   @media (max-width:900px){ .grid{grid-template-columns:repeat(4,1fr)} }
   @media (max-width:600px){ .grid{grid-template-columns:repeat(3,1fr)} }
@@ -6371,6 +6371,8 @@ window.addEventListener("message", function (e) {
   .it .cov.wait{background:repeating-linear-gradient(135deg,#241F17 0 8px,#2A241B 8px 16px)}
   .it .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     text-align:center;font-size:10.5px;line-height:1.5;color:#6E6455}
+  /* 커서를 올리면 바로 뜨는 정보. 누르면 아래에 전체 정보가 열립니다. */
+  .it{position:relative}
   .it .t{display:block;font-size:11.5px;line-height:1.4;margin:6px 2px 0;color:var(--paper)}
   .it .d{display:block;font-size:10px;color:var(--dim);margin:1px 2px 0}
 
@@ -6418,6 +6420,21 @@ window.addEventListener("message", function (e) {
     h3 { font-size: 14px; }
     .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
     .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
+
+  /* ── 오른쪽 정보 칸 ──
+     포스터를 훑으면서 옆에서 바로 확인하게 합니다. 좁은 화면에서는 아래로 내려갑니다. */
+  .stage{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+  .stage > .side{transition:transform .12s linear}
+  .side .info{margin:0;flex-direction:column}
+  .side .info img.p{width:100%;max-width:150px}
+  .side .info .txt{min-width:0}
+  .side .info .sts i{width:100%;height:64px}
+  .side .empty{padding:40px 14px;text-align:center;font-size:12.5px;color:var(--dim);
+    border:1px dashed var(--edge);border-radius:6px;line-height:1.8}
+  @media (max-width:900px){
+    .stage{grid-template-columns:minmax(0,1fr)}
+    .stage > .side{transform:none !important}
   }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
@@ -7084,8 +7101,12 @@ window.addEventListener("message", function (e) {
   </div>
   <div class="prog"><i id="fill" style="width:0%"></i></div>
 
-  <ul class="grid" id="grid"></ul>
-  <div id="detail"></div>
+  <div class="stage">
+    <div>
+      <ul class="grid" id="grid"></ul>
+    </div>
+    <div class="side"><div id="detail"><div class="empty">포스터에 커서를 올리거나<br>눌러보세요</div></div></div>
+  </div>
 
   <p class="note">
     <b>자료</b> — 4대 영화제는 2000년 이후 수상작, 시네필 안내서는 정성일 평론가가
@@ -7227,8 +7248,22 @@ window.addEventListener("message", function (e) {
     $("grid").onclick = function (e) {
       var b = e.target.closest && e.target.closest("[data-r]");
       if (!b) return;
-      showInfo(all[parseInt(b.dataset.r, 10)]);
+      showInfo(all[parseInt(b.dataset.r, 10)], true);
     };
+
+    /* 커서를 올리면 아래 정보 창이 그 작품으로 바뀝니다.
+       스쳐 지나갈 때마다 요청하지 않도록 잠깐 머문 뒤에 부릅니다. */
+    var hoverT = null, hoverId = null;
+    $("grid").onmouseover = function (e) {
+      var b = e.target.closest && e.target.closest("[data-r]");
+      if (!b || b.dataset.r === hoverId) return;
+      hoverId = b.dataset.r;
+      clearTimeout(hoverT);
+      hoverT = setTimeout(function () {
+        showInfo(all[parseInt(b.dataset.r, 10)], false);
+      }, 260);
+    };
+    $("grid").onmouseleave = function () { clearTimeout(hoverT); hoverId = null; };
 
     loadPosters(all);
   }
@@ -7303,10 +7338,10 @@ window.addEventListener("message", function (e) {
     } catch (e) {}
   }
 
-  function showInfo(r) {
+  function showInfo(r, scroll) {
     var box = $("detail");
     box.innerHTML = '<div class="info"><span class="load">' + r[1] + " 정보를 불러오는 중…</span></div>";
-    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (scroll) box.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
     if (!APP.canSearch()) {
       box.innerHTML = '<div class="info"><span class="load">' +
@@ -7392,6 +7427,35 @@ window.addEventListener("message", function (e) {
   })();
 
   try { APP.subscribe("collection", function () { renderTabs(); renderGrid(); }); } catch (e) {}
+
+  /* 이 화면은 iframe 안이라 자체 스크롤이 없습니다.
+     그래서 CSS 붙임(sticky)이 작동하지 않습니다.
+     바깥 창이 알려주는 스크롤 위치를 받아 옆 칸을 직접 내려 줍니다. */
+  (function () {
+    if (typeof onOuterScroll !== "function") return;
+    var side = document.querySelector(".side");
+    var stage = document.querySelector(".stage");
+    if (!side || !stage) return;
+
+    function place() {
+      if (window.matchMedia("(max-width: 900px)").matches) {
+        side.style.transform = "";
+        return;
+      }
+      var box = side.firstElementChild;
+      var h = (box && box.offsetHeight) || 0;
+      var top = (OUTER.top || 0);
+      var room = Math.max(0, stage.offsetHeight - h - 8);
+      /* 바깥이 보내는 top 은 "화면 위로 지나간 만큼" 이라 그대로 더하면 됩니다.
+         칸 밖으로 벗어나지 않게 위아래로 묶어 둡니다. */
+      var y = Math.max(0, Math.min(top + 12, room));
+      side.style.transform = "translateY(" + y + "px)";
+    }
+    onOuterScroll(place);
+    window.addEventListener("resize", place);
+    setTimeout(place, 300);
+  })();
+
 })();
 <\/script>
 </body>
@@ -7432,7 +7496,7 @@ window.addEventListener("message", function (e) {
   .head h2{font-size:18px;font-weight:700;margin:0}
   .head span{font-size:12px;color:var(--dim)}
 
-  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px 12px;
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 12px;
     list-style:none;padding:0;margin:0}
   @media (max-width:900px){ .grid{grid-template-columns:repeat(4,1fr)} }
   @media (max-width:600px){ .grid{grid-template-columns:repeat(3,1fr)} }
@@ -7477,6 +7541,21 @@ window.addEventListener("message", function (e) {
     padding-top:12px;border-top:1px solid #2A2A24}
   .note b{color:#A99B84;font-weight:500}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* ── 오른쪽 정보 칸 ──
+     포스터를 훑으면서 옆에서 바로 확인하게 합니다. 좁은 화면에서는 아래로 내려갑니다. */
+  .stage{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+  .stage > .side{transition:transform .12s linear}
+  .side .info{margin:0;flex-direction:column}
+  .side .info img.p{width:100%;max-width:150px}
+  .side .info .txt{min-width:0}
+  .side .info .sts i{width:100%;height:64px}
+  .side .empty{padding:40px 14px;text-align:center;font-size:12.5px;color:var(--dim);
+    border:1px dashed var(--edge);border-radius:6px;line-height:1.8}
+  @media (max-width:900px){
+    .stage{grid-template-columns:minmax(0,1fr)}
+    .stage > .side{transform:none !important}
+  }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
@@ -7824,9 +7903,13 @@ window.addEventListener("message", function (e) {
   <div class="months" id="months"></div>
 
   <div class="head"><h2 id="title"></h2><span id="cnt"></span></div>
-  <ul class="grid" id="grid"></ul>
-  <button class="more" id="more" hidden>더 보기</button>
-  <div id="detail"></div>
+  <div class="stage">
+    <div>
+      <ul class="grid" id="grid"></ul>
+      <button class="more" id="more" hidden>더 보기</button>
+    </div>
+    <div class="side"><div id="detail"><div class="empty">포스터에 커서를 올리거나<br>눌러보세요</div></div></div>
+  </div>
 
   <p class="note">
     <b>자료</b> — TMDB 의 한국 개봉일(극장·프리미어)로 조회합니다.
@@ -7950,12 +8033,24 @@ window.addEventListener("message", function (e) {
       if (!b) return;
       showInfo(rows[parseInt(b.dataset.i, 10)]);
     };
+
+    /* 커서를 올리면 옆 칸이 그 작품으로 바뀝니다. 스쳐 지나가면 요청하지 않습니다. */
+    var hoverT = null, hoverId = null;
+    $("grid").onmouseover = function (e) {
+      var b = e.target.closest && e.target.closest("[data-i]");
+      if (!b || b.dataset.i === hoverId) return;
+      hoverId = b.dataset.i;
+      clearTimeout(hoverT);
+      hoverT = setTimeout(function () {
+        showInfo(rows[parseInt(b.dataset.i, 10)]);
+      }, 260);
+    };
+    $("grid").onmouseleave = function () { clearTimeout(hoverT); hoverId = null; };
   }
 
   function showInfo(r) {
     var box = $("detail");
     box.innerHTML = '<div class="info"><span class="load">' + r.ko + " 정보를 불러오는 중…</span></div>";
-    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
     APP.preview(r.id).then(function (d) {
       var got = owned(r.id);
@@ -7997,6 +8092,35 @@ window.addEventListener("message", function (e) {
   try { APP.subscribe("calendar", function () { render(); }); } catch (e) {}
 
   reset();
+
+  /* 이 화면은 iframe 안이라 자체 스크롤이 없습니다.
+     그래서 CSS 붙임(sticky)이 작동하지 않습니다.
+     바깥 창이 알려주는 스크롤 위치를 받아 옆 칸을 직접 내려 줍니다. */
+  (function () {
+    if (typeof onOuterScroll !== "function") return;
+    var side = document.querySelector(".side");
+    var stage = document.querySelector(".stage");
+    if (!side || !stage) return;
+
+    function place() {
+      if (window.matchMedia("(max-width: 900px)").matches) {
+        side.style.transform = "";
+        return;
+      }
+      var box = side.firstElementChild;
+      var h = (box && box.offsetHeight) || 0;
+      var top = (OUTER.top || 0);
+      var room = Math.max(0, stage.offsetHeight - h - 8);
+      /* 바깥이 보내는 top 은 "화면 위로 지나간 만큼" 이라 그대로 더하면 됩니다.
+         칸 밖으로 벗어나지 않게 위아래로 묶어 둡니다. */
+      var y = Math.max(0, Math.min(top + 12, room));
+      side.style.transform = "translateY(" + y + "px)";
+    }
+    onOuterScroll(place);
+    window.addEventListener("resize", place);
+    setTimeout(place, 300);
+  })();
+
 })();
 <\/script>
 </body>
@@ -8112,6 +8236,18 @@ window.addEventListener("message", function (e) {
     h3 { font-size: 14px; }
     .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
     .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
+  /* ── 오른쪽 정보 칸 ── */
+  .stage{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+  .stage > .side{transition:transform .12s linear}
+  .side .info{margin:0;flex-direction:column}
+  .side .info img.p{width:100%;max-width:150px}
+  .side .info .sts i{width:100%;height:64px}
+  .side .empty{padding:40px 14px;text-align:center;font-size:12.5px;color:var(--dim);
+    border:1px dashed var(--edge);border-radius:6px;line-height:1.8}
+  @media (max-width:900px){
+    .stage{grid-template-columns:minmax(0,1fr)}
+    .stage > .side{transform:none !important}
   }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
@@ -8468,7 +8604,10 @@ window.addEventListener("message", function (e) {
   </div>
 
   <div class="bar" id="tabs"></div>
-  <div id="list"></div>
+  <div class="stage">
+    <div><div id="list"></div></div>
+    <div class="side"><div id="detail"><div class="empty">제목에 커서를 올리거나<br>눌러보세요</div></div></div>
+  </div>
 
   <p class="note">
     <b>자료</b> — 공개된 구글 시트를 읽어옵니다. 열 때 하루에 한 번 자동으로 새로 받고,
@@ -8560,9 +8699,22 @@ window.addEventListener("message", function (e) {
         }).join("") + "</div>";
     }).join("");
 
+    /* 커서를 올리면 옆 칸이 그 작품으로 바뀝니다. */
+    var hoverT = null, hoverId = null;
+    $("list").onmouseover = function (e) {
+      var t = e.target.closest && e.target.closest("[data-info]");
+      if (!t || t.dataset.info === hoverId) return;
+      hoverId = t.dataset.info;
+      clearTimeout(hoverT);
+      hoverT = setTimeout(function () {
+        showInfo(BIFF[parseInt(t.dataset.info, 10)]);
+      }, 260);
+    };
+    $("list").onmouseleave = function () { clearTimeout(hoverT); hoverId = null; };
+
     $("list").onclick = function (e) {
       var t = e.target.closest && e.target.closest("[data-info]");
-      if (t) { e.preventDefault(); showInfo(BIFF[parseInt(t.dataset.info, 10)], t); return; }
+      if (t) { e.preventDefault(); showInfo(BIFF[parseInt(t.dataset.info, 10)]); return; }
       var b = e.target.closest && e.target.closest("[data-i]");
       if (b) { e.preventDefault(); addOne(BIFF[parseInt(b.dataset.i, 10)], b); }
     };
@@ -8634,16 +8786,11 @@ window.addEventListener("message", function (e) {
   }
 
   /* 제목을 누르면 그 줄 아래에 정보를 펼칩니다. 담지 않고 보기만 합니다. */
-  function showInfo(f, el) {
-    var row = el.closest(".row");
-    var open = row.querySelector(".info");
-    if (open) { open.remove(); return; }
-    Array.prototype.forEach.call($("list").querySelectorAll(".info"), function (n) { n.remove(); });
-
-    var box = document.createElement("div");
-    box.className = "info";
-    box.innerHTML = '<span class="load">' + f.ko + " 정보를 불러오는 중…</span>";
-    row.appendChild(box);
+  function showInfo(f) {
+    var host = $("detail");
+    host.innerHTML = '<div class="info"><span class="load">' + f.ko +
+      " 정보를 불러오는 중…</span></div>";
+    var box = host.querySelector(".info");
 
     if (!APP.canSearch()) {
       box.innerHTML = '<span class="load">위쪽 <b>TMDB 연결</b>에서 키를 넣으면 정보가 나옵니다.</span>';
@@ -8843,6 +8990,35 @@ window.addEventListener("message", function (e) {
 
   renderTabs();
   renderList();
+
+  /* 이 화면은 iframe 안이라 자체 스크롤이 없습니다.
+     그래서 CSS 붙임(sticky)이 작동하지 않습니다.
+     바깥 창이 알려주는 스크롤 위치를 받아 옆 칸을 직접 내려 줍니다. */
+  (function () {
+    if (typeof onOuterScroll !== "function") return;
+    var side = document.querySelector(".side");
+    var stage = document.querySelector(".stage");
+    if (!side || !stage) return;
+
+    function place() {
+      if (window.matchMedia("(max-width: 900px)").matches) {
+        side.style.transform = "";
+        return;
+      }
+      var box = side.firstElementChild;
+      var h = (box && box.offsetHeight) || 0;
+      var top = (OUTER.top || 0);
+      var room = Math.max(0, stage.offsetHeight - h - 8);
+      /* 바깥이 보내는 top 은 "화면 위로 지나간 만큼" 이라 그대로 더하면 됩니다.
+         칸 밖으로 벗어나지 않게 위아래로 묶어 둡니다. */
+      var y = Math.max(0, Math.min(top + 12, room));
+      side.style.transform = "translateY(" + y + "px)";
+    }
+    onOuterScroll(place);
+    window.addEventListener("resize", place);
+    setTimeout(place, 300);
+  })();
+
 })();
 <\/script>
 </body>
@@ -13164,7 +13340,7 @@ function film(id) { return FILM_BY_ID[id]; }
   })();
 
   /* 어느 판을 보고 있는지 알 수 있게 빌드 시각을 남깁니다. */
-  var BUILD = "0906-0936";
+  var BUILD = "0906-0949";
   (function(){ var e=document.getElementById("buildStamp"); if(e) e.textContent = "build " + BUILD; })();
 
   var KEYS = ["rate", "shelf", "record", "collage", "taste", "collection", "calendar", "biff", "cinema", "schedule"];
