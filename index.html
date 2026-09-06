@@ -574,6 +574,161 @@
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
 </style>
 
 <script>
@@ -1421,7 +1576,51 @@ window.addEventListener("message", function (e) {
     transition:transform .16s, height .16s, filter .16s;
     box-shadow:1px 0 0 rgba(0,0,0,.45), inset -1px 0 0 rgba(255,255,255,.06) }
   .spine:hover { transform:translateY(-8px); filter:brightness(1.12) }
-  .spine.out { transform:translateY(-16px); height:176px; filter:brightness(1.2) }
+  /* 책등을 누르면 비디오테이프를 꺼내듯 비스듬히 빠져나옵니다.
+     옆 정보 칸은 건드리지 않고 책등에만 줍니다. */
+  .spine { transition: transform .34s cubic-bezier(.22,.9,.3,1.1), box-shadow .34s; }
+  /* 꺼내면 책등이 앞으로 나오면서 테이프 면이 드러납니다. */
+  .spine.out {
+    width: 116px;
+    transform: translateY(-16px) rotate(-2deg);
+    box-shadow: 10px 18px 30px -10px rgba(0,0,0,.9);
+    z-index: 6;
+  }
+  .spine.out .sp-t, .spine.out .sp-band, .spine.out .sp-cap { opacity: 0; }
+  .spine .sp-t, .spine .sp-band, .spine .sp-cap { transition: opacity .18s; }
+
+  .tape {
+    position: absolute; inset: 5px; border-radius: 3px;
+    background: linear-gradient(160deg,#26262A 0%,#141416 60%,#0E0E10 100%);
+    border: 1px solid #3A3A40;
+    display: flex; flex-direction: column; gap: 5px; padding: 7px 6px;
+    opacity: 0; transform: scale(.9); pointer-events: none;
+    transition: opacity .22s .1s, transform .22s .1s;
+  }
+  .spine.out .tape { opacity: 1; transform: scale(1); }
+  .tape .tp-lab {
+    flex: 1; border-radius: 2px; background: #F0EDE2; color: #17140E;
+    padding: 5px 6px; display: flex; flex-direction: column; gap: 3px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.15); overflow: hidden;
+  }
+  .tape .tp-img { display:block; width:100%; height:52px; border-radius:1px;
+    background-size: cover; background-position: center top; }
+  .tape .tp-t { font-family: var(--sans); font-size: 9.5px; font-weight: 700;
+    line-height: 1.25; max-height: 24px; overflow: hidden; }
+  .tape .tp-y { font-size: 8px; color: #6E6A5E; margin-top: auto; }
+  .tape .tp-win {
+    height: 26px; border-radius: 2px; background: #08080A;
+    border: 1px solid #2C2C32; display: flex; align-items: center;
+    justify-content: space-around; padding: 0 6px;
+  }
+  .tape .tp-win i {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: radial-gradient(circle,#4A4A52 0 30%,#1C1C20 32%,#2E2E34 100%);
+    box-shadow: inset 0 0 0 1px #55555E;
+  }
+  .spine.out .sp-cap { background: rgba(255,255,255,.3); }
+  @media (prefers-reduced-motion: reduce) { .spine { transition: none; } }
+  .spine.outX { transform:translateY(-16px); height:176px; filter:brightness(1.2) }
   .spine:focus-visible { outline:2px solid var(--lamp); outline-offset:2px }
   /* 실물 책등은 글자를 하나씩 세워 촘촘히 올립니다. 굵게 잡아야 좁은 폭에서 읽힙니다. */
   /* 책등 제목 — 26px 폭에서 읽혀야 하므로 획이 굵고 단단한 글씨체를 씁니다.
@@ -1696,6 +1895,161 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
 </style>
 
 <script>
@@ -2371,6 +2725,15 @@ window.addEventListener("message", function (e) {
           '<span class="sp-cap"></span>' +
           '<span class="sp-t">' + f.ko + "</span>" +
           '<span class="sp-band"><i>DVD</i></span>' +
+          /* 꺼냈을 때 드러나는 비디오테이프 면 */
+          '<span class="tape">' +
+            '<span class="tp-lab">' +
+              (art ? '<span class="tp-img" style="background-image:url(' + art + ')"></span>' : "") +
+              '<span class="tp-t">' + f.ko + "</span>" +
+              '<span class="tp-y">' + f.year + "</span>" +
+            "</span>" +
+            '<span class="tp-win"><i></i><i></i></span>' +
+          "</span>" +
           "</button>";
       }).join("") + '</div><div class="rackboard"></div>';
     }
@@ -3109,6 +3472,161 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
 </style>
 
 <script>
@@ -4219,6 +4737,161 @@ window.addEventListener("message", function (e) {
   .hit .hy{color:var(--dim);font-size:11px}
   .hit:hover .hy{color:rgba(42,28,8,.7)}
   .hnone{font-size:12px;color:var(--dim);margin:0}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
 </style>
 
 <script>
@@ -5707,6 +6380,182 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  .ostage{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;align-items:start}
+  .oside{position:sticky;top:12px}
+  #oinfo{padding:13px;border-radius:6px;background:var(--panel);border:1px solid var(--edge)}
+  #oinfo .op{width:100%;max-width:130px;border-radius:3px;display:block;margin:0 0 10px}
+  #oinfo h3{font-size:15px;font-weight:700;margin:0 0 2px;color:var(--paper)}
+  #oinfo .ometa{font-size:11px;color:var(--dim);margin:0 0 7px;line-height:1.6}
+  #oinfo .oov{font-size:11.5px;color:#B5AC97;line-height:1.7;margin:0 0 9px}
+  #oinfo .ocrew{border-collapse:collapse;font-size:11px;margin:0 0 8px}
+  #oinfo .ocrew th{text-align:left;color:var(--dim);font-weight:400;padding:1px 10px 1px 0;width:40px}
+  #oinfo .ocrew td{color:var(--paper);padding:1px 0}
+  #oinfo .osts{display:flex;flex-direction:column;gap:5px;margin:0 0 9px}
+  #oinfo .osts i{width:100%;height:62px;border-radius:3px;background-size:cover;
+    background-position:center;display:block}
+  #oinfo .otr{display:inline-block;font-size:11.5px;border-radius:999px;padding:5px 13px;
+    border:1px solid var(--edge);background:#2C2317;color:#C9BDA8;text-decoration:none}
+  #oinfo .otr:hover{background:var(--lamp);border-color:var(--lamp);color:#2A1C08}
+  .oempty{padding:34px 12px;text-align:center;font-size:12px;color:var(--dim);line-height:1.8}
+  html[data-mode="light"] #oinfo .oov{color:#4A4840}
+  html[data-mode="light"] #oinfo .ocrew td{color:#17140E}
+  html[data-mode="light"] #oinfo .otr{background:#F2EFE2;border-color:#DDD9C8;color:#3A382E}
+  @media (max-width:820px){ .ostage{grid-template-columns:minmax(0,1fr)} .oside{position:static} }
 </style>
 
 <script>
@@ -6003,8 +6852,44 @@ window.addEventListener("message", function (e) {
 <script>
 (function(){
   "use strict";
-  var LAMP="#E3B168", LAMPD="#B07B32", COOL="#7FA8C4", GRID="#33291C",
-      TXT="#8E8271", DIM="#6E6455", INK="#EFE9DD";
+  /* 차트는 SVG 라 CSS 로 색을 못 바꿉니다.
+     그릴 때마다 모드를 보고 이 값들을 다시 잡습니다. */
+  var LAMP, LAMPD, COOL, GRID, TXT, DIM, INK, TRACK, ONBAR;
+
+  /* 속성을 읽는 대신 실제로 칠해진 색을 잽니다.
+     iframe · 부모 어느 쪽 속성을 보느냐로 어긋날 일이 없습니다. */
+  function isLightNow() {
+    try {
+      var probe = document.getElementById("__probe");
+      if (!probe) {
+        probe = document.createElement("div");
+        probe.id = "__probe";
+        probe.style.cssText = "position:absolute;left:-9999px;width:1px;height:1px;" +
+          "background:var(--panel)";
+        document.body.appendChild(probe);
+      }
+      var c = getComputedStyle(probe).backgroundColor;
+      var m2 = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(c);
+      if (!m2) return false;
+      var lum = (+m2[1] * 299 + +m2[2] * 587 + +m2[3] * 114) / 1000;
+      return lum > 128;
+    } catch (e) { return false; }
+  }
+
+  function setPalette() {
+    var light = isLightNow();
+
+    if (light) {
+      LAMP = "#8A5A20"; LAMPD = "#6E4416"; COOL = "#3E6B8C"; GRID = "#DDD9C8";
+      TXT = "#5A584E"; DIM = "#8E8C7E"; INK = "#22221C";
+      TRACK = "#E7E4D3"; ONBAR = "#FFFFFF";
+    } else {
+      LAMP = "#E3B168"; LAMPD = "#B07B32"; COOL = "#7FA8C4"; GRID = "#33291C";
+      TXT = "#8E8271"; DIM = "#6E6455"; INK = "#EFE9DD";
+      TRACK = "#2C2317"; ONBAR = "#6B4A18";
+    }
+  }
+  setPalette();
   var MIN = 5;
 
   var my = {};                                  // 부모 창 별점의 로컬 사본
@@ -6192,7 +7077,19 @@ window.addEventListener("message", function (e) {
     });
   }, true);
 
+  (function () {
+    function watch(t) {
+      try {
+        new MutationObserver(function () { setPalette(); renderOut(); })
+          .observe(t, { attributes: true, attributeFilter: ["data-mode"] });
+      } catch (e) {}
+    }
+    watch(document.documentElement);
+    try { watch(window.parent.document.documentElement); } catch (e) {}
+  })();
+
   function renderOut(){
+    setPalette();
     var R = rated();
     if (R.length < MIN){
       $("out").innerHTML = FILMS.length
@@ -6303,15 +7200,29 @@ window.addEventListener("message", function (e) {
     return svg(W,H,s);
   }
 
+  /* 차트는 SVG 라 CSS 로 못 바꿉니다. 모드에 맞는 색을 그릴 때 정합니다. */
+  function isLight(){
+    try { return document.documentElement.getAttribute("data-mode") === "light" ||
+      (window.parent && window.parent.document.documentElement.getAttribute("data-mode") === "light"); }
+    catch (e) { return false; }
+  }
+  function C(){
+    return isLight()
+      ? { ink:"#22221C", dim:"#6E6C60", lamp:"#8A5A20", track:"#E7E4D3",
+          onbar:"#FFFFFF", dot:"#22221C" }
+      : { ink:"#F4F2E7", dim:"#8C8B7E", lamp:"#E3B168", track:"#2C2317",
+          onbar:"#6B4A18", dot:"#F4F2E7" };
+  }
+
   function chartDir(dirs, keys){
     var W=470,rh=26,H=keys.length*rh+10,L=92,R=48,s="";
     keys.forEach(function(k,i){
       var y=i*rh+10, a=avg(dirs[k]);
       s+=txt(L-8,y+13,k,{anchor:"end",size:10.5,fill:INK});
-      s+=rect(L,y+4,(W-L-R),14,"#2C2317");
+      s+=rect(L,y+4,(W-L-R),14,TRACK);
       s+=rect(L,y+4,(W-L-R)*(a/5),14,LAMP);
       s+=txt(W-R+8,y+14,a.toFixed(2),{size:10,fill:LAMP,weight:500});
-      s+=txt(L+5,y+14.5,dirs[k].length+"편",{size:8.5,fill:"#6B4A18"});
+      s+=txt(L+5,y+14.5,dirs[k].length+"편",{size:8.5,fill:ONBAR});
     });
     return svg(W,H,s);
   }
@@ -6322,7 +7233,7 @@ window.addEventListener("message", function (e) {
     keys.forEach(function(k,i){
       var y=i*rh+12, n=gen[k].length, a=avg(gen[k]);
       s+=txt(L-8,y+13,k,{anchor:"end",size:10.5,fill:INK});
-      s+=rect(L,y+5,(W-L-R),13,"#2C2317");
+      s+=rect(L,y+5,(W-L-R),13,TRACK);
       s+=rect(L,y+5,(W-L-R)*(n/max),13,LAMPD);
       s+=txt(L+(W-L-R)*(n/max)+7,y+15,n+"편",{size:9.5,fill:DIM});
       s+='<circle cx="'+(L+(W-L-R)*(a/5))+'" cy="'+(y+11.5)+'" r="3.6" fill="'+INK+'"/>';
@@ -6422,6 +7333,7 @@ window.addEventListener("message", function (e) {
                '<button class="chipbtn" id="findout">다시 찾기</button>';
       }
       return '<p class="thin">' + outsideCache.note + '</p>' +
+        '<div class="ostage"><div class="olist">' +
         outsideCache.list.map(function(x){
           return '<div class="orow">' +
             (x.poster ? '<img src="'+x.poster+'" alt="">' : '<span class="noimg"></span>') +
@@ -6429,13 +7341,58 @@ window.addEventListener("message", function (e) {
             '<span class="oy">'+(x.year||"—")+' · 대중 ★'+x.pub.toFixed(1)+
               (x.why.length ? ' · <em>'+x.why.join(" · ")+'</em>' : "") + '</span></span>' +
             '<button class="obtn" data-add="'+x.tmdbId+'">담기</button></div>';
-        }).join("") +
+        }).join("") + "</div>" +
+        '<div class="oside"><div id="oinfo"><div class="oempty">' +
+          "커서를 올리면<br>여기에 정보가 나옵니다</div></div></div></div>" +
         '<button class="chipbtn" id="findout" style="margin-top:10px">다시 찾기</button>';
     }
     return '<button class="chipbtn" id="findout">내 취향으로 찾기</button>';
   }
 
+  /* 목록에 커서를 올리면 오른쪽 칸이 그 작품으로 바뀝니다. */
+  function bindOutsideHover(){
+    var host = document.querySelector(".olist");
+    if (!host) return;
+    var t = null, cur = null;
+    host.addEventListener("mouseover", function(e){
+      var row = e.target.closest && e.target.closest(".orow");
+      if (!row) return;
+      var btn = row.querySelector("[data-add]");
+      if (!btn || btn.dataset.add === cur) return;
+      cur = btn.dataset.add;
+      clearTimeout(t);
+      t = setTimeout(function(){ showOutside(parseInt(cur, 10)); }, 240);
+    });
+    host.addEventListener("mouseleave", function(){ clearTimeout(t); cur = null; });
+  }
+
+  function showOutside(tmdbId){
+    var box = document.getElementById("oinfo");
+    if (!box) return;
+    box.innerHTML = '<div class="oempty">불러오는 중…</div>';
+    APP.preview(tmdbId).then(function(d){
+      box.innerHTML =
+        (d.poster ? '<img class="op" src="' + d.poster + '" alt="">' : "") +
+        "<h3>" + d.ko + "</h3>" +
+        '<p class="ometa">' + [d.en, d.year, d.runtime && (d.runtime + "분"), d.genres,
+          d.imdb && ("TMDB ★ " + d.imdb)].filter(Boolean).join(" · ") + "</p>" +
+        (d.overview ? '<p class="oov">' + d.overview.slice(0,240) +
+          (d.overview.length > 240 ? "…" : "") + "</p>" : "") +
+        (d.crew.length ? '<table class="ocrew">' + d.crew.map(function(c){
+          return "<tr><th>"+c[0]+"</th><td>"+c[1]+"</td></tr>"; }).join("") + "</table>" : "") +
+        (d.cast.length ? '<p class="ometa">출연 · ' +
+          d.cast.map(function(c){ return c[0]; }).join(", ") + "</p>" : "") +
+        (d.stills.length ? '<div class="osts">' + d.stills.map(function(u){
+          return '<i style="background-image:url('+u+')"></i>'; }).join("") + "</div>" : "") +
+        (d.trailer ? '<a class="otr" href="https://www.youtube.com/watch?v=' + d.trailer +
+          '" target="_blank" rel="noopener">예고편 보기</a>' : "");
+    }).catch(function(e){
+      box.innerHTML = '<div class="oempty">' + e.message + "</div>";
+    });
+  }
+
   function bindOutside(R){
+    bindOutsideHover();
     var b = document.getElementById("findout");
     if (b) {
       b.addEventListener("click", function(){
@@ -6806,6 +7763,177 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* 포스터 위 연도·날짜 배지 — 밝은 포스터에서도 읽히게 진하게 깔고 그림자를 줍니다. */
+  .it .yr, .it .cov .d {
+    background: rgba(12,10,8,.9) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    padding: 3px 8px !important;
+    letter-spacing: .01em;
+    box-shadow: 0 2px 6px rgba(0,0,0,.55);
+    backdrop-filter: blur(2px);
+  }
+  html[data-mode="light"] .it .yr,
+  html[data-mode="light"] .it .cov .d {
+    background: rgba(12,10,8,.92) !important;
+    color: #FFFFFF !important;
+  }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
 </style>
 
 <script>
@@ -8213,6 +9341,177 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* 포스터 위 연도·날짜 배지 — 밝은 포스터에서도 읽히게 진하게 깔고 그림자를 줍니다. */
+  .it .yr, .it .cov .d {
+    background: rgba(12,10,8,.9) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    padding: 3px 8px !important;
+    letter-spacing: .01em;
+    box-shadow: 0 2px 6px rgba(0,0,0,.55);
+    backdrop-filter: blur(2px);
+  }
+  html[data-mode="light"] .it .yr,
+  html[data-mode="light"] .it .cov .d {
+    background: rgba(12,10,8,.92) !important;
+    color: #FFFFFF !important;
+  }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
 </style>
 
 <script>
@@ -8925,6 +10224,161 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
 </style>
 <script>
 var BIFF_SECTIONS = ["개막작", "경쟁", "갈라 프레젠테이션", "아이콘", "비전", "아시아영화의 창", "한국영화의 오늘", "월드 시네마", "플래시 포워드", "오픈 시네마"];
@@ -9881,6 +11335,204 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+
+  /* 라이트 모드에서 회차 블록이 흐릿해 보입니다. 테두리와 글씨를 진하게 잡습니다. */
+  html[data-mode="light"] .scr {
+    background: #FFFDF4 !important; border: 1px solid #C9C5B4 !important;
+    color: #22221C !important; box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  html[data-mode="light"] .scr b { color: #17140E !important; font-weight: 700; }
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .scr span { color: #5A584E !important; }
+  html[data-mode="light"] .scr.on {
+    background: #22221C !important; border-color: #22221C !important;
+  }
+  html[data-mode="light"] .scr.on b,
+  html[data-mode="light"] .scr.on small,
+  html[data-mode="light"] .scr.on span { color: #F4F2E7 !important; }
+  html[data-mode="light"] .lane { border-color: #DDD9C8; }
+  html[data-mode="light"] .hr { color: #5A584E; }
+  html[data-mode="light"] .head > div { color: #17140E; font-weight: 500; }
+
+  /* 라이트 모드 회차 상태 — 누르면 색이 확실히 바뀌어야 합니다. */
+  html[data-mode="light"] .s-free{
+    background:#FFFDF4 !important; color:#3A382E !important; border-color:#C9C5B4 !important}
+  html[data-mode="light"] .s-free b{color:#17140E !important}
+  html[data-mode="light"] .s-pick{
+    background:#8A5A20 !important; color:#FFFFFF !important;
+    border-color:#6E4416 !important; box-shadow:0 3px 10px rgba(138,90,32,.4) !important}
+  html[data-mode="light"] .s-pick b,
+  html[data-mode="light"] .s-pick span,
+  html[data-mode="light"] .s-pick small{color:#FFFFFF !important}
+  html[data-mode="light"] .s-bad{
+    background:#F6E3E0 !important; color:#8A463E !important; border-color:#E0BDB8 !important}
+  html[data-mode="light"] .s-bad b{color:#7A3A32 !important}
+  html[data-mode="light"] .s-dim{
+    background:#F0EEE4 !important; color:#9A9788 !important; border-color:#E2DECF !important}
+  html[data-mode="light"] .s-dim b{color:#8A8778 !important}
+
+  /* 모바일 목록에서도 같게 */
+  html[data-mode="light"] .mrow.on{
+    background:#8A5A20 !important; border-color:#6E4416 !important}
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b,
+  html[data-mode="light"] .mrow.on .mk{color:#FFFFFF !important}
+  html[data-mode="light"] .mrow.on .mv{color:#F0E4D2 !important}
 </style>
 
 <script>
@@ -11278,6 +12930,204 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* ── 라이트 모드 덧칠 ──
+     변수를 안 쓰고 색을 직접 적어둔 곳이 화면마다 남아 있습니다.
+     밝은 배경 위에 밝은 글씨가 되는 자리를 여기서 한 번에 뒤집습니다. */
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] .rev,
+  html[data-mode="light"] .mrow,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .loadwrap,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .side .empty,
+  html[data-mode="light"] #pbox,
+  html[data-mode="light"] .tinfo .txt { color: #22221C; }
+
+  html[data-mode="light"] .info,
+  html[data-mode="light"] .tinfo,
+  html[data-mode="light"] #pbox { background: #FFFDF4; border-color: #DDD9C8; }
+
+  html[data-mode="light"] .info h3,
+  html[data-mode="light"] .tinfo h3,
+  html[data-mode="light"] .info td,
+  html[data-mode="light"] .rev b,
+  html[data-mode="light"] .sechead b,
+  html[data-mode="light"] .it .t,
+  html[data-mode="light"] .mrow .mm b,
+  html[data-mode="light"] .hit b,
+  html[data-mode="light"] .welcome > b { color: #17140E; }
+
+  html[data-mode="light"] .info .ov,
+  html[data-mode="light"] .tinfo .ov,
+  html[data-mode="light"] .rev p,
+  html[data-mode="light"] .welcome > span { color: #4A4840; }
+
+  html[data-mode="light"] .info .meta,
+  html[data-mode="light"] .tinfo .meta,
+  html[data-mode="light"] .info th,
+  html[data-mode="light"] .info .load,
+  html[data-mode="light"] .tinfo .load,
+  html[data-mode="light"] .it .d,
+  html[data-mode="light"] .sechead span,
+  html[data-mode="light"] .mrow .mv,
+  html[data-mode="light"] .mgap,
+  html[data-mode="light"] .hit .hy,
+  html[data-mode="light"] .pnote,
+  html[data-mode="light"] .hnone,
+  html[data-mode="light"] .empty,
+  html[data-mode="light"] .loadwrap { color: #6E6C60; }
+
+  /* 어두운 알약·상자들 */
+  html[data-mode="light"] .chipbtn,
+  html[data-mode="light"] .tinyb,
+  html[data-mode="light"] .hit,
+  html[data-mode="light"] .altrow button,
+  html[data-mode="light"] .info .acts a,
+  html[data-mode="light"] .info .acts button,
+  html[data-mode="light"] .tinfo a,
+  html[data-mode="light"] .more,
+  html[data-mode="light"] .mrow {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .chipbtn:hover,
+  html[data-mode="light"] .tinyb:hover,
+  html[data-mode="light"] .more:hover,
+  html[data-mode="light"] .mrow:hover { background: #E7E4D3; color: #17140E; }
+
+  /* 고른 것 — 어두운 바탕에 밝은 글씨로 대비를 줍니다. */
+  html[data-mode="light"] .chipbtn[aria-pressed="true"],
+  html[data-mode="light"] .mrow.on,
+  html[data-mode="light"] .it .plus.on,
+  html[data-mode="light"] .row .add.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b { color: #F4F2E7; }
+  html[data-mode="light"] .mrow.on .mv { color: #B9B6A8; }
+  html[data-mode="light"] .mrow .mt { color: #8A5A20; }
+
+  /* 빈 자리·불러오는 중 */
+  html[data-mode="light"] .it .cov,
+  html[data-mode="light"] .it .cov.wait { background: #E7E4D3; }
+  html[data-mode="light"] .it .ph { color: #8E8C7E; }
+  html[data-mode="light"] .it .plus { background: rgba(255,253,244,.9); color: #3A382E;
+    border: 1px solid #DDD9C8; }
+
+  /* 위쪽 알림 */
+  html[data-mode="light"] .toast { background: #FFFDF4; color: #22221C; border-color: #DDD9C8; }
+  html[data-mode="light"] .toast span { color: #6E6C60; }
+  html[data-mode="light"] .toast .tbar { background: #E7E4D3; }
+
+  /* 검색 결과 목록 */
+  html[data-mode="light"] .res,
+  html[data-mode="light"] .res button { background: #FFFDF4; color: #22221C; }
+  html[data-mode="light"] .res button:hover { background: #E7E4D3; }
+
+  /* 구분선 */
+  html[data-mode="light"] .revhead,
+  html[data-mode="light"] .note,
+  html[data-mode="light"] .sechead { border-color: #DDD9C8; }
+
+  /* ── 라이트 모드 2차 ──
+     앞서 글자색만 뒤집는 바람에, 배경이 어두운 채로 남은 자리는
+     어두운 글씨 + 어두운 배경이 됐습니다. 배경까지 함께 뒤집습니다. */
+  html[data-mode="light"] .chip,
+  html[data-mode="light"] .chip .mv,
+  html[data-mode="light"] .chip .pst,
+  html[data-mode="light"] .row .add,
+  html[data-mode="light"] .gapchip,
+  html[data-mode="light"] .val,
+  html[data-mode="light"] .scr,
+  html[data-mode="light"] .lane,
+  html[data-mode="light"] .plan li,
+  html[data-mode="light"] .flash,
+  html[data-mode="light"] .crit span,
+  html[data-mode="light"] .a,
+  html[data-mode="light"] .grp {
+    background: #F2EFE2;
+    border-color: #DDD9C8;
+    color: #22221C;
+  }
+  html[data-mode="light"] .chip b,
+  html[data-mode="light"] .chip span,
+  html[data-mode="light"] .scr b,
+  html[data-mode="light"] .plan li b { color: #17140E; }
+  html[data-mode="light"] .chip .yr,
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .plan li span { color: #6E6C60; }
+
+  html[data-mode="light"] .chip.on,
+  html[data-mode="light"] .scr.on,
+  html[data-mode="light"] .lane.on {
+    background: #22221C; border-color: #22221C; color: #F4F2E7;
+  }
+  html[data-mode="light"] .chip.on b,
+  html[data-mode="light"] .chip.on span,
+  html[data-mode="light"] .scr.on b { color: #F4F2E7; }
+
+  html[data-mode="light"] .gapchip.far { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .chip .rmv:hover { background: #A8564E; border-color: #A8564E; color: #fff; }
+  html[data-mode="light"] .chip .mv:hover,
+  html[data-mode="light"] .chip .pst:hover { background: #8A5A20; border-color: #8A5A20; color: #fff; }
+
+  /* 어두운 알약으로 남는 것들 */
+  html[data-mode="light"] .add,
+  html[data-mode="light"] .obtn,
+  html[data-mode="light"] .clr,
+  html[data-mode="light"] .plus:not(.on),
+  html[data-mode="light"] .warnbtn,
+  html[data-mode="light"] .pbtn {
+    background: #F2EFE2; border-color: #DDD9C8; color: #3A382E;
+  }
+  html[data-mode="light"] .warnbtn { background: #F6E3E0; border-color: #E0BDB8; color: #8A463E; }
+
+  /* 라이트 모드에서 회차 블록이 흐릿해 보입니다. 테두리와 글씨를 진하게 잡습니다. */
+  html[data-mode="light"] .scr {
+    background: #FFFDF4 !important; border: 1px solid #C9C5B4 !important;
+    color: #22221C !important; box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  html[data-mode="light"] .scr b { color: #17140E !important; font-weight: 700; }
+  html[data-mode="light"] .scr small,
+  html[data-mode="light"] .scr span { color: #5A584E !important; }
+  html[data-mode="light"] .scr.on {
+    background: #22221C !important; border-color: #22221C !important;
+  }
+  html[data-mode="light"] .scr.on b,
+  html[data-mode="light"] .scr.on small,
+  html[data-mode="light"] .scr.on span { color: #F4F2E7 !important; }
+  html[data-mode="light"] .lane { border-color: #DDD9C8; }
+  html[data-mode="light"] .hr { color: #5A584E; }
+  html[data-mode="light"] .head > div { color: #17140E; font-weight: 500; }
+
+  /* 라이트 모드 회차 상태 — 누르면 색이 확실히 바뀌어야 합니다. */
+  html[data-mode="light"] .s-free{
+    background:#FFFDF4 !important; color:#3A382E !important; border-color:#C9C5B4 !important}
+  html[data-mode="light"] .s-free b{color:#17140E !important}
+  html[data-mode="light"] .s-pick{
+    background:#8A5A20 !important; color:#FFFFFF !important;
+    border-color:#6E4416 !important; box-shadow:0 3px 10px rgba(138,90,32,.4) !important}
+  html[data-mode="light"] .s-pick b,
+  html[data-mode="light"] .s-pick span,
+  html[data-mode="light"] .s-pick small{color:#FFFFFF !important}
+  html[data-mode="light"] .s-bad{
+    background:#F6E3E0 !important; color:#8A463E !important; border-color:#E0BDB8 !important}
+  html[data-mode="light"] .s-bad b{color:#7A3A32 !important}
+  html[data-mode="light"] .s-dim{
+    background:#F0EEE4 !important; color:#9A9788 !important; border-color:#E2DECF !important}
+  html[data-mode="light"] .s-dim b{color:#8A8778 !important}
+
+  /* 모바일 목록에서도 같게 */
+  html[data-mode="light"] .mrow.on{
+    background:#8A5A20 !important; border-color:#6E4416 !important}
+  html[data-mode="light"] .mrow.on .mt,
+  html[data-mode="light"] .mrow.on .mm b,
+  html[data-mode="light"] .mrow.on .mk{color:#FFFFFF !important}
+  html[data-mode="light"] .mrow.on .mv{color:#F0E4D2 !important}
 </style>
 
 <script>
