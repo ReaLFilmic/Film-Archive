@@ -5414,6 +5414,7 @@ window.addEventListener("message", function (e) {
     .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
     .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
   }
+  [hidden]{display:none !important}
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
@@ -5768,12 +5769,7 @@ window.addEventListener("message", function (e) {
     <button class="chipbtn" id="reset">전부 지우기</button>
   </div>
 
-  <div class="rate">
-    <h2>별점 매기기</h2>
-    <p class="d">0.5점 단위입니다. 별의 왼쪽 절반은 반 점, 오른쪽은 한 점.
-      같은 점수를 다시 누르면 지워집니다. 본 영화만 매기면 됩니다.</p>
-    <div class="rows" id="rows"></div>
-  </div>
+  <div class="rows" id="rows" hidden></div>
 
   <div id="out"></div>
 
@@ -6369,16 +6365,14 @@ window.addEventListener("message", function (e) {
     overflow:hidden;background:#241F17;border:0;padding:0;cursor:pointer;display:block;
     box-shadow:0 8px 18px -12px rgba(0,0,0,.9)}
   .it .cov img{width:100%;height:100%;object-fit:cover;display:block}
-  .it.no .cov{filter:grayscale(1) brightness(.5)}
   .it .cov:hover{outline:2px solid var(--lamp);outline-offset:1px}
   .it .yr{position:absolute;left:5px;top:5px;z-index:2;font-size:10px;font-weight:700;
     padding:2px 7px;border-radius:999px;background:rgba(18,16,12,.82);color:var(--paper)}
-  .it .seen{position:absolute;right:5px;top:5px;z-index:2;width:18px;height:18px;
-    border-radius:50%;background:var(--lamp);color:#2A1C08;font-size:11px;font-weight:700;
-    display:flex;align-items:center;justify-content:center}
+  .it .cov.wait{background:repeating-linear-gradient(135deg,#241F17 0 8px,#2A241B 8px 16px)}
+  .it .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    text-align:center;font-size:10.5px;line-height:1.5;color:#6E6455}
   .it .t{display:block;font-size:11.5px;line-height:1.4;margin:6px 2px 0;color:var(--paper)}
   .it .d{display:block;font-size:10px;color:var(--dim);margin:1px 2px 0}
-  .it.no .t{color:var(--dim)}
 
   .sechead{grid-column:1/-1;display:flex;align-items:baseline;gap:9px;
     margin:14px 0 2px;padding-bottom:7px;border-bottom:1px solid #2A2A24;list-style:none}
@@ -6577,7 +6571,7 @@ var AWARDS = {
       [2009, "레바논", "Lebanon", "사무엘 마오즈"],
       [2010, "썸웨어", "Somewhere", "소피아 코폴라"],
       [2011, "파우스트", "Фауст", "알렉산드르 소쿠로프"],
-      [2012, "피에타", "Pieta", "김기덕"],
+      [2012, "피에타", "Pieta", "김기덕", 123377],
       [2013, "성스러운 도로", "Sacro GRA", "잔프랑코 로시"],
       [2014, "비둘기, 가지에 앉아 존재를 성찰하다", "En duva satt på en gren", "로이 안데르손"],
       [2015, "머나먼 곳에서", "Desde allá", "로렌소 비가스"],
@@ -6689,7 +6683,7 @@ var CINEPHILE = {
       [1958, "서부의 사나이", "Man of the West", "안소니 만"]
     ]},
     { t: "2차 대전 직전 유럽 영화 3편", list: [
-      [1931, "M", "M", "프리츠 랑"],
+      [1931, "M", "M", "프리츠 랑", 832],
       [1934, "라탈랑트", "L'Atalante", "장 비고"],
       [1937, "위대한 환상", "La Grande Illusion", "장 르누아르"]
     ]},
@@ -6701,7 +6695,7 @@ var CINEPHILE = {
       [1951, "어느 시골 본당 신부의 일기", "Journal d'un curé de campagne", "로베르 브레송"],
       [1952, "황금 투구", "Casque d'or", "자크 베케르"],
       [1953, "공포의 보수", "Le Salaire de la peur", "앙리 조르주 클루조"],
-      [1954, "길", "La Strada", "페데리코 펠리니"],
+      [1954, "길", "La Strada", "페데리코 펠리니", 12102],
       [1954, "센소", "Senso", "루키노 비스콘티"],
       [1955, "롤라 몽테스", "Lola Montès", "막스 오퓔스"]
     ]},
@@ -6748,7 +6742,7 @@ var CINEPHILE = {
       [1991, "고령가 소년 살인사건", "牯嶺街少年殺人事件", "에드워드 양"],
       [1994, "애정만세", "愛情萬歲", "차이밍량"],
       [1994, "중경삼림", "重慶森林", "왕가위"],
-      [1995, "칼", "刀", "서극"],
+      [1995, "칼", "刀", "서극", 42213],
       [2000, "와호장룡", "臥虎藏龍", "이안"],
       [2005, "흑사회", "黑社會", "두기봉"],
       [2006, "스틸 라이프", "三峡好人", "자장커"]
@@ -6797,7 +6791,7 @@ var CINEPHILE = {
     { t: "21세기를 시작하는 영화 10편", list: [
       [2000, "반다의 방", "No Quarto da Vanda", "페드로 코스타"],
       [2001, "멀홀랜드 드라이브", "Mulholland Drive", "데이비드 린치"],
-      [2002, "텐", "Ten", "압바스 키아로스타미"],
+      [2002, "텐", "Ten", "압바스 키아로스타미", 25538],
       [2003, "철서구", "鐵西區", "왕빙"],
       [2003, "엘리펀트", "Elephant", "구스 반 산트"],
       [2004, "열대병", "สัตว์ประหลาด", "아피찻퐁 위라세타꾼"],
@@ -7080,12 +7074,13 @@ window.addEventListener("message", function (e) {
 <div class="wrap">
 
   <h1>컬렉션</h1>
-  <p class="sub">4대 영화제 수상작을 한자리에. 서재에 담은 작품은 색이 살아납니다.</p>
+  <p class="sub">4대 영화제 수상작과 시네필 안내서를 한자리에. 포스터를 누르면 정보가 열립니다.</p>
 
   <div class="bar" id="tabs"></div>
   <div class="bar" style="margin:-6px 0 12px">
     <button class="chipbtn" id="wipe">저장된 표지 정보 비우기</button>
     <span class="stat" id="wipelog"></span>
+    <span class="stat" id="loadnote" style="margin-left:10px"></span>
   </div>
   <div class="prog"><i id="fill" style="width:0%"></i></div>
 
@@ -7201,12 +7196,13 @@ window.addEventListener("message", function (e) {
     $("fill").style.background = a.color;
 
     function cell(r, idx) {
-      var k = key(r), got = owned(r), p = POSTER[k];
-      return '<li class="it' + (got ? "" : " no") + '">' +
-        '<button class="cov" data-r="' + idx + '" aria-label="' + r[1] + '">' +
+      var p = POSTER[key(r)];
+      return '<li class="it">' +
+        '<button class="cov' + (p ? "" : " wait") + '" data-r="' + idx +
+        '" data-cell="' + key(r) + '" aria-label="' + r[1] + '">' +
         '<span class="yr">' + r[0] + "</span>" +
-        (got ? '<span class="seen">✓</span>' : "") +
-        (p ? '<img src="' + p + '" alt="">' : "") +
+        (p ? '<img src="' + p + '" alt="">'
+           : '<span class="ph">포스터<br>불러오는 중</span>') +
         "</button>" +
         '<span class="t">' + r[1] + "</span>" +
         '<span class="d">' + r[3] + "</span></li>";
@@ -7241,6 +7237,8 @@ window.addEventListener("message", function (e) {
   function loadPosters(list) {
     if (!APP.canSearch()) return;
     var todo = list.filter(function (r) { return !POSTER[key(r)]; });
+    left = todo.length;
+    tick();
     if (!todo.length) return;
 
     /* 한 장씩 차례로 받으면 100편에 30초가 넘습니다. 넷씩 동시에 받습니다. */
@@ -7250,10 +7248,18 @@ window.addEventListener("message", function (e) {
       var r = q.shift();
       /* 원제로 먼저 찾습니다. 한글 제목은 같은 이름이 여럿이고,
          아카데미는 시상식 연도라 영화 개봉 연도와 한 해 차이가 납니다. */
-      APP.searchMovies(r[2] || r[1]).then(function (hits) {
-        if (hits && hits.length) return hits;
-        return APP.searchMovies(r[1]);
-      }).then(function (hits) {
+      /* 원제와 한글 제목 양쪽으로 찾아 후보를 합칩니다.
+         옛 영화는 원제로, 한국 영화는 한글 제목으로 잘 잡힙니다. */
+      Promise.all([
+        APP.searchMovies(r[2] || r[1]).catch(function () { return []; }),
+        (r[1] && r[1] !== r[2]) ? APP.searchMovies(r[1]).catch(function () { return []; })
+                                : Promise.resolve([])
+      ]).then(function (two) {
+        var seen2 = {}, hits = [];
+        two[0].concat(two[1]).forEach(function (h) {
+          if (seen2[h.id]) return;
+          seen2[h.id] = 1; hits.push(h);
+        });
         var h = bestHit(hits, r);
         if (h && h.poster_path) {
           POSTER[key(r)] = "https://image.tmdb.org/t/p/w342" + h.poster_path;
@@ -7261,6 +7267,8 @@ window.addEventListener("message", function (e) {
           paint(r);
         }
       }).catch(function () {}).then(function () {
+        left--;
+        tick();
         if (!q.length) save();
         setTimeout(worker, 40);
       });
@@ -7272,13 +7280,20 @@ window.addEventListener("message", function (e) {
 
   /* 받아온 표지 한 장만 그 자리에 끼웁니다 — 전체를 다시 그리지 않습니다. */
   function paint(r) {
-    var a = meta(cur);
-    var idx = a.list.indexOf(r);
-    if (idx < 0) return;
-    var b = $("grid").querySelector('[data-r="' + idx + '"]');
-    if (b && !b.querySelector("img")) {
-      b.insertAdjacentHTML("beforeend", '<img src="' + POSTER[key(r)] + '" alt="">');
-    }
+    var b = $("grid").querySelector('[data-cell="' + key(r) + '"]');
+    if (!b || b.querySelector("img")) return;
+    var ph = b.querySelector(".ph");
+    if (ph) ph.remove();
+    b.classList.remove("wait");
+    b.insertAdjacentHTML("beforeend", '<img src="' + POSTER[key(r)] + '" alt="">');
+  }
+
+  /* 처음 열면 140장을 받아야 해서 시간이 걸립니다. 몇 장 남았는지 알려줍니다. */
+  var left = 0;
+  function tick() {
+    var el = $("loadnote");
+    if (!el) return;
+    el.textContent = left > 0 ? "포스터 불러오는 중… " + left + "장 남음" : "";
   }
 
   function save() {
@@ -11866,11 +11881,34 @@ function film(id) { return FILM_BY_ID[id]; }
     }, 2);
   }
 
+  /* 검색 결과의 첫 번째를 그냥 쓰면 엉뚱한 영화가 들어옵니다.
+     제목이 얼마나 맞는지, 연도가 가까운지, 얼마나 알려진 작품인지로 골라냅니다. */
+  function pickBest(list, q, year) {
+    function norm(x) { return String(x || "").replace(/[\s:·.,'"!?-]/g, "").toLowerCase(); }
+    var want = norm(q), best = null, bs = -1e9;
+    (list || []).forEach(function (h) {
+      var t1 = norm(h.title), t2 = norm(h.original_title);
+      var y = parseInt(String(h.release_date || "").slice(0, 4), 10) || 0;
+      var sc = 0;
+      if (t1 === want || t2 === want) sc += 24;
+      else if (t1.indexOf(want) >= 0 || t2.indexOf(want) >= 0) sc += 9;
+      else if (want.indexOf(t1) >= 0 || want.indexOf(t2) >= 0) sc += 6;
+      if (year && y) {
+        var gap = Math.abs(y - year);
+        sc += gap === 0 ? 8 : (gap === 1 ? 4 : (gap <= 3 ? 1 : -8));
+      }
+      sc += Math.min((h.vote_count || 0) / 700, 6);
+      if ((h.vote_count || 0) < 15) sc -= 5;
+      if (sc > bs) { bs = sc; best = h; }
+    });
+    return (bs > 0) ? best : null;
+  }
+
   function search(q, year, a) {
     return retry(function () {
       return tmdb("/search/movie", a,
         "&query=" + encodeURIComponent(q) + (year ? "&year=" + year : ""));
-    }, 2).then(function (r) { return (r.results || [])[0] || null; });
+    }, 2).then(function (r) { return pickBest(r.results, q, year); });
   }
 
   /* 찾는 순서
@@ -13126,7 +13164,7 @@ function film(id) { return FILM_BY_ID[id]; }
   })();
 
   /* 어느 판을 보고 있는지 알 수 있게 빌드 시각을 남깁니다. */
-  var BUILD = "0906-0924";
+  var BUILD = "0906-0936";
   (function(){ var e=document.getElementById("buildStamp"); if(e) e.textContent = "build " + BUILD; })();
 
   var KEYS = ["rate", "shelf", "record", "collage", "taste", "collection", "calendar", "biff", "cinema", "schedule"];
