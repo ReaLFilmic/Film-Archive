@@ -1589,43 +1589,49 @@ window.addEventListener("message", function (e) {
   .spine.out .sp-t, .spine.out .sp-band, .spine.out .sp-cap { opacity: 0; }
   .spine .sp-t, .spine .sp-band, .spine .sp-cap { transition: opacity .18s; }
 
-  .tape {
-    position: absolute; inset: 5px; border-radius: 3px;
-    background: linear-gradient(160deg,#26262A 0%,#141416 60%,#0E0E10 100%);
-    border: 1px solid #3A3A40;
-    display: flex; flex-direction: column; gap: 5px; padding: 7px 6px;
-    opacity: 0; transform: scale(.9); pointer-events: none;
-    transition: opacity .22s .1s, transform .22s .1s;
-  }
-  .spine.out .tape { opacity: 1; transform: scale(1); }
-  .tape .tp-lab {
-    flex: 1; border-radius: 2px; background: #F0EDE2; color: #17140E;
-    padding: 5px 6px; display: flex; flex-direction: column; gap: 3px;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,.15); overflow: hidden;
-  }
-  .tape .tp-img { display:block; width:100%; height:52px; border-radius:1px;
-    background-size: cover; background-position: center top; }
-  .tape .tp-t { font-family: var(--sans); font-size: 9.5px; font-weight: 700;
-    line-height: 1.25; max-height: 24px; overflow: hidden; }
-  .tape .tp-y { font-size: 8px; color: #6E6A5E; margin-top: auto; }
-  .tape .tp-win {
-    height: 26px; border-radius: 2px; background: #08080A;
-    border: 1px solid #2C2C32; display: flex; align-items: center;
-    justify-content: space-around; padding: 0 6px;
-  }
-  .tape .tp-win i {
-    width: 14px; height: 14px; border-radius: 50%;
-    background: radial-gradient(circle,#4A4A52 0 30%,#1C1C20 32%,#2E2E34 100%);
-    box-shadow: inset 0 0 0 1px #55555E;
-  }
+  /* 눌렀을 때 화면 가운데에 크게 뜨는 비디오테이프 */
+  .tapeOv{position:absolute;left:0;right:0;z-index:70;display:flex;
+    align-items:center;justify-content:center;padding:22px}
+  .tapeOv .bg{position:absolute;inset:0;background:rgba(8,7,5,.72)}
+  .tapeBox{position:relative;width:min(880px,94%);border-radius:8px;
+    background:linear-gradient(160deg,#2A2A2E 0%,#141416 62%,#0D0D0F 100%);
+    border:1px solid #3E3E46;padding:26px;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.9);
+    transform:translateY(14px) scale(.96);opacity:0;
+    transition:transform .3s cubic-bezier(.22,.9,.3,1.05),opacity .3s}
+  .tapeOv.on .tapeBox{transform:none;opacity:1}
+  .tapeBox .lab{display:flex;gap:22px;background:#F0EDE2;color:#17140E;
+    border-radius:3px;padding:14px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.16)}
+  .tapeBox .lab img{width:150px;border-radius:2px;display:block;flex:none}
+  .tapeBox .lab h3{font-size:26px;font-weight:700;margin:0 0 3px}
+  .tapeBox .lab p{font-size:13.5px;color:#5E5A50;margin:0;line-height:1.7}
+  .tapeBox .win{margin-top:22px;height:118px;border-radius:4px;background:#08080A;
+    border:1px solid #2E2E36;display:flex;align-items:center;
+    justify-content:space-around;padding:0 90px}
+  .tapeBox .win i{width:86px;height:86px;border-radius:50%;
+    background:radial-gradient(circle,#4E4E58 0 26%,#191920 28%,#33333A 100%);
+    box-shadow:inset 0 0 0 2px #5A5A64;animation:reel 6s linear infinite}
+  .tapeBox .win i:last-child{animation-direction:reverse}
+  @keyframes reel{to{transform:rotate(360deg)}}
+  .tapeBox .cls{position:absolute;right:12px;top:12px;width:30px;height:30px;
+    border-radius:50%;border:1px solid #4A4A52;background:#1C1C22;color:#C9C7BE;
+    font-size:15px;cursor:pointer;line-height:1}
+  .tapeBox .cls:hover{background:#A8564E;border-color:#A8564E;color:#fff}
+  @media (prefers-reduced-motion: reduce){ .tapeBox{transition:none} .tapeBox .win i{animation:none} }
   .spine.out .sp-cap { background: rgba(255,255,255,.3); }
   @media (prefers-reduced-motion: reduce) { .spine { transition: none; } }
-  .spine.outX { transform:translateY(-16px); height:176px; filter:brightness(1.2) }
   .spine:focus-visible { outline:2px solid var(--lamp); outline-offset:2px }
   /* 실물 책등은 글자를 하나씩 세워 촘촘히 올립니다. 굵게 잡아야 좁은 폭에서 읽힙니다. */
   /* 책등 제목 — 26px 폭에서 읽혀야 하므로 획이 굵고 단단한 글씨체를 씁니다.
      붓글씨(Nanum Brush Script)는 흘림이 많아 이 폭에서는 뭉개집니다. */
-  .spine .sp-t { position:absolute; inset:12px 0 26px;
+  /* 포스터 배경 위에서 글자가 묻히지 않게 세로로 어두운 띠를 깝니다. */
+  .spine.art::after {
+    content:""; position:absolute; left:0; right:0; top:9px; bottom:22px;
+    background:linear-gradient(90deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.62) 34%,
+      rgba(0,0,0,.62) 66%,rgba(0,0,0,.15) 100%);
+    pointer-events:none;
+  }
+  .spine .sp-t { z-index:2; position:absolute; inset:12px 0 26px;
     writing-mode:vertical-rl; text-orientation:upright;
     display:flex; align-items:center; justify-content:center;
     font-family:"Black Han Sans", var(--sans); font-size:12px; font-weight:400;
@@ -2723,17 +2729,11 @@ window.addEventListener("message", function (e) {
           'style="background:' + bg + ';color:' + (art ? "#F4F2E7" : f.fg) + '" ' +
           'title="' + f.ko + " · " + f.year + '" aria-label="' + f.ko + '">' +
           '<span class="sp-cap"></span>' +
-          '<span class="sp-t">' + f.ko + "</span>" +
+          '<span class="sp-t"' +
+            (f.ko.length > 11 ? ' style="font-size:9.5px;letter-spacing:0"' :
+             f.ko.length > 8  ? ' style="font-size:11px"' : "") +
+            ">" + f.ko + "</span>" +
           '<span class="sp-band"><i>DVD</i></span>' +
-          /* 꺼냈을 때 드러나는 비디오테이프 면 */
-          '<span class="tape">' +
-            '<span class="tp-lab">' +
-              (art ? '<span class="tp-img" style="background-image:url(' + art + ')"></span>' : "") +
-              '<span class="tp-t">' + f.ko + "</span>" +
-              '<span class="tp-y">' + f.year + "</span>" +
-            "</span>" +
-            '<span class="tp-win"><i></i><i></i></span>' +
-          "</span>" +
           "</button>";
       }).join("") + '</div><div class="rackboard"></div>';
     }
@@ -2743,6 +2743,10 @@ window.addEventListener("message", function (e) {
       if (!b) return;
       e.preventDefault();
       pick(b.dataset.id);
+      if (window.pickMode !== "remove") {
+        var f = byId(b.dataset.id);
+        if (f) setTimeout(function () { showTape(f); }, 220);
+      }
     };
   }
 
@@ -2949,6 +2953,38 @@ window.addEventListener("message", function (e) {
   }
 
   // ---------- 꺼내기 ----------
+  /* 책등을 누르면 테이프를 화면 가운데에 크게 띄웁니다. */
+  function showTape(f) {
+    var ov = document.getElementById("tapeOv");
+    if (ov) ov.remove();
+    var md = MED(f), art = md && md.poster;
+
+    ov = document.createElement("div");
+    ov.id = "tapeOv"; ov.className = "tapeOv";
+    ov.innerHTML = '<div class="bg"></div>' +
+      '<div class="tapeBox"><button class="cls" aria-label="닫기">×</button>' +
+        '<div class="lab">' +
+          (art ? '<img src="' + art + '" alt="">' : "") +
+          "<div><h3>" + f.ko + "</h3>" +
+          "<p>" + [f.en, f.year, f.runtime && (f.runtime + "분"), f.dir]
+                    .filter(Boolean).join("<br>") + "</p></div>" +
+        "</div>" +
+        '<div class="win"><i></i><i></i></div>' +
+      "</div>";
+    document.body.appendChild(ov);
+
+    var top = 0, vh = 700;
+    try { top = OUTER.top || 0; vh = OUTER.vh || 700; } catch (e) {}
+    ov.style.top = Math.max(0, top) + "px";
+    ov.style.height = vh + "px";
+
+    setTimeout(function () { ov.classList.add("on"); }, 10);
+    function close() { ov.classList.remove("on");
+      setTimeout(function () { ov.remove(); }, 260); }
+    ov.querySelector(".cls").addEventListener("click", close);
+    ov.querySelector(".bg").addEventListener("click", close);
+  }
+
   function pick(id) {
     selected = (selected === id) ? null : id;
     renderShelf();
