@@ -4071,6 +4071,28 @@ window.addEventListener("message", function (e) {
   .chip.on{background:#33291A;border-color:var(--lamp-deep);color:var(--paper)}
   .chip.drag{opacity:.35}
   .chip .sw{width:14px;height:20px;border-radius:1px;flex:none}
+  .chip .pst{font-family:var(--sans);font-size:10px;cursor:pointer;width:18px;height:18px;
+    margin-left:3px;border-radius:3px;border:1px solid var(--edge);
+    background:#1F1A12;color:#A99B84;line-height:1;padding:0}
+  .chip .pst:hover{background:var(--lamp);border-color:var(--lamp);color:#2A1C08}
+  .pstitle{font-size:11.5px;color:var(--dim);margin:12px 0 7px}
+  .pstrip{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 6px}
+  .pth{width:76px;border:0;padding:0;background:none;cursor:pointer;text-align:center}
+  .pth img,.pth .noimg{width:76px;aspect-ratio:27/40;object-fit:cover;border-radius:3px;
+    display:block;background:#241F17;border:2px solid transparent;
+    font-size:10px;color:#6E6455;line-height:1.4}
+  .pth:hover img,.pth:hover .noimg{border-color:var(--lamp)}
+  .pth .pcap{display:block;font-size:10px;color:var(--dim);margin-top:3px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #pbox{margin:6px 0;padding:11px;border-radius:6px;
+    background:var(--panel);border:1px solid var(--edge)}
+  .pnote{font-size:11.5px;color:var(--dim);margin:0 0 8px}
+  .pnote b{color:var(--paper);font-weight:500}
+  .pgrid2{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  .pgrid2 img{width:100%;aspect-ratio:27/40;object-fit:cover;border-radius:3px;
+    cursor:pointer;border:2px solid transparent;display:block}
+  .pgrid2 img:hover{border-color:var(--lamp)}
+  @media (max-width:700px){ .pgrid2{grid-template-columns:repeat(4,1fr)} }
   .chip .rmv{font-family:var(--sans);font-size:12px;cursor:pointer;width:18px;height:18px;
     margin-left:4px;border-radius:3px;border:1px solid #5A3A34;
     background:#3A211E;color:#DFA9A2;line-height:1;padding:0}
@@ -4453,7 +4475,7 @@ window.addEventListener("message", function (e) {
 <div class="wrap">
 
   <h1>콜라주 생성기</h1>
-  <p class="sub">검색해서 넣고, 목록에서 눌러 빼세요. 앞에 올수록 크게 배치되고 표지를 끌어 자리를 바꿀 수 있습니다.</p>
+  <p class="sub">검색해서 넣고 목록에서 빼세요. 콜라주의 표지를 끌면 자리가 바뀌고, 그냥 누르면 다른 표지로 바꿀 수 있습니다.</p>
 
   <div class="pickhead">
     <h2>콜라주에 넣을 영화</h2>
@@ -4466,6 +4488,8 @@ window.addEventListener("message", function (e) {
   </div>
   <div id="hits"></div>
   <ul class="pool" id="pool"></ul>
+
+  <div id="pickAnchor"></div>
 
   <div class="cols">
     <div class="stagebox"><canvas id="cv" width="1500" height="1000"></canvas></div>
@@ -4845,6 +4869,14 @@ window.addEventListener("message", function (e) {
     var from = dragN, to = dropN;
     dragN = -1; dropN = -1;
     cv.style.cursor = "grab";
+
+    /* 끌지 않고 그 자리에서 뗐으면 표지 고르기로 봅니다. */
+    if (to === from) {
+      var list0 = chosen().slice(0, capacity());
+      var f0 = list0[from];
+      if (f0) { openPoster(f0, document.getElementById("pickAnchor")); return; }
+    }
+
     if (to >= 0 && to !== from){
       var list = chosen().slice(0, capacity());
       var a = list[from], b = list[to];
@@ -4929,6 +4961,60 @@ window.addEventListener("message", function (e) {
     renderPool(); render();
     say("콜라주를 비웠습니다.");
   });
+
+  /* 표지 고르기 — TMDB 는 같은 영화의 포스터를 여러 장 갖고 있습니다. */
+  /* 콜라주에 들어간 작품의 표지를 줄지어 보여줍니다. 누르면 다른 표지로 바꿉니다. */
+  function renderStrip() {
+    var host = document.getElementById("pstrip");
+    var head = document.getElementById("pstitle");
+    if (!host) return;
+    var list = chosen();
+    head.hidden = !list.length;
+    host.innerHTML = list.map(function (f) {
+      var md = MED(f);
+      var u = md && md.poster;
+      return '<button class="pth" data-pst="' + f.id + '" title="' + f.ko + ' 표지 바꾸기">' +
+        (u ? '<img src="' + u + '" alt="">' : '<span class="noimg">' + f.ko + "</span>") +
+        '<span class="pcap">' + f.ko + "</span></button>";
+    }).join("");
+
+    host.onclick = function (e) {
+      var b = e.target.closest && e.target.closest("[data-pst]");
+      if (!b) return;
+      var f = byId(b.dataset.pst);
+      if (f) openPoster(f, host);
+    };
+  }
+
+  function openPoster(f, li) {
+    var old = document.getElementById("pbox");
+    if (old) { var was = old.dataset.of; old.remove(); if (was === f.id) return; }
+
+    var box = document.createElement("div");
+    box.id = "pbox"; box.dataset.of = f.id;
+    box.innerHTML = '<p class="pnote">표지를 찾는 중…</p>';
+    (li || document.getElementById("pickAnchor")).appendChild(box);
+
+    APP.posters(f.id).then(function (list) {
+      if (!list.length) { box.innerHTML = '<p class="pnote">다른 표지가 없습니다.</p>'; return; }
+      box.innerHTML = '<p class="pnote"><b>' + f.ko + '</b> · ' + list.length + '장 중에서 고르세요.</p>' +
+        '<div class="pgrid2">' + list.map(function (x) {
+          return '<img src="' + x.thumb + '" alt="표지 후보" data-full="' + x.full + '">';
+        }).join("") + "</div>";
+      Array.prototype.forEach.call(box.querySelectorAll("[data-full]"), function (im) {
+        im.addEventListener("click", function () {
+          APP.setPoster(f.id, im.dataset.full);
+          preloadPosters([im.dataset.full]).then(function () {
+            box.remove();
+            renderPool(); render();
+            say(f.ko + " 표지를 바꿨습니다.");
+          });
+        });
+      });
+    }).catch(function (e) {
+      box.innerHTML = '<p class="pnote">' + e.message + "</p>";
+    });
+  }
 
   // ---------- 콜라주 렌더 ----------
   function render(){
@@ -5173,10 +5259,8 @@ window.addEventListener("message", function (e) {
       });
     } catch (e) {}
 
-    var rated = FILMS.filter(function(f){ return APP.score(f.id) > 0; })
-      .sort(function(a,b){ return APP.score(b.id) - APP.score(a.id); });
-    var rest = FILMS.filter(function(f){ return !(APP.score(f.id) > 0); });
-    var pick = rated.concat(rest).slice(0, cap);
+    /* 담은 차례대로 채웁니다. 먼저 넣은 것이 첫 자리입니다. */
+    var pick = order.map(byId).filter(Boolean).slice(0, cap);
 
     ON = {};
     pick.forEach(function(f){ ON[f.id] = true; });
@@ -5189,7 +5273,7 @@ window.addEventListener("message", function (e) {
       renderPool(); render();
     });
     say(pick.length + "편을 자동으로 배치했습니다." +
-        (rated.length ? " 별점 매긴 " + Math.min(rated.length, cap) + "편이 앞에 옵니다." : ""));
+        " 담은 차례대로 놓았습니다.");
   });
 
   document.getElementById("byrank").addEventListener("click", function(){
