@@ -6505,7 +6505,342 @@ window.addEventListener("message", function (e) {
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+
+  /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
+     따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
+  :root{
+    --room:#121210; --panel:#1B1B18; --panel2:#232320; --edge:#32322D;
+    --paper:#F4F2E7; --mut:#8C8B7E; --dim:#6A6A5F;
+    --lamp:#E3B168; --lamp-deep:#B07B32;
+    --sleeve:#F4F2E7; --sleeve-2:#E7E4D6; --ink:#17170F; --ink-soft:#65645A;
+    --rule:#CFCCBB;
+  }
+  body{background:transparent}
+
+  /* ── 라이트 모드 ──
+     화면마다 흩어진 색을 하나하나 고치는 대신, 변수 값을 뒤집습니다.
+     변수로 안 쓰인 어두운 색만 아래에서 따로 덧칠합니다. */
+  html[data-mode="light"]{
+    --room:transparent; --panel:#FFFDF4; --panel2:#F2EFE2; --edge:#DDD9C8;
+    --paper:#22221C; --mut:#6E6C60; --dim:#8E8C7E;
+    --lamp:#8A5A20; --lamp-deep:#6E4416;
+    --sleeve:#FFFDF4; --sleeve-2:#F2EFE2; --ink:#22221C; --ink-soft:#6E6C60;
+    --rule:#DDD9C8;
+  }
+  html[data-mode="light"] input,
+  html[data-mode="light"] textarea{background:#FFFDF4;color:#22221C;border-color:#DDD9C8}
+  html[data-mode="light"] input::placeholder,
+  html[data-mode="light"] textarea::placeholder{color:#9A9788}
+  html[data-mode="light"] button{background:#F2EFE2;border-color:#DDD9C8;color:#3A382E}
+  html[data-mode="light"] button:hover{background:#E7E4D3;color:#22221C}
+  html[data-mode="light"] button[aria-pressed="true"],
+  html[data-mode="light"] .primary,
+  html[data-mode="light"] .go{background:#22221C;border-color:#22221C;color:#F4F2E7}
+  html[data-mode="light"] .board,
+  html[data-mode="light"] .stagebox{background:#FFFDF4;border-color:#DDD9C8}
+  html[data-mode="light"] .hr{border-top-color:#E7E4D3}
+  html[data-mode="light"] .lane{border-left-color:#E7E4D3}
+  html[data-mode="light"] .s-free{background:#EDE9D8;color:#4A483C}
+  html[data-mode="light"] .s-dim{background:#F2EFE2;color:#9A9788}
+  html[data-mode="light"] .cb{background:#EDE9D8;color:#3A382E}
+  html[data-mode="light"] .cnote{color:#8E8C7E}
+  html[data-mode="light"] .emptybox{border-color:#DDD9C8}
+  html[data-mode="light"] .emptybox>b:first-child{color:#22221C}
+  html[data-mode="light"] .zoomwrap{background:rgba(240,238,226,.95)}
+  html[data-mode="light"] .zoomclose{color:#6E6C60}
+
+  .zoomwrap{position:absolute;z-index:9999;background:rgba(10,8,6,.94);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    gap:14px;padding:26px;cursor:zoom-out}
+  .zoomwrap img{max-width:100%;max-height:82vh;border-radius:3px;
+    box-shadow:0 24px 60px rgba(0,0,0,.7)}
+  .zoomclose{font-size:12px;color:#8E8271}
+  .ytout{position:absolute;right:8px;bottom:7px;z-index:3;font-size:10.5px;
+    color:#EFE9DD;background:rgba(0,0,0,.62);padding:3px 9px;border-radius:3px;
+    text-decoration:none}
+  .ytout:hover{background:rgba(0,0,0,.85)}
+  .tw{cursor:pointer}
+  .crit{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:9px 0 0;min-height:22px}
+  .cb{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;
+    padding:2px 9px 2px 3px;border-radius:999px;background:#26261F;color:#C6C5B6}
+  .cb b{display:inline-flex;align-items:center;justify-content:center;
+    min-width:26px;height:18px;border-radius:999px;font-size:11px;font-weight:700;color:#12120E}
+  .cb.g b{background:#6FB84A} .cb.y b{background:#E0C452} .cb.r b{background:#D4604E}
+  .cb.fresh b{background:#E0472F;color:#FFF} .cb.rotten b{background:#4E9A4E;color:#FFF}
+  .cnote{font-size:10.5px;color:#6A6A5F}
+  .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
+    line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
+    color:#EFE9DD;font-weight:700;margin-bottom:6px}
+  .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
+    background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
 </style>
+
+<script>
+/* 부모 창의 공유 저장소에 연결합니다. 단독으로 열었을 때도 동작하도록 대비합니다. */
+var APP = (function () {
+  try { if (window.parent && window.parent !== window && window.parent.APP) return window.parent.APP; }
+  catch (e) {}
+  var recs = {}, subs = [];
+  return {
+    records: recs,
+    rec: function (id) {
+      return recs[id] || (recs[id] = { score: 0, status: "", comment: "", spoiler: false, at: "" });
+    },
+    score: function (id) { return recs[id] ? (recs[id].score || 0) : 0; },
+    setScore: function (id, v) { this.rec(id).score = v || 0; this.notify(); },
+    library: [],
+    clearLibrary: function () { this.library = []; this.notify(); return 0; },
+    canSearch: function () { return false; },
+    searchMovies: function () { return Promise.reject(new Error("연결 없음")); },
+    addByTmdbId: function () { return Promise.reject(new Error("연결 없음")); },
+    directorFilms: function () { return Promise.reject(new Error("연결 없음")); },
+    similarTo: function () { return Promise.reject(new Error("연결 없음")); },
+    crit: {},
+    critOf: function () { return null; },
+    critLoad: function () { return Promise.reject(new Error("연결 없음")); },
+    findByTmdb: function () { return null; },
+    dedupe: function () { return 0; },
+    removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
+    savedCSV: { cinema: "", schedule: "" },
+    setCSV: function () {},
+    kobisKey: "",
+    setKobis: function () {},
+    preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
+    popular: function () { return Promise.reject(new Error("연결 없음")); },
+    director: function () { return Promise.resolve(""); },
+    releasedIn: function () { return Promise.reject(new Error("연결 없음")); },
+    keysBaked: false,
+    subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
+    notify: function (from) {
+      subs.forEach(function (s) {
+        if (s.name === from) return;
+        try { s.fn(); } catch (e) {}
+      });
+    }
+  };
+})();
+
+/* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
+var FILM_BY_ID = {};
+FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
+function film(id) { return FILM_BY_ID[id]; }
+
+var EMPTY_HTML = "<div class='emptybox'><b>서재가 비어 있습니다</b>위쪽 <b>영화 추가</b>에서 제목을 검색해 담아보세요.<br>TMDB 에 등록된 거의 모든 영화를 넣을 수 있습니다.</div>";
+
+/* 메타스코어 · 로튼토마토 배지.
+   메타스코어는 61 이상 초록 · 40~60 노랑 · 그 아래 빨강 (메타크리틱 기준).
+   로튼토마토는 60% 이상이 신선(빨강 토마토) 입니다. */
+function critHTML(f) {
+  var c = APP.critOf(f.id);
+  if (!c) return '<div class="crit" data-crit="' + f.id + '"></div>';
+  var out = [];
+  if (c.meta !== null && c.meta !== undefined) {
+    var mc = c.meta >= 61 ? "g" : (c.meta >= 40 ? "y" : "r");
+    out.push('<span class="cb ' + mc + '"><b>' + c.meta + '</b>메타스코어</span>');
+  }
+  if (c.rt !== null && c.rt !== undefined) {
+    out.push('<span class="cb ' + (c.rt >= 60 ? "fresh" : "rotten") + '"><b>' +
+             c.rt + '%</b>' + (c.rt >= 60 ? "신선" : "썩음") + '</span>');
+  }
+  if (!out.length) out.push('<span class="cnote">평론 점수 없음</span>');
+  return '<div class="crit">' + out.join("") + "</div>";
+}
+
+/* 아직 안 받아온 자리를 채웁니다. 꺼낼 때 그 작품만 한 번 요청합니다. */
+function critFill(root, redraw) {
+  var slots = (root || document).querySelectorAll("[data-crit]");
+  Array.prototype.forEach.call(slots, function (el) {
+    var id = el.getAttribute("data-crit");
+    el.removeAttribute("data-crit");
+    el.innerHTML = '<span class="cnote">평론 점수 불러오는 중…</span>';
+    APP.critLoad(id).then(function () {
+      if (typeof redraw === "function") redraw();
+    }).catch(function (e) {
+      el.innerHTML = '<span class="cnote">' + e.message + "</span>";
+    });
+  });
+}
+
+/* 예고편 · 스틸컷: TMDB 에서 받아온 것이 있으면 실물로, 없으면 자리 표시로 */
+function MED(f) {
+  try { return (APP.media || {})[f.id] || null; } catch (e) { return null; }
+}
+function canEmbed() {
+  /* 유튜브는 페이지 출처를 확인할 수 없으면 "동영상 플레이어 구성 오류 153" 을 냅니다.
+     내려받은 파일을 그냥 열면(file://) 출처가 없어 어떤 방법으로도 재생되지 않습니다.
+     주소가 http/https 일 때만 그 자리 재생을 시도합니다. */
+  try {
+    var p = (window.top && window.top.location && window.top.location.protocol) || location.protocol;
+    return p === "http:" || p === "https:";
+  } catch (e) { return location.protocol === "http:" || location.protocol === "https:"; }
+}
+
+function trailerHTML(f, cls) {
+  var md = MED(f);
+  var tag = (cls === "trailer") ? "tt" : "trailer-tag";
+  if (md && md.trailer) {
+    var thumb = (md.stills && md.stills[0]) || md.poster || "";
+    var embed = canEmbed();
+    return '<div class="' + cls + ' tw" data-key="' + md.trailer + '" data-embed="' + embed + '" ' +
+      'role="button" tabindex="0" aria-label="' + f.ko + ' 예고편" style="background:#000">' +
+      (thumb ? '<img src="' + thumb + '" alt="" style="position:absolute;inset:0;' +
+               'width:100%;height:100%;object-fit:cover;opacity:.5">' : "") +
+      '<span class="play"></span>' +
+      '<span class="' + tag + '">' +
+        (embed ? "눌러서 재생" : "눌러서 유튜브에서 보기") + "</span>" +
+      '<a class="ytout" href="https://www.youtube.com/watch?v=' + md.trailer +
+        '" target="_blank" rel="noopener">유튜브</a>' +
+      (embed ? "" : '<span class="whyout">파일을 직접 열면 유튜브가 재생을 막습니다</span>') +
+      "</div>";
+  }
+  return '<div class="' + cls + '" role="button" tabindex="0" aria-label="예고편 자리">' +
+    '<span class="glow" style="background:radial-gradient(circle at 50% 50%,' +
+      f.fg + '55,' + f.bg + ' 70%)"></span><span class="play"></span>' +
+    '<span class="' + (cls === "trailer" ? "tt" : "trailer-tag") + '">' +
+    (md ? "예고편 없음" : "예고편 자리 — 위에서 TMDB 를 연결하세요") + '</span></div>';
+}
+function stillsHTML(f, n) {
+  var md = MED(f);
+  if (md && md.stills && md.stills.length) {
+    return md.stills.slice(0, n).map(function (u) {
+      return '<div data-zoom="' + u + '" role="button" tabindex="0" aria-label="스틸컷 확대" ' +
+             'style="background-image:url(' + u + ');background-size:cover;' +
+             'background-position:center;cursor:zoom-in"></div>';
+    }).join("");
+  }
+  return f.stills.slice(0, n).map(function (c) {
+    return '<div style="background:' + c + '"></div>';
+  }).join("");
+}
+
+/* 눌렀을 때의 동작을 문서 하나에 몰아 둡니다. 모듈마다 따로 붙이지 않아도 됩니다. */
+document.addEventListener("click", function (e) {
+  var t = e.target;
+
+  var out = t.closest && t.closest(".ytout");
+  if (out) return;                                  // 유튜브 링크는 그대로 열리게
+
+  var tw = t.closest && t.closest(".tw");
+  if (tw && tw.dataset.key) {
+    if (tw.dataset.embed !== "true") {
+      window.open("https://www.youtube.com/watch?v=" + tw.dataset.key, "_blank", "noopener");
+      return;
+    }
+    tw.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + tw.dataset.key +
+      '?autoplay=1&rel=0" title="예고편" allowfullscreen allow="autoplay; encrypted-media" ' +
+      'style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>' +
+      '<a class="ytout" href="https://www.youtube.com/watch?v=' + tw.dataset.key +
+      '" target="_blank" rel="noopener">유튜브</a>';
+    tw.classList.remove("tw");
+    return;
+  }
+
+  var zm = t.closest && t.closest("[data-zoom]");
+  if (zm) { openZoom(zm.getAttribute("data-zoom")); return; }
+});
+
+/* 스틸컷 확대 */
+function openZoom(src) {
+  var o = document.createElement("div");
+  o.className = "zoomwrap";
+  /* iframe 안에서는 fixed 가 화면 기준이 아니라 iframe 상자 기준입니다.
+     그래서 바깥 스크롤 위치를 받아 "지금 눈에 보이는 자리" 에 놓습니다. */
+  var vh = (OUTER && OUTER.vh) || window.innerHeight || 700;
+  var top = Math.max(0, (OUTER && OUTER.top) || 0);
+  o.style.position = "absolute";
+  o.style.top = top + "px";
+  o.style.left = "0";
+  o.style.right = "0";
+  o.style.height = vh + "px";
+  o.innerHTML = '<img src="' + src + '" alt="스틸컷 확대">' +
+                '<span class="zoomclose">닫기 · 아무 곳이나 누르세요</span>';
+  o.addEventListener("click", function () { o.remove(); });
+  document.addEventListener("keydown", function esc(ev) {
+    if (ev.key === "Escape") { o.remove(); document.removeEventListener("keydown", esc); }
+  });
+  document.body.appendChild(o);
+}
+
+var MODKEY = "collection";
+
+/* 화면 안쪽에서 바깥 페이지를 특정 위치로 스크롤시킵니다.
+   iframe 자체에는 스크롤이 없으므로 바깥에 부탁해야 합니다. */
+function askDownload(name, blob) {
+  try { parent.postMessage({ tag: "proto-download", name: name, blob: blob }, "*"); return true; }
+  catch (e) { return false; }
+}
+function askOpen(blob) {
+  try { parent.postMessage({ tag: "proto-open", blob: blob }, "*"); return true; }
+  catch (e) { return false; }
+}
+
+function askCapture(el, name, onResult) {
+  try {
+    var r = el.getBoundingClientRect();
+    var once = function (e) {
+      if (!e.data || e.data.tag !== "proto-capture-result") return;
+      window.removeEventListener("message", once);
+      onResult(e.data.ok, e.data.msg);
+    };
+    window.addEventListener("message", once);
+    parent.postMessage({
+      tag: "proto-capture",
+      name: name,
+      rect: { x: r.left, y: r.top, w: r.width, h: r.height }
+    }, "*");
+    return true;
+  } catch (e) { return false; }
+}
+
+function askScroll(y) {
+  try { parent.postMessage({ tag: "proto-scrollto", y: y }, "*"); } catch (e) {}
+}
+
+/* 바깥 스크롤 위치. 진열장 정보 패널이 이 값을 보고 따라 내려갑니다. */
+var OUTER = { top: 0, vh: 800 };
+var scrollSubs = [];
+function onOuterScroll(fn) { scrollSubs.push(fn); }
+window.addEventListener("message", function (e) {
+  var d = e.data;
+  if (d && d.tag === "proto-mode") {
+    document.documentElement.setAttribute("data-mode", d.mode || "dark");
+    return;
+  }
+  if (!d || d.tag !== "proto-scroll") return;
+  OUTER.top = d.top; OUTER.vh = d.vh;
+  scrollSubs.forEach(function (f) { try { f(OUTER); } catch (x) {} });
+});
+
+/* 내용 높이를 부모에게 알려, 안쪽에 또 스크롤바가 생기지 않게 합니다.
+   postMessage 는 file:// 로 열어도 막히지 않습니다. */
+(function () {
+  var KEY = MODKEY, last = 0;
+  function report() {
+    try {
+      /* body.scrollHeight 를 재면 안 됩니다. body 는 iframe 높이보다 작아질 수 없어서
+         부모가 iframe 을 키울 때마다 측정값도 같이 커지는 되먹임이 생깁니다.
+         내용이 담긴 .wrap 만 재면 iframe 높이와 무관한 값이 나옵니다. */
+      /* 진열장은 최상위 컨테이너 이름이 .room 입니다.
+         .wrap 만 찾으면 못 찾아 높이가 늘어나지 않고 화면이 잘립니다. */
+      var el = document.querySelector(".wrap, .room") || document.body.firstElementChild;
+      var h = el ? Math.ceil(el.offsetTop + el.offsetHeight + 24)
+                 : document.documentElement.scrollHeight;
+      if (Math.abs(h - last) < 8) return;
+      last = h;
+      parent.postMessage({ tag: "proto-height", k: KEY, h: h }, "*");
+    } catch (e) {}
+  }
+  window.addEventListener("load", report);
+  setInterval(report, 350);
+})();
+<\/script>
 <script>
 /* 4대 영화제 수상작 — 2000년 이후
    a: 아카데미 작품상 (시상식 연도)
@@ -7105,7 +7440,7 @@ window.addEventListener("message", function (e) {
     <div>
       <ul class="grid" id="grid"></ul>
     </div>
-    <div class="side"><div id="detail"><div class="empty">포스터에 커서를 올리거나<br>눌러보세요</div></div></div>
+    <div class="side"><div id="detail"><div class="empty">포스터를 누르면<br>여기에 정보가 나옵니다</div></div></div>
   </div>
 
   <p class="note">
@@ -7251,19 +7586,7 @@ window.addEventListener("message", function (e) {
       showInfo(all[parseInt(b.dataset.r, 10)], true);
     };
 
-    /* 커서를 올리면 아래 정보 창이 그 작품으로 바뀝니다.
-       스쳐 지나갈 때마다 요청하지 않도록 잠깐 머문 뒤에 부릅니다. */
-    var hoverT = null, hoverId = null;
-    $("grid").onmouseover = function (e) {
-      var b = e.target.closest && e.target.closest("[data-r]");
-      if (!b || b.dataset.r === hoverId) return;
-      hoverId = b.dataset.r;
-      clearTimeout(hoverT);
-      hoverT = setTimeout(function () {
-        showInfo(all[parseInt(b.dataset.r, 10)], false);
-      }, 260);
-    };
-    $("grid").onmouseleave = function () { clearTimeout(hoverT); hoverId = null; };
+
 
     loadPosters(all);
   }
@@ -7428,27 +7751,19 @@ window.addEventListener("message", function (e) {
 
   try { APP.subscribe("collection", function () { renderTabs(); renderGrid(); }); } catch (e) {}
 
-  /* 이 화면은 iframe 안이라 자체 스크롤이 없습니다.
-     그래서 CSS 붙임(sticky)이 작동하지 않습니다.
+  /* 이 화면은 iframe 안이라 자체 스크롤이 없어 CSS 붙임이 작동하지 않습니다.
      바깥 창이 알려주는 스크롤 위치를 받아 옆 칸을 직접 내려 줍니다. */
   (function () {
     if (typeof onOuterScroll !== "function") return;
     var side = document.querySelector(".side");
     var stage = document.querySelector(".stage");
     if (!side || !stage) return;
-
     function place() {
-      if (window.matchMedia("(max-width: 900px)").matches) {
-        side.style.transform = "";
-        return;
-      }
+      if (window.matchMedia("(max-width: 900px)").matches) { side.style.transform = ""; return; }
       var box = side.firstElementChild;
       var h = (box && box.offsetHeight) || 0;
-      var top = (OUTER.top || 0);
       var room = Math.max(0, stage.offsetHeight - h - 8);
-      /* 바깥이 보내는 top 은 "화면 위로 지나간 만큼" 이라 그대로 더하면 됩니다.
-         칸 밖으로 벗어나지 않게 위아래로 묶어 둡니다. */
-      var y = Math.max(0, Math.min(top + 12, room));
+      var y = Math.max(0, Math.min((OUTER.top || 0) + 12, room));
       side.style.transform = "translateY(" + y + "px)";
     }
     onOuterScroll(place);
@@ -7908,7 +8223,7 @@ window.addEventListener("message", function (e) {
       <ul class="grid" id="grid"></ul>
       <button class="more" id="more" hidden>더 보기</button>
     </div>
-    <div class="side"><div id="detail"><div class="empty">포스터에 커서를 올리거나<br>눌러보세요</div></div></div>
+    <div class="side"><div id="detail"><div class="empty">포스터를 누르면<br>여기에 정보가 나옵니다</div></div></div>
   </div>
 
   <p class="note">
@@ -8033,19 +8348,6 @@ window.addEventListener("message", function (e) {
       if (!b) return;
       showInfo(rows[parseInt(b.dataset.i, 10)]);
     };
-
-    /* 커서를 올리면 옆 칸이 그 작품으로 바뀝니다. 스쳐 지나가면 요청하지 않습니다. */
-    var hoverT = null, hoverId = null;
-    $("grid").onmouseover = function (e) {
-      var b = e.target.closest && e.target.closest("[data-i]");
-      if (!b || b.dataset.i === hoverId) return;
-      hoverId = b.dataset.i;
-      clearTimeout(hoverT);
-      hoverT = setTimeout(function () {
-        showInfo(rows[parseInt(b.dataset.i, 10)]);
-      }, 260);
-    };
-    $("grid").onmouseleave = function () { clearTimeout(hoverT); hoverId = null; };
   }
 
   function showInfo(r) {
@@ -8606,7 +8908,7 @@ window.addEventListener("message", function (e) {
   <div class="bar" id="tabs"></div>
   <div class="stage">
     <div><div id="list"></div></div>
-    <div class="side"><div id="detail"><div class="empty">제목에 커서를 올리거나<br>눌러보세요</div></div></div>
+    <div class="side"><div id="detail"><div class="empty">제목을 누르면<br>여기에 정보가 나옵니다</div></div></div>
   </div>
 
   <p class="note">
@@ -8698,19 +9000,6 @@ window.addEventListener("message", function (e) {
             "</div>";
         }).join("") + "</div>";
     }).join("");
-
-    /* 커서를 올리면 옆 칸이 그 작품으로 바뀝니다. */
-    var hoverT = null, hoverId = null;
-    $("list").onmouseover = function (e) {
-      var t = e.target.closest && e.target.closest("[data-info]");
-      if (!t || t.dataset.info === hoverId) return;
-      hoverId = t.dataset.info;
-      clearTimeout(hoverT);
-      hoverT = setTimeout(function () {
-        showInfo(BIFF[parseInt(t.dataset.info, 10)]);
-      }, 260);
-    };
-    $("list").onmouseleave = function () { clearTimeout(hoverT); hoverId = null; };
 
     $("list").onclick = function (e) {
       var t = e.target.closest && e.target.closest("[data-info]");
@@ -13340,7 +13629,7 @@ function film(id) { return FILM_BY_ID[id]; }
   })();
 
   /* 어느 판을 보고 있는지 알 수 있게 빌드 시각을 남깁니다. */
-  var BUILD = "0906-0949";
+  var BUILD = "0906-0955";
   (function(){ var e=document.getElementById("buildStamp"); if(e) e.textContent = "build " + BUILD; })();
 
   var KEYS = ["rate", "shelf", "record", "collage", "taste", "collection", "calendar", "biff", "cinema", "schedule"];
