@@ -569,6 +569,26 @@
     padding: 0 10px 18px;
   }
   /* 선반 널 */
+  .welcome{
+    grid-column:1/-1;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;gap:10px;
+    min-height:280px;padding:38px 26px;list-style:none;
+    background:rgba(14,11,7,.62);border-radius:6px;margin:10px}
+  .welcome>b{font-size:20px;font-weight:700;color:#F2EAD9;line-height:1.4}
+  .welcome>span{font-size:13.5px;color:#C3B69C;line-height:1.85;max-width:460px}
+  .welcome .wsteps{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;
+    max-width:460px;margin-top:2px}
+  .welcome .wsteps i{font-style:normal;font-size:11px;color:#C9BDA8;
+    background:rgba(20,16,10,.7);border:1px solid #4A3B27;
+    border-radius:999px;padding:4px 11px;line-height:1.5}
+  .welcome .wgo{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .welcome .wbtn{font-family:var(--sans);font-size:12.5px;cursor:pointer;min-height:38px;
+    border-radius:999px;padding:9px 18px;border:1px solid var(--lamp);
+    background:var(--lamp);color:#2A1C08;font-weight:700}
+  .welcome .wbtn.ghost{background:rgba(20,16,10,.6);color:#C9BDA8;
+    border-color:#4A3B27;font-weight:400}
+  .welcome .wbtn:hover{filter:brightness(1.08)}
+
   .emptyrow{
     grid-column:1/-1; display:flex; align-items:center; justify-content:center;
     gap:16px; flex-wrap:wrap; text-align:center;
@@ -891,6 +911,43 @@
     * { transition: none !important; }
     .case.out { transform: translateY(-14px) scale(1.12); }
   }
+
+  /* ── 좁은 화면 가독성 ──
+     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
+     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
+  @media (max-width: 760px) {
+    body { font-size: 15px; }
+    button, input, textarea, select { font-size: 13px; }
+    button { min-height: 38px; }
+    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
+    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
+
+  /* ── 라이트 모드 ──
+     진열장은 색 이름 체계가 다른 화면과 다릅니다(--sleeve 가 글자색).
+     그대로 두면 밝은 배경에 흰 글씨가 되므로 여기서 따로 잡아 줍니다.
+     나무 선반과 케이스는 물건이라 그대로 둡니다. */
+  html[data-mode="light"] body { color: #22221C; }
+  html[data-mode="light"] h1 { color: #17140E; }
+  html[data-mode="light"] .sub { color: #6E6C60; }
+  html[data-mode="light"] .bar-label { color: #6E6C60; }
+  html[data-mode="light"] .count { color: #6E6C60; }
+  html[data-mode="light"] .count b { color: #17140E; }
+  html[data-mode="light"] .bar button,
+  html[data-mode="light"] .more { background: #FFFDF4; border-color: #DDD9C8; color: #3A382E; }
+  html[data-mode="light"] .bar button:hover,
+  html[data-mode="light"] .more:hover { background: #EFEBDC; color: #17140E; }
+  html[data-mode="light"] .bar button[aria-pressed="true"] {
+    background: #22221C; border-color: #22221C; color: #F4F2E7; }
+  html[data-mode="light"] .warnbtn { background: #FBEDEB; border-color: #E0BDB8; color: #8A463E; }
+  html[data-mode="light"] .pager button { background: #FFFDF4; border-color: #DDD9C8; color: #3A382E; }
+  html[data-mode="light"] .pager .info { color: #6E6C60; }
+  html[data-mode="light"] .emptyrow b { color: #17140E; }
+  html[data-mode="light"] .emptyrow span { color: #6E6C60; }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
@@ -1234,17 +1291,19 @@ window.addEventListener("message", function (e) {
   </header>
 
   <div class="bar">
-    <span class="bar-label">정렬</span>
     <span class="bar-label">보기</span>
     <button data-view="face" aria-pressed="true" onclick="setView('face')">표지</button>
     <button data-view="spine" aria-pressed="false" onclick="setView('spine')">책등</button>
-    <span style="width:1px;height:20px;background:#3A2E20;margin:0 4px"></span>
-    <span class="bar-label">정렬</span>
-    <button data-sort="added" aria-pressed="true">담은 순</button>
-    <button data-sort="score" aria-pressed="false">내 별점순</button>
-    <button data-sort="title" aria-pressed="false">이름순</button>
-    <button data-sort="year"  aria-pressed="false">연도순</button>
-    <button data-sort="custom" aria-pressed="false" id="btn-custom">내 배치</button>
+    <button class="more" id="moreBtn" aria-expanded="false">정렬 · 필터</button>
+    <span class="fold" id="fold">
+      <span style="width:1px;height:20px;background:#3A2E20;margin:0 4px"></span>
+      <span class="bar-label">정렬</span>
+      <button data-sort="added" aria-pressed="true">담은 순</button>
+      <button data-sort="score" aria-pressed="false">내 별점순</button>
+      <button data-sort="title" aria-pressed="false">이름순</button>
+      <button data-sort="year"  aria-pressed="false">연도순</button>
+      <button data-sort="custom" aria-pressed="false" id="btn-custom">내 배치</button>
+    </span>
     <span style="width:1px;height:20px;background:#3A2E20;margin:0 4px"></span>
     <span class="bar-label">진열</span>
     <button data-filt="all" aria-pressed="true">전체</button>
@@ -1685,8 +1744,32 @@ window.addEventListener("message", function (e) {
 
     document.getElementById("n").textContent = all.length;
     if (!FILMS.length) {
-      shelves.innerHTML = '<li class="emptyrow"><b>서재가 비어 있습니다</b>' +
-        '<span>위쪽 <em>영화 추가</em> 에서 검색해 담아보세요</span></li>';
+      /* 처음 여는 사람은 빈 선반만 보고 무엇을 하는 곳인지 알 수 없습니다. */
+      shelves.innerHTML =
+        '<li class="welcome">' +
+          "<b>내가 본 영화를 모아두는 곳</b>" +
+          "<span>별점을 매기면 진열장에 꽂히고, 그 기록으로 콜라주 · 취향 분석 · " +
+          "관람 계획이 만들어집니다.</span>" +
+          '<span class="wsteps">' +
+            "<i>기록</i><i>진열장</i><i>콜라주</i><i>취향 분석</i>" +
+            "<i>컬렉션</i><i>개봉 달력</i><i>영화제</i>" +
+          "</span>" +
+          '<span class="wgo">' +
+            '<button class="wbtn" id="wseed">추천작 36편으로 시작하기</button>' +
+            '<button class="wbtn ghost" id="wsearch">직접 검색해서 담기</button>' +
+          "</span>" +
+        "</li>";
+
+      ["wseed", "wsearch"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("click", function () {
+          try {
+            var t = window.parent.document.getElementById(id === "wseed" ? "seed" : "openLib");
+            if (t) t.click();
+          } catch (e) {}
+        });
+      });
     } else if (filt === "seen" && !list.length) {
       shelves.innerHTML = '<li class="emptyrow"><b>본 작품이 없습니다</b>' +
         '<span>기록 탭에서 별점을 매기면 여기 진열됩니다</span></li>';
@@ -2006,6 +2089,16 @@ window.addEventListener("message", function (e) {
     say(view === "spine" ? "책등으로 꽂아 진열했습니다." : "표지가 보이게 진열했습니다.");
   };
 
+  (function () {
+    var mb = document.getElementById("moreBtn"), fd = document.getElementById("fold");
+    if (!mb || !fd) return;
+    mb.addEventListener("click", function () {
+      var on = fd.classList.toggle("on");
+      mb.setAttribute("aria-expanded", on ? "true" : "false");
+      mb.textContent = on ? "접기" : "정렬 · 필터";
+    });
+  })();
+
   /* 넣은 영화 비우기 — 실수로 누르는 일이 없게 두 번 눌러야 실행됩니다. */
   (function () {
     var btn = document.getElementById("reset"), armed = false, timer = null;
@@ -2239,6 +2332,21 @@ window.addEventListener("message", function (e) {
   .log button:hover{color:var(--lamp)}
   .empty{font-size:12.5px;color:var(--dim)}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* ── 좁은 화면 가독성 ──
+     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
+     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
+  @media (max-width: 760px) {
+    body { font-size: 15px; }
+    button, input, textarea, select { font-size: 13px; }
+    button { min-height: 38px; }
+    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
+    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
@@ -3290,6 +3398,21 @@ window.addEventListener("message", function (e) {
   .chip .rk{font-size:10px;color:var(--lamp);min-width:14px;text-align:center}
   .chip.tgt{outline:1px dashed var(--lamp);outline-offset:2px}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* ── 좁은 화면 가독성 ──
+     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
+     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
+  @media (max-width: 760px) {
+    body { font-size: 15px; }
+    button, input, textarea, select { font-size: 13px; }
+    button { min-height: 38px; }
+    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
+    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
@@ -4609,6 +4732,21 @@ window.addEventListener("message", function (e) {
   .legend b{font-weight:500}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
+  /* ── 좁은 화면 가독성 ──
+     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
+     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
+  @media (max-width: 760px) {
+    body { font-size: 15px; }
+    button, input, textarea, select { font-size: 13px; }
+    button { min-height: 38px; }
+    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
+    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
+
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
   :root{
@@ -5597,6 +5735,21 @@ window.addEventListener("message", function (e) {
   .note b{color:#A99B84;font-weight:500}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
+  /* ── 좁은 화면 가독성 ──
+     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
+     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
+  @media (max-width: 760px) {
+    body { font-size: 15px; }
+    button, input, textarea, select { font-size: 13px; }
+    button { min-height: 38px; }
+    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
+    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
+
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
   :root{
@@ -6429,6 +6582,21 @@ window.addEventListener("message", function (e) {
     padding-top:12px;border-top:1px solid #2A2A24}
   .note b{color:#A99B84;font-weight:500}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* ── 좁은 화면 가독성 ──
+     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
+     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
+  @media (max-width: 760px) {
+    body { font-size: 15px; }
+    button, input, textarea, select { font-size: 13px; }
+    button { min-height: 38px; }
+    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
+    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
@@ -7303,6 +7471,21 @@ window.addEventListener("message", function (e) {
   .empty{font-size:13px;color:var(--dim);padding:28px 0;text-align:center}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
+  /* ── 좁은 화면 가독성 ──
+     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
+     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
+  @media (max-width: 760px) {
+    body { font-size: 15px; }
+    button, input, textarea, select { font-size: 13px; }
+    button { min-height: 38px; }
+    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
+    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
+
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
   :root{
@@ -8141,6 +8324,24 @@ window.addEventListener("message", function (e) {
     border-radius:6px;color:var(--dim);font-size:13px;line-height:1.9}
   .loadwrap b{display:block;font-family:var(--serif);font-size:19px;color:var(--paper);
     font-weight:700;margin-bottom:4px}
+  .mlist{display:block}
+  .mnone{font-size:13px;color:var(--dim);padding:34px 0;text-align:center}
+  .mrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    padding:11px 12px;margin:0 0 6px;border-radius:6px;cursor:pointer;
+    background:#1A1710;border:1px solid var(--edge);font-family:var(--sans)}
+  .mrow.on{background:var(--lamp);border-color:var(--lamp)}
+  .mrow .mt{flex:none;width:44px;font-size:13px;font-weight:700;color:var(--lamp)}
+  .mrow.on .mt{color:#2A1C08}
+  .mrow .mm{flex:1;min-width:0}
+  .mrow .mm b{display:block;font-size:13.5px;font-weight:500;color:var(--paper);
+    line-height:1.35}
+  .mrow.on .mm b{color:#2A1C08}
+  .mrow .mv{display:block;font-size:11px;color:var(--dim);margin-top:2px;line-height:1.45}
+  .mrow.on .mv{color:rgba(42,28,8,.72)}
+  .mrow .mk{flex:none;font-size:11px;color:var(--dim)}
+  .mrow.on .mk{color:#2A1C08;font-weight:700}
+  .mgap{font-size:11px;color:var(--dim);padding:3px 0 6px 56px;line-height:1.5}
+  .mgap.bad{color:#D9A09E}
   .plan{list-style:none;padding:0;margin:0;font-size:12.5px}
   .plan li{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #2E251A}
   .plan li:last-child{border-bottom:0}
@@ -8158,6 +8359,21 @@ window.addEventListener("message", function (e) {
   .legend span{display:flex;align-items:center;gap:5px}
   .legend i{width:11px;height:11px;border-radius:2px;display:block}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* ── 좁은 화면 가독성 ──
+     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
+     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
+  @media (max-width: 760px) {
+    body { font-size: 15px; }
+    button, input, textarea, select { font-size: 13px; }
+    button { min-height: 38px; }
+    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
+    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
@@ -8876,6 +9092,7 @@ window.addEventListener("message", function (e) {
     var cur = $("csv").value.replace(/\s+$/, "");
     $("csv").value = cur + "\n" + rows.join("\n");
     boot($("csv").value);
+  window.addEventListener("resize", function(){ renderBoard(); });
     try { APP.setCSV(MODKEY, $("csv").value); } catch (e) {}
     $("pLog").innerHTML = "<b>" + rows.length + "회차</b>를 시간표에 넣었습니다.";
     say(rows.length + "회차를 시간표에 넣었습니다.");
@@ -9123,7 +9340,60 @@ window.addEventListener("message", function (e) {
     });
   }
 
+  /* 좁은 화면에서 표는 극장 수만큼 칸이 쪼개져 제목이 두 글자만 보입니다.
+     폰에서는 표를 버리고 시간순 목록으로 보여줍니다. */
+  function narrow(){
+    try { return window.matchMedia("(max-width: 760px)").matches; } catch (e) { return false; }
+  }
+
+  function renderList(){
+    var todays = S.filter(function(s){ return s.date === day; })
+                  .sort(function(a,b){ return a.start - b.start; });
+    var host = $("board");
+
+    if (!todays.length) {
+      host.innerHTML = '<p class="mnone">이 날 상영이 없습니다.</p>';
+      return;
+    }
+
+    var prev = null;
+    host.innerHTML = '<div class="mlist">' + todays.map(function(s){
+      var on = !!picked[s.id];
+      var gap = "";
+      if (prev && on) {
+        /* 앞서 담은 회차와의 간격이 이동시간보다 짧으면 갈 수 없습니다. */
+        var need = travel(prev.venue, s.venue) + BUF;
+        var have = s.start - endOf(prev);
+        if (have < need) {
+          gap = '<div class="mgap bad">앞 회차에서 ' + have + '분 뒤 — ' +
+                prev.venue + " → " + s.venue + " 이동에 " + need + "분 필요</div>";
+        } else if (prev.venue !== s.venue) {
+          gap = '<div class="mgap">이동 ' + travel(prev.venue, s.venue) + '분 · 여유 ' +
+                (have - need) + "분</div>";
+        }
+      }
+      if (on) prev = s;
+
+      return gap + '<button class="mrow' + (on ? " on" : "") + '" data-id="' + s.id + '">' +
+        '<span class="mt">' + hhmm(s.start) + "</span>" +
+        '<span class="mm"><b>' + s.title + "</b>" +
+        '<span class="mv">' + s.venue + " · " + s.runtime + "분 · ~" + hhmm(endOf(s)) +
+        " · 우선순위 " + s.priority + "</span></span>" +
+        '<span class="mk">' + (on ? "담김" : "담기") + "</span></button>";
+    }).join("") + "</div>";
+
+    host.onclick = function(e){
+      var b = e.target.closest && e.target.closest("[data-id]");
+      if (!b) return;
+      /* toggle 은 회차 객체를 받습니다. id 만 넘기면 아무 일도 일어나지 않습니다. */
+      var s = S.filter(function(x){ return String(x.id) === b.dataset.id; })[0];
+      if (s) toggle(s);
+    };
+  }
+
   function renderBoard(){
+    if (narrow()) return renderList();
+
     var todays = S.filter(function(s){ return s.date === day; });
     var venues = ORDER.filter(function(v){
       return todays.some(function(s){ return s.venue === v; });
@@ -9421,6 +9691,24 @@ window.addEventListener("message", function (e) {
   .paste textarea:focus{outline:none;border-color:var(--lamp-deep)}
   .paste #pOut{height:74px}
   .boardout{display:flex;align-items:center;gap:9px;margin:10px 0 0;flex-wrap:wrap}
+  .mlist{display:block}
+  .mnone{font-size:13px;color:var(--dim);padding:34px 0;text-align:center}
+  .mrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    padding:11px 12px;margin:0 0 6px;border-radius:6px;cursor:pointer;
+    background:#1A1710;border:1px solid var(--edge);font-family:var(--sans)}
+  .mrow.on{background:var(--lamp);border-color:var(--lamp)}
+  .mrow .mt{flex:none;width:44px;font-size:13px;font-weight:700;color:var(--lamp)}
+  .mrow.on .mt{color:#2A1C08}
+  .mrow .mm{flex:1;min-width:0}
+  .mrow .mm b{display:block;font-size:13.5px;font-weight:500;color:var(--paper);
+    line-height:1.35}
+  .mrow.on .mm b{color:#2A1C08}
+  .mrow .mv{display:block;font-size:11px;color:var(--dim);margin-top:2px;line-height:1.45}
+  .mrow.on .mv{color:rgba(42,28,8,.72)}
+  .mrow .mk{flex:none;font-size:11px;color:var(--dim)}
+  .mrow.on .mk{color:#2A1C08;font-weight:700}
+  .mgap{font-size:11px;color:var(--dim);padding:3px 0 6px 56px;line-height:1.5}
+  .mgap.bad{color:#D9A09E}
   .plan{list-style:none;padding:0;margin:0;font-size:12.5px}
   .plan li{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #2E251A}
   .plan li:last-child{border-bottom:0}
@@ -9438,6 +9726,21 @@ window.addEventListener("message", function (e) {
   .legend span{display:flex;align-items:center;gap:5px}
   .legend i{width:11px;height:11px;border-radius:2px;display:block}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* ── 좁은 화면 가독성 ──
+     PC 기준으로 잡은 10~11px 은 폰에서 읽기 힘듭니다.
+     본문은 12px 이상, 누르는 것은 최소 40px 높이로 올립니다. */
+  @media (max-width: 760px) {
+    body { font-size: 15px; }
+    button, input, textarea, select { font-size: 13px; }
+    button { min-height: 38px; }
+    .chipbtn, .tinyb { min-height: 34px; padding-left: 13px; padding-right: 13px; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .sub, .thin, .tnote, .note, .meta, .hint { font-size: 12.5px; line-height: 1.75; }
+    .row, .orow, .mrow, .dv, .wr, .qr { font-size: 13px; }
+  }
 
   /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
      따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
@@ -10131,6 +10434,7 @@ window.addEventListener("message", function (e) {
     var cur = $("csv").value.replace(/\s+$/, "");
     $("csv").value = cur + "\n" + rows.join("\n");
     boot($("csv").value);
+  window.addEventListener("resize", function(){ renderBoard(); });
     try { APP.setCSV(MODKEY, $("csv").value); } catch (e) {}
     $("pLog").innerHTML = "<b>" + rows.length + "회차</b>를 시간표에 넣었습니다.";
     say(rows.length + "회차를 시간표에 넣었습니다.");
@@ -10319,7 +10623,60 @@ window.addEventListener("message", function (e) {
     });
   }
 
+  /* 좁은 화면에서 표는 극장 수만큼 칸이 쪼개져 제목이 두 글자만 보입니다.
+     폰에서는 표를 버리고 시간순 목록으로 보여줍니다. */
+  function narrow(){
+    try { return window.matchMedia("(max-width: 760px)").matches; } catch (e) { return false; }
+  }
+
+  function renderList(){
+    var todays = S.filter(function(s){ return s.date === day; })
+                  .sort(function(a,b){ return a.start - b.start; });
+    var host = $("board");
+
+    if (!todays.length) {
+      host.innerHTML = '<p class="mnone">이 날 상영이 없습니다.</p>';
+      return;
+    }
+
+    var prev = null;
+    host.innerHTML = '<div class="mlist">' + todays.map(function(s){
+      var on = !!picked[s.id];
+      var gap = "";
+      if (prev && on) {
+        /* 앞서 담은 회차와의 간격이 이동시간보다 짧으면 갈 수 없습니다. */
+        var need = travel(prev.venue, s.venue) + BUF;
+        var have = s.start - endOf(prev);
+        if (have < need) {
+          gap = '<div class="mgap bad">앞 회차에서 ' + have + '분 뒤 — ' +
+                prev.venue + " → " + s.venue + " 이동에 " + need + "분 필요</div>";
+        } else if (prev.venue !== s.venue) {
+          gap = '<div class="mgap">이동 ' + travel(prev.venue, s.venue) + '분 · 여유 ' +
+                (have - need) + "분</div>";
+        }
+      }
+      if (on) prev = s;
+
+      return gap + '<button class="mrow' + (on ? " on" : "") + '" data-id="' + s.id + '">' +
+        '<span class="mt">' + hhmm(s.start) + "</span>" +
+        '<span class="mm"><b>' + s.title + "</b>" +
+        '<span class="mv">' + s.venue + " · " + s.runtime + "분 · ~" + hhmm(endOf(s)) +
+        " · 우선순위 " + s.priority + "</span></span>" +
+        '<span class="mk">' + (on ? "담김" : "담기") + "</span></button>";
+    }).join("") + "</div>";
+
+    host.onclick = function(e){
+      var b = e.target.closest && e.target.closest("[data-id]");
+      if (!b) return;
+      /* toggle 은 회차 객체를 받습니다. id 만 넘기면 아무 일도 일어나지 않습니다. */
+      var s = S.filter(function(x){ return String(x.id) === b.dataset.id; })[0];
+      if (s) toggle(s);
+    };
+  }
+
   function renderBoard(){
+    if (narrow()) return renderList();
+
     var todays = S.filter(function(s){ return s.date === day; });
     var venues = ORDER.filter(function(v){
       return todays.some(function(s){ return s.venue === v; });
