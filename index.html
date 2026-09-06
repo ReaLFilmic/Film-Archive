@@ -996,6 +996,7 @@ var APP = (function () {
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -2125,6 +2126,16 @@ window.addEventListener("message", function (e) {
   .wide{border-top:1px solid #332A1C}
   .wl{display:block;font-size:10.5px;color:var(--dim);padding:7px 10px 4px}
   .res .plus{margin-left:8px;font-size:10.5px;color:var(--lamp);flex:none}
+  #revbox{margin:16px 0 0}
+  .revhead{font-size:12px;color:var(--lamp);margin:0 0 8px;
+    padding-top:12px;border-top:1px solid #2A2A24}
+  .revhead span{color:var(--dim);font-size:10.5px;margin-left:5px}
+  .rev{padding:9px 0;border-bottom:1px solid #221F1A}
+  .rev:last-child{border-bottom:0}
+  .rev b{font-size:12px;font-weight:500;color:var(--paper)}
+  .rev .rs{font-size:10.5px;color:var(--lamp);margin-left:7px}
+  .rev .rd{font-size:10.5px;color:var(--dim);margin-left:7px}
+  .rev p{margin:4px 0 0;font-size:11.5px;line-height:1.75;color:#B5AC97}
   .loading{padding:46px 22px;text-align:center;border:1px dashed var(--edge);
     border-radius:6px;color:var(--dim);font-size:13px}
   .loading b{display:block;font-family:var(--serif);font-size:18px;color:var(--paper);
@@ -2333,6 +2344,7 @@ var APP = (function () {
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -2912,6 +2924,7 @@ window.addEventListener("message", function (e) {
           '</div>'+
           '<div style="margin-top:10px"><button class="primary" id="scm" disabled>저장</button></div>'+
           '<div id="cmview"></div>'+
+          '<div id="revbox"></div>'+
         '</div>'+
 
         '<div class="card">'+
@@ -2936,8 +2949,38 @@ window.addEventListener("message", function (e) {
     renderLogs();
   }
 
+  /* 다른 사람의 감상 — TMDB 에 올라온 것 중 100자가 넘는 것만. */
+  function loadReviews(f){
+    var box = document.getElementById("revbox");
+    if (!box || box.dataset.done || !f) return;
+    box.dataset.done = "1";
+    var tid = f.tmdbId || (APP.media[f.id] && APP.media[f.id].tmdbId);
+    if (!tid) return;
+    box.innerHTML = '<div class="revhead">다른 사람의 감상 <span>불러오는 중…</span></div>';
+    APP.reviews(tid, 30).then(function(list){
+      if (!list.length) {
+        box.innerHTML = '<div class="revhead">다른 사람의 감상 ' +
+          '<span>30자 넘는 글이 없습니다</span></div>';
+        return;
+      }
+      box.innerHTML = '<div class="revhead">다른 사람의 감상 <span>TMDB · ' +
+        list.length + '편</span></div>' +
+        list.map(function(r){
+          var t = r.text.length > 420 ? r.text.slice(0, 420) + "…" : r.text;
+          return '<div class="rev"><b>' + r.who + "</b>" +
+            (r.score ? '<span class="rs">★ ' + r.score + "/10</span>" : "") +
+            (r.at ? '<span class="rd">' + r.at + "</span>" : "") +
+            "<p>" + t + "</p></div>";
+        }).join("");
+    }).catch(function(e){
+      box.innerHTML = '<div class="revhead">다른 사람의 감상 <span>' +
+        (e && e.message ? e.message : "불러오지 못했습니다") + "</span></div>";
+    });
+  }
+
   function bindDetail(){
     critFill(document, renderDetail);
+    loadReviews(cur);
     bindStars();
     Array.prototype.forEach.call($("detail").querySelectorAll("[data-st]"), function(b){
       b.addEventListener("click", function(){
@@ -3352,6 +3395,7 @@ var APP = (function () {
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -4669,6 +4713,7 @@ var APP = (function () {
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -5787,6 +5832,7 @@ var APP = (function () {
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -6488,6 +6534,7 @@ var APP = (function () {
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -7364,6 +7411,7 @@ var APP = (function () {
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -8215,6 +8263,7 @@ var APP = (function () {
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -9494,6 +9543,7 @@ var APP = (function () {
     setKobis: function () {},
     preview: function () { return Promise.reject(new Error("연결 없음")); },
     searchPeople: function () { return Promise.resolve([]); },
+    reviews: function () { return Promise.resolve([]); },
     keysBaked: false,
     subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
     notify: function (from) {
@@ -11493,6 +11543,28 @@ function film(id) { return FILM_BY_ID[id]; }
       }
     } catch (e) {}
     APP.notify();
+  };
+
+  /* TMDB 에 올라온 다른 이용자의 리뷰. 영어권 글이 대부분이고 한국 영화는 거의 없습니다.
+     짧은 한 줄 평은 빼고 어느 정도 길이가 되는 것만 돌려줍니다. */
+  APP.reviews = function (tmdbId, minLen) {
+    var key = ($("key").value || "").replace(/\s+/g, "");
+    if (!tmdbId || key.length < 20) return Promise.resolve([]);
+    var lo = minLen || 30;
+    return retry(function () {
+      return tmdb("/movie/" + tmdbId + "/reviews", auth(key), "");
+    }, 2).then(function (d) {
+      return (d.results || []).map(function (r) {
+        return {
+          who: (r.author_details && r.author_details.username) || r.author || "익명",
+          score: (r.author_details && r.author_details.rating) || null,
+          at: String(r.created_at || "").slice(0, 10),
+          text: String(r.content || "").replace(/\s+/g, " ").trim()
+        };
+      }).filter(function (r) { return r.text.length >= lo; })
+        .sort(function (a, b) { return b.text.length - a.text.length; })
+        .slice(0, 5);
+    });
   };
 
   APP.clearLibrary = function () {
