@@ -272,6 +272,7 @@
     <button class="tab" data-k="record" data-desc="별점 · 코멘트 · 크레딧" aria-pressed="false">기록</button>
     <button class="tab" data-k="collage" data-desc="베스트 목록 이미지" aria-pressed="false">콜라주</button>
     <button class="tab" data-k="taste" data-desc="내 별점으로 만드는 통계" aria-pressed="false">취향 분석</button>
+    <button class="tab" data-k="collection" data-desc="4대 영화제 수상작" aria-pressed="false">컬렉션</button>
     <button class="tab" data-k="calendar" data-desc="1980년부터 월별 개봉작" aria-pressed="false">개봉 달력</button>
     <button class="tab" data-k="biff" data-desc="상영작 165편 · 10섹션" aria-pressed="false">부산국제영화제</button>
     <button class="tab" data-k="cinema" data-desc="붙여넣어 관람 계획" aria-pressed="false">극장 시간표</button>
@@ -410,7 +411,7 @@
 <title>진열장 — 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --room:      #1B1610;
@@ -427,7 +428,7 @@
     --ink:       #241D14;
     --ink-soft:  #6B6151;
     --rule:      #CFC5B2;
-    --serif: "Gowun Batang", Georgia, serif;
+    --serif: "Noto Sans KR", system-ui, sans-serif;
     --sans:  "Noto Sans KR", system-ui, sans-serif;
   }
 
@@ -955,7 +956,7 @@
   .cnote{font-size:10.5px;color:#6A6A5F}
   .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
     line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
-  .emptybox>b:first-child{display:block;font-family:"Gowun Batang",serif;font-size:17px;
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
@@ -1394,7 +1395,7 @@ window.addEventListener("message", function (e) {
              : 'rgba(0,0,0,0),rgba(0,0,0,.72)') + ')"></i>');
 
     var t = '<span style="position:absolute;left:8%;right:8%;bottom:8%;text-align:left;color:' + I + ';' +
-      'font-family:\'Gowun Batang\',Georgia,serif;font-weight:700;line-height:1.2;' +
+      'font-family:\'Noto Sans KR\',Georgia,serif;font-weight:700;line-height:1.2;' +
       'font-size:' + (opt.titleSize || "13.5px") + '">' + f.ko +
       '<span style="display:block;font-family:\'Noto Sans KR\',sans-serif;font-weight:400;' +
       'font-size:' + (opt.subSize || "8px") + ';letter-spacing:.07em;color:' + I2 +
@@ -1477,7 +1478,7 @@ window.addEventListener("message", function (e) {
 
     var pad = w * 0.08, maxW = w - pad * 2;
     var ts = Math.max(9, w * (opt.titleScale || 0.105));
-    ctx.font = "700 " + ts + "px 'Gowun Batang', Georgia, serif";
+    ctx.font = "700 " + ts + "px 'Noto Sans KR', system-ui, sans-serif";
     var lines = wrap(ctx, f.ko, maxW);
     if (lines.length > 3) lines = lines.slice(0, 3);
 
@@ -2095,13 +2096,13 @@ window.addEventListener("message", function (e) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>영화 기록 — 프로토타입</title>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --room:#1B1610; --panel:#241D14; --panel2:#2C2418; --edge:#3A2E20;
     --lamp:#E3B168; --lamp-deep:#B07B32; --cool:#7FA8C4;
     --paper:#EFE9DD; --mut:#8E8271; --dim:#6E6455;
-    --serif:"Gowun Batang",Georgia,serif; --sans:"Noto Sans KR",system-ui,sans-serif;
+    --serif:"Noto Sans KR",system-ui,sans-serif; --sans:"Noto Sans KR",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--room);color:var(--paper);font-family:var(--sans);font-size:14px;line-height:1.7}
@@ -2292,7 +2293,7 @@ window.addEventListener("message", function (e) {
   .cnote{font-size:10.5px;color:#6A6A5F}
   .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
     line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
-  .emptybox>b:first-child{display:block;font-family:"Gowun Batang",serif;font-size:17px;
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
@@ -2708,7 +2709,7 @@ window.addEventListener("message", function (e) {
              : 'rgba(0,0,0,0),rgba(0,0,0,.72)') + ')"></i>');
 
     var t = '<span style="position:absolute;left:8%;right:8%;bottom:8%;text-align:left;color:' + I + ';' +
-      'font-family:\'Gowun Batang\',Georgia,serif;font-weight:700;line-height:1.2;' +
+      'font-family:\'Noto Sans KR\',Georgia,serif;font-weight:700;line-height:1.2;' +
       'font-size:' + (opt.titleSize || "13.5px") + '">' + f.ko +
       '<span style="display:block;font-family:\'Noto Sans KR\',sans-serif;font-weight:400;' +
       'font-size:' + (opt.subSize || "8px") + ';letter-spacing:.07em;color:' + I2 +
@@ -2791,7 +2792,7 @@ window.addEventListener("message", function (e) {
 
     var pad = w * 0.08, maxW = w - pad * 2;
     var ts = Math.max(9, w * (opt.titleScale || 0.105));
-    ctx.font = "700 " + ts + "px 'Gowun Batang', Georgia, serif";
+    ctx.font = "700 " + ts + "px 'Noto Sans KR', system-ui, sans-serif";
     var lines = wrap(ctx, f.ko, maxW);
     if (lines.length > 3) lines = lines.slice(0, 3);
 
@@ -3161,14 +3162,14 @@ window.addEventListener("message", function (e) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>콜라주 생성기 — 프로토타입</title>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --room:#1B1610; --panel:#241D14; --edge:#3A2E20;
     --lamp:#E3B168; --lamp-deep:#B07B32;
     --paper:#EFE9DD; --ink:#241D14; --ink-soft:#6B6151;
     --mut:#8E8271; --dim:#6E6455;
-    --serif:"Gowun Batang",Georgia,serif; --sans:"Noto Sans KR",system-ui,sans-serif;
+    --serif:"Noto Sans KR",system-ui,sans-serif; --sans:"Noto Sans KR",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--room);color:var(--paper);font-family:var(--sans);font-size:14px;line-height:1.7}
@@ -3311,7 +3312,7 @@ window.addEventListener("message", function (e) {
   .cnote{font-size:10.5px;color:#6A6A5F}
   .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
     line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
-  .emptybox>b:first-child{display:block;font-family:"Gowun Batang",serif;font-size:17px;
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
@@ -3801,7 +3802,7 @@ window.addEventListener("message", function (e) {
              : 'rgba(0,0,0,0),rgba(0,0,0,.72)') + ')"></i>');
 
     var t = '<span style="position:absolute;left:8%;right:8%;bottom:8%;text-align:left;color:' + I + ';' +
-      'font-family:\'Gowun Batang\',Georgia,serif;font-weight:700;line-height:1.2;' +
+      'font-family:\'Noto Sans KR\',Georgia,serif;font-weight:700;line-height:1.2;' +
       'font-size:' + (opt.titleSize || "13.5px") + '">' + f.ko +
       '<span style="display:block;font-family:\'Noto Sans KR\',sans-serif;font-weight:400;' +
       'font-size:' + (opt.subSize || "8px") + ';letter-spacing:.07em;color:' + I2 +
@@ -3884,7 +3885,7 @@ window.addEventListener("message", function (e) {
 
     var pad = w * 0.08, maxW = w - pad * 2;
     var ts = Math.max(9, w * (opt.titleScale || 0.105));
-    ctx.font = "700 " + ts + "px 'Gowun Batang', Georgia, serif";
+    ctx.font = "700 " + ts + "px 'Noto Sans KR', system-ui, sans-serif";
     var lines = wrap(ctx, f.ko, maxW);
     if (lines.length > 3) lines = lines.slice(0, 3);
 
@@ -4247,7 +4248,12 @@ window.addEventListener("message", function (e) {
           : "아직 별점을 매긴 작품이 없어 순위순과 같습니다. 기록이나 취향 분석에서 매겨보세요.");
   });
 
-  APP.subscribe("collage", function(){ renderPool(); render(); });
+  APP.subscribe("collage", function(){
+    /* 진열장에서 표지를 바꾸면 주소가 달라집니다.
+       캔버스는 미리 받아둔 이미지를 쓰므로, 다시 받아야 반영됩니다. */
+    var urls = FILMS.map(function(f){ var m = MED(f); return m && m.poster; }).filter(Boolean);
+    preloadPosters(urls).then(function(){ renderPool(); render(); });
+  });
 
   var wideTimer = null;
   document.getElementById("find").addEventListener("input", function(){
@@ -4397,13 +4403,13 @@ window.addEventListener("message", function (e) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>취향 분석기 — 프로토타입</title>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --room:#1B1610; --panel:#241D14; --edge:#3A2E20;
     --lamp:#E3B168; --lamp-deep:#B07B32; --cool:#7FA8C4;
     --paper:#EFE9DD; --mut:#8E8271; --dim:#6E6455;
-    --serif:"Gowun Batang",Georgia,serif; --sans:"Noto Sans KR",system-ui,sans-serif;
+    --serif:"Noto Sans KR",system-ui,sans-serif; --sans:"Noto Sans KR",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--room);color:var(--paper);font-family:var(--sans);font-size:14px;line-height:1.7}
@@ -4507,6 +4513,24 @@ window.addEventListener("message", function (e) {
   .dv .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .dv .b{width:132px;height:8px;position:relative;background:#1C1710;border-radius:1px;flex:none}
   .dv .b i{position:absolute;top:0;height:8px;border-radius:1px}
+  .pt{cursor:pointer}
+  .pt:hover{color:var(--lamp);text-decoration:underline}
+  .tinfo{margin:8px 0;padding:13px;border-radius:6px;background:var(--panel);
+    border:1px solid var(--edge);display:flex;gap:14px;flex-wrap:wrap}
+  .tinfo img.p{width:96px;border-radius:3px;flex:none;display:block}
+  .tinfo .txt{flex:1;min-width:210px}
+  .tinfo h3{font-size:15.5px;margin:0 0 2px;font-weight:700}
+  .tinfo .meta{font-size:11.5px;color:var(--dim);margin:0 0 8px}
+  .tinfo .ov{font-size:11.5px;color:#B5AC97;line-height:1.65;margin:0 0 9px}
+  .tinfo table{border-collapse:collapse;font-size:11.5px;margin:0 0 8px}
+  .tinfo th{text-align:left;color:var(--dim);font-weight:400;padding:1px 12px 1px 0;width:44px}
+  .tinfo .sts{display:flex;gap:5px;flex-wrap:wrap;margin:0 0 8px}
+  .tinfo .sts i{width:100px;height:56px;border-radius:3px;background-size:cover;
+    background-position:center;display:block}
+  .tinfo a{font-size:11.5px;border-radius:999px;padding:5px 13px;border:1px solid var(--edge);
+    background:#2C2317;color:#C9BDA8;text-decoration:none}
+  .tinfo a:hover{background:var(--lamp);border-color:var(--lamp);color:#2A1C08}
+  .tinfo .load{font-size:12px;color:var(--dim)}
   .dv .n{width:42px;text-align:right;font-size:11.5px;flex:none}
   .dv .dvn{color:var(--dim);font-size:11px;width:96px;text-align:right;flex:none}
 
@@ -4605,7 +4629,7 @@ window.addEventListener("message", function (e) {
   .cnote{font-size:10.5px;color:#6A6A5F}
   .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
     line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
-  .emptybox>b:first-child{display:block;font-family:"Gowun Batang",serif;font-size:17px;
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
@@ -4945,7 +4969,7 @@ window.addEventListener("message", function (e) {
       return '<div class="row">'+
         '<span class="rk">'+f.rank+'</span>'+
         '<span class="sw" style="background:'+f.bg+'"></span>'+
-        '<span class="tl">'+f.ko+' <span class="yr">'+f.year+'</span></span>'+
+        '<span class="tl pt" data-info="'+f.id+'">'+f.ko+' <span class="yr">'+f.year+'</span></span>'+
         starsHTML(f)+
         '<span class="mine">'+(v?v.toFixed(1):"")+'</span>'+
       '</div>';
@@ -5049,6 +5073,52 @@ window.addEventListener("message", function (e) {
       .sort(function(a,b){ return b.s - a.s; }).slice(0, 6);
   }
 
+  /* 제목을 누르면 그 줄 아래에 정보를 펼칩니다. */
+  document.addEventListener("click", function(e){
+    var t = e.target.closest && e.target.closest("[data-info]");
+    if (!t) return;
+    var f = FILMS.filter(function(x){ return x.id === t.dataset.info; })[0];
+    if (!f) return;
+    e.preventDefault();
+
+    var row = t.parentElement;
+    var open = row.parentElement.querySelector(".tinfo");
+    if (open && open.dataset.for === f.id) { open.remove(); return; }
+    if (open) open.remove();
+
+    var box = document.createElement("div");
+    box.className = "tinfo";
+    box.dataset.for = f.id;
+    box.innerHTML = '<span class="load">' + f.ko + " 정보를 불러오는 중…</span>";
+    row.insertAdjacentElement("afterend", box);
+
+    var tid = f.tmdbId || (APP.media[f.id] && APP.media[f.id].tmdbId);
+    if (!tid) {
+      box.innerHTML = '<span class="load">TMDB 번호가 없습니다. 불러오기를 한 번 실행해보세요.</span>';
+      return;
+    }
+    APP.preview(tid).then(function(d){
+      box.innerHTML =
+        (d.poster ? '<img class="p" src="' + d.poster + '" alt="">' : "") +
+        '<div class="txt"><h3>' + d.ko + "</h3>" +
+        '<p class="meta">' + [d.en, d.year, d.runtime && (d.runtime + "분"), d.genres,
+          d.imdb && ("TMDB ★ " + d.imdb)].filter(Boolean).join(" · ") + "</p>" +
+        (d.overview ? '<p class="ov">' + d.overview.slice(0,200) +
+          (d.overview.length > 200 ? "…" : "") + "</p>" : "") +
+        (d.crew.length ? "<table>" + d.crew.map(function(c){
+          return "<tr><th>"+c[0]+"</th><td>"+c[1]+"</td></tr>"; }).join("") + "</table>" : "") +
+        (d.cast.length ? '<p class="meta">출연 · ' +
+          d.cast.map(function(c){ return c[0]; }).join(", ") + "</p>" : "") +
+        (d.stills.length ? '<div class="sts">' + d.stills.map(function(u){
+          return '<i style="background-image:url('+u+')"></i>'; }).join("") + "</div>" : "") +
+        (d.trailer ? '<a href="https://www.youtube.com/watch?v=' + d.trailer +
+          '" target="_blank" rel="noopener">예고편 보기</a>' : "") +
+        "</div>";
+    }).catch(function(err){
+      box.innerHTML = '<span class="load">' + err.message + "</span>";
+    });
+  }, true);
+
   function renderOut(){
     var R = rated();
     if (R.length < MIN){
@@ -5105,7 +5175,7 @@ window.addEventListener("message", function (e) {
         card("아직 안 매긴 작품 중에서", "서재에 있지만 별점을 안 준 작품을, 내 취향 편차로 줄 세웠습니다.",
              recoHTML(R)) +
         cardWide("서재 밖에서 찾기",
-          "내가 높게 준 작품을 씨앗 삼아, 그와 비슷한 영화를 TMDB 에서 모아옵니다.",
+          "내가 후하게 주는 장르와 연대를 따져, 그 성향에 맞는 작품을 골라옵니다.",
           outsideHTML(R)) +
         cardWide("대중과 가장 어긋난 작품",
           "내 별점에서 IMDb 평균(5점 환산)을 뺀 값. 이 서비스에서 가장 개인적인 지표입니다.",
@@ -5235,30 +5305,61 @@ window.addEventListener("message", function (e) {
       }).filter(Boolean).slice(0, 5);
   }
 
+  /* TMDB 장르 번호 → 이름. 후보에는 이름 대신 번호가 실려 옵니다. */
+  var GEN = {28:"액션",12:"모험",16:"애니메이션",35:"코미디",80:"범죄",99:"다큐멘터리",
+    18:"드라마",10751:"가족",14:"판타지",36:"역사",27:"공포",10402:"음악",9648:"미스터리",
+    10749:"로맨스",878:"SF",10770:"TV영화",53:"스릴러",10752:"전쟁",37:"서부"};
+
+  /* 취향 점수 — 취향 분석에서 쓰는 편차를 그대로 후보에 적용합니다.
+     "이 한 편과 비슷해서"가 아니라 "당신이 이런 장르·연대에 후하게 주기 때문에"로 고릅니다. */
+  function scoreCandidate(c, A){
+    var s = 0, why = [];
+
+    (c.genres || []).forEach(function(id){
+      var g = GEN[id], x = g && A.gen[g];
+      if (!x) return;
+      s += x.gap * 1.3;
+      why.push({ w: Math.abs(x.gap) * 1.3, t: g + " 평균 " + x.mean.toFixed(1) + "점" });
+    });
+
+    var dk = Math.floor((c.year || 0) / 10) * 10, e = A.dec[dk];
+    if (e) {
+      s += e.gap * 0.9;
+      why.push({ w: Math.abs(e.gap) * 0.9, t: dk + "년대 평균 " + e.mean.toFixed(1) + "점" });
+    }
+
+    /* 여러 씨앗이 함께 가리킨 작품은 그만큼 취향 한가운데 있다고 봅니다. */
+    s += Math.min(c.from.length, 3) * 0.35;
+    s += (c.pub - 3.5) * 0.25;
+
+    why.sort(function(a,b){ return b.w - a.w; });
+    return { s: s, why: why.slice(0, 2).map(function(x){ return x.t; }) };
+  }
+
   function outsideHTML(R){
     var sd = seeds(R);
     if (!sd.length){
       return '<p class="thin">작품에 TMDB 번호가 아직 없습니다. ' +
              '위쪽 <b>TMDB 연결</b>에서 <b>불러오기</b>를 한 번 실행하면 채워집니다.</p>';
     }
+
     if (outsideCache){
       if (!outsideCache.list.length){
-        return '<p class="thin">비슷한 작품을 찾지 못했거나, 이미 다 담았습니다.</p>' +
+        return '<p class="thin">추천할 만한 작품을 찾지 못했습니다.</p>' +
                '<button class="chipbtn" id="findout">다시 찾기</button>';
       }
-      return outsideCache.list.map(function(x){
+      return '<p class="thin">' + outsideCache.note + '</p>' +
+        outsideCache.list.map(function(x){
           return '<div class="orow">' +
             (x.poster ? '<img src="'+x.poster+'" alt="">' : '<span class="noimg"></span>') +
             '<span class="om"><b>'+x.ko+'</b>' +
             '<span class="oy">'+(x.year||"—")+' · 대중 ★'+x.pub.toFixed(1)+
-              ' · <em>'+x.from.join(", ")+'</em> 와 비슷' +
-              (x.from.length>1 ? ' ('+x.from.length+'편이 함께 가리킴)' : '') +
-            '</span></span>' +
+              (x.why.length ? ' · <em>'+x.why.join(" · ")+'</em>' : "") + '</span></span>' +
             '<button class="obtn" data-add="'+x.tmdbId+'">담기</button></div>';
         }).join("") +
         '<button class="chipbtn" id="findout" style="margin-top:10px">다시 찾기</button>';
     }
-    return '<button class="chipbtn" id="findout">비슷한 영화 찾기</button>';
+    return '<button class="chipbtn" id="findout">내 취향으로 찾기</button>';
   }
 
   function bindOutside(R){
@@ -5268,10 +5369,38 @@ window.addEventListener("message", function (e) {
         var sd = seeds(R);
         if (!sd.length) return;
         b.disabled = true; b.textContent = "찾는 중…";
+
         APP.similarTo(sd).then(function(list){
-          outsideCache = { list: list };
+          var A = affinity(R);
+
+          var scored = list.map(function(c){
+            var r = scoreCandidate(c, A);
+            c.s = r.s; c.why = r.why;
+            return c;
+          }).filter(function(c){ return c.s > 0; })
+            .sort(function(a,b){ return b.s - a.s; })
+            .slice(0, 8);
+
+          /* 무엇을 근거로 골랐는지 한 줄로 밝힙니다. */
+          var top = [];
+          Object.keys(A.gen).sort(function(a,b){ return A.gen[b].gap - A.gen[a].gap; })
+            .slice(0, 2).forEach(function(g){
+              if (A.gen[g].gap > 0) top.push(g + " ★" + A.gen[g].mean.toFixed(1));
+            });
+          Object.keys(A.dec).sort(function(a,b){ return A.dec[b].gap - A.dec[a].gap; })
+            .slice(0, 1).forEach(function(d){
+              if (A.dec[d].gap > 0) top.push(d + "년대 ★" + A.dec[d].mean.toFixed(1));
+            });
+
+          outsideCache = {
+            list: scored,
+            note: top.length
+              ? "후보 " + list.length + "편 중에서, 내가 후하게 주는 " +
+                top.join(" · ") + " 성향으로 골랐습니다."
+              : "후보 " + list.length + "편 중에서 골랐습니다. 별점을 더 매기면 정확해집니다."
+          };
           renderOut();
-          say(list.length + "편을 찾았습니다.");
+          say(scored.length + "편을 골랐습니다.");
         }).catch(function(e){
           b.disabled = false; b.textContent = "다시 시도";
           say("찾지 못했습니다 — " + e.message);
@@ -5296,13 +5425,13 @@ window.addEventListener("message", function (e) {
 
   function listDiv(R){
     var list = R.map(function(f){
-      return { ko:f.ko, year:f.year, g:my[f.id]-f.pub, me:my[f.id], pub:f.pub };
+      return { id:f.id, ko:f.ko, year:f.year, g:my[f.id]-f.pub, me:my[f.id], pub:f.pub };
     }).sort(function(a,b){ return Math.abs(b.g)-Math.abs(a.g); }).slice(0,10);
     var max = Math.max.apply(null, list.map(function(x){return Math.abs(x.g);})) || 1;
     return list.map(function(x){
       var w = 64*(Math.abs(x.g)/max), up = x.g>0;
       return '<div class="dv">'+
-        '<span class="t">'+x.ko+' <span style="color:var(--dim);font-size:11px">'+x.year+'</span></span>'+
+        '<span class="t pt" data-info="'+(x.id||'')+'">'+x.ko+' <span style="color:var(--dim);font-size:11px">'+x.year+'</span></span>'+
         '<span class="dvn">나 '+x.me.toFixed(1)+' · 대중 '+x.pub.toFixed(1)+'</span>'+
         '<span class="b"><i style="'+(up?'left:66px;':'right:66px;')+'width:'+w+
           'px;background:'+(up?LAMP:COOL)+'"></i>'+
@@ -5342,19 +5471,834 @@ window.addEventListener("message", function (e) {
 </body>
 </html>
 </script>
+<script type="text/html" id="src-collection"><!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>컬렉션 — 프로토타입</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --room:#121210; --panel:#1B1B18; --edge:#32322D;
+    --lamp:#E3B168; --lamp-deep:#B07B32;
+    --paper:#F4F2E7; --mut:#8C8B7E; --dim:#6A6A5F;
+    --sans:"Noto Sans KR",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:transparent;color:var(--paper);
+    font-family:var(--sans);font-size:14px;line-height:1.7}
+  .wrap{max-width:1180px;margin:0 auto;padding:4px 22px 40px}
+  h1{font-size:24px;font-weight:700;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:13px;margin:0 0 16px}
+
+  button{font-family:var(--sans);cursor:pointer}
+  .chipbtn{font-size:12.5px;color:#C9BDA8;background:#2C2317;border:1px solid var(--edge);
+    border-radius:999px;padding:5px 14px;transition:background .15s,color .15s}
+  .chipbtn:hover{background:#382C1C;color:var(--paper)}
+  .chipbtn[aria-pressed="true"]{color:#17140E;font-weight:700}
+
+  .bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+  .stat{margin-left:auto;font-size:12px;color:var(--dim)}
+  .stat b{color:var(--lamp);font-weight:700}
+
+  .prog{height:5px;background:#211C14;border-radius:3px;overflow:hidden;margin:0 0 18px}
+  .prog i{display:block;height:5px;border-radius:3px;transition:width .3s}
+
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px 12px;
+    list-style:none;padding:0;margin:0}
+  @media (max-width:900px){ .grid{grid-template-columns:repeat(4,1fr)} }
+  @media (max-width:600px){ .grid{grid-template-columns:repeat(3,1fr)} }
+
+  .it{position:relative}
+  .it .cov{position:relative;width:100%;aspect-ratio:27/40;border-radius:3px;
+    overflow:hidden;background:#241F17;border:0;padding:0;cursor:pointer;display:block;
+    box-shadow:0 8px 18px -12px rgba(0,0,0,.9)}
+  .it .cov img{width:100%;height:100%;object-fit:cover;display:block}
+  .it.no .cov{filter:grayscale(1) brightness(.5)}
+  .it .cov:hover{outline:2px solid var(--lamp);outline-offset:1px}
+  .it .yr{position:absolute;left:5px;top:5px;z-index:2;font-size:10px;font-weight:700;
+    padding:2px 7px;border-radius:999px;background:rgba(18,16,12,.82);color:var(--paper)}
+  .it .seen{position:absolute;right:5px;top:5px;z-index:2;width:18px;height:18px;
+    border-radius:50%;background:var(--lamp);color:#2A1C08;font-size:11px;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+  .it .t{display:block;font-size:11.5px;line-height:1.4;margin:6px 2px 0;color:var(--paper)}
+  .it .d{display:block;font-size:10px;color:var(--dim);margin:1px 2px 0}
+  .it.no .t{color:var(--dim)}
+
+  .info{margin:14px 0 0;padding:14px;border-radius:6px;background:var(--panel);
+    border:1px solid var(--edge);display:flex;gap:14px;flex-wrap:wrap}
+  .info img.p{width:104px;border-radius:3px;flex:none;display:block}
+  .info .txt{flex:1;min-width:220px}
+  .info h3{font-size:16px;margin:0 0 2px;font-weight:700}
+  .info .meta{font-size:11.5px;color:var(--dim);margin:0 0 8px}
+  .info .ov{font-size:11.5px;color:#B5AC97;line-height:1.65;margin:0 0 9px}
+  .info table{border-collapse:collapse;font-size:11.5px;margin:0 0 8px}
+  .info th{text-align:left;color:var(--dim);font-weight:400;padding:1px 12px 1px 0;width:44px}
+  .info td{padding:1px 0}
+  .info .sts{display:flex;gap:5px;flex-wrap:wrap;margin:0 0 8px}
+  .info .sts i{width:106px;height:60px;border-radius:3px;background-size:cover;
+    background-position:center;display:block}
+  .info .acts{display:flex;gap:6px;flex-wrap:wrap}
+  .info .acts a,.info .acts button{font-family:var(--sans);font-size:11.5px;
+    border-radius:999px;padding:5px 13px;border:1px solid var(--edge);
+    background:#2C2317;color:#C9BDA8;text-decoration:none;cursor:pointer}
+  .info .acts a:hover,.info .acts button:hover{background:var(--lamp);
+    border-color:var(--lamp);color:#2A1C08}
+  .info .load{font-size:12px;color:var(--dim)}
+
+  .note{font-size:11.5px;color:var(--dim);line-height:1.7;margin:18px 0 0;
+    padding-top:12px;border-top:1px solid #2A2A24}
+  .note b{color:#A99B84;font-weight:500}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* 바깥 껍데기의 크림색 지면 위, 검은 카드 안쪽에 놓이는 화면들입니다.
+     따뜻한 갈색을 중성 검정으로 옮겨 카드와 이어지게 합니다. */
+  :root{
+    --room:#121210; --panel:#1B1B18; --panel2:#232320; --edge:#32322D;
+    --paper:#F4F2E7; --mut:#8C8B7E; --dim:#6A6A5F;
+    --lamp:#E3B168; --lamp-deep:#B07B32;
+    --sleeve:#F4F2E7; --sleeve-2:#E7E4D6; --ink:#17170F; --ink-soft:#65645A;
+    --rule:#CFCCBB;
+  }
+  body{background:transparent}
+
+  /* ── 라이트 모드 ──
+     화면마다 흩어진 색을 하나하나 고치는 대신, 변수 값을 뒤집습니다.
+     변수로 안 쓰인 어두운 색만 아래에서 따로 덧칠합니다. */
+  html[data-mode="light"]{
+    --room:transparent; --panel:#FFFDF4; --panel2:#F2EFE2; --edge:#DDD9C8;
+    --paper:#22221C; --mut:#6E6C60; --dim:#8E8C7E;
+    --lamp:#8A5A20; --lamp-deep:#6E4416;
+    --sleeve:#FFFDF4; --sleeve-2:#F2EFE2; --ink:#22221C; --ink-soft:#6E6C60;
+    --rule:#DDD9C8;
+  }
+  html[data-mode="light"] input,
+  html[data-mode="light"] textarea{background:#FFFDF4;color:#22221C;border-color:#DDD9C8}
+  html[data-mode="light"] input::placeholder,
+  html[data-mode="light"] textarea::placeholder{color:#9A9788}
+  html[data-mode="light"] button{background:#F2EFE2;border-color:#DDD9C8;color:#3A382E}
+  html[data-mode="light"] button:hover{background:#E7E4D3;color:#22221C}
+  html[data-mode="light"] button[aria-pressed="true"],
+  html[data-mode="light"] .primary,
+  html[data-mode="light"] .go{background:#22221C;border-color:#22221C;color:#F4F2E7}
+  html[data-mode="light"] .board,
+  html[data-mode="light"] .stagebox{background:#FFFDF4;border-color:#DDD9C8}
+  html[data-mode="light"] .hr{border-top-color:#E7E4D3}
+  html[data-mode="light"] .lane{border-left-color:#E7E4D3}
+  html[data-mode="light"] .s-free{background:#EDE9D8;color:#4A483C}
+  html[data-mode="light"] .s-dim{background:#F2EFE2;color:#9A9788}
+  html[data-mode="light"] .cb{background:#EDE9D8;color:#3A382E}
+  html[data-mode="light"] .cnote{color:#8E8C7E}
+  html[data-mode="light"] .emptybox{border-color:#DDD9C8}
+  html[data-mode="light"] .emptybox>b:first-child{color:#22221C}
+  html[data-mode="light"] .zoomwrap{background:rgba(240,238,226,.95)}
+  html[data-mode="light"] .zoomclose{color:#6E6C60}
+
+  .zoomwrap{position:absolute;z-index:9999;background:rgba(10,8,6,.94);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    gap:14px;padding:26px;cursor:zoom-out}
+  .zoomwrap img{max-width:100%;max-height:82vh;border-radius:3px;
+    box-shadow:0 24px 60px rgba(0,0,0,.7)}
+  .zoomclose{font-size:12px;color:#8E8271}
+  .ytout{position:absolute;right:8px;bottom:7px;z-index:3;font-size:10.5px;
+    color:#EFE9DD;background:rgba(0,0,0,.62);padding:3px 9px;border-radius:3px;
+    text-decoration:none}
+  .ytout:hover{background:rgba(0,0,0,.85)}
+  .tw{cursor:pointer}
+  .crit{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:9px 0 0;min-height:22px}
+  .cb{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;
+    padding:2px 9px 2px 3px;border-radius:999px;background:#26261F;color:#C6C5B6}
+  .cb b{display:inline-flex;align-items:center;justify-content:center;
+    min-width:26px;height:18px;border-radius:999px;font-size:11px;font-weight:700;color:#12120E}
+  .cb.g b{background:#6FB84A} .cb.y b{background:#E0C452} .cb.r b{background:#D4604E}
+  .cb.fresh b{background:#E0472F;color:#FFF} .cb.rotten b{background:#4E9A4E;color:#FFF}
+  .cnote{font-size:10.5px;color:#6A6A5F}
+  .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
+    line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
+    color:#EFE9DD;font-weight:700;margin-bottom:6px}
+  .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
+    background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
+</style>
+<script>
+/* 4대 영화제 수상작 — 2000년 이후
+   a: 아카데미 작품상 (시상식 연도)
+   c: 칸 황금종려상   v: 베니스 황금사자상   b: 베를린 황금곰상
+   [연도, 한글제목, 원제, 감독] */
+var AWARDS = {
+  a: {
+    name: "아카데미 작품상", short: "아카데미", color: "#C9A227",
+    list: [
+      [2000, "아메리칸 뷰티", "American Beauty", "샘 멘데스"],
+      [2001, "글래디에이터", "Gladiator", "리들리 스콧"],
+      [2002, "뷰티풀 마인드", "A Beautiful Mind", "론 하워드"],
+      [2003, "시카고", "Chicago", "롭 마샬"],
+      [2004, "반지의 제왕: 왕의 귀환", "The Lord of the Rings: The Return of the King", "피터 잭슨"],
+      [2005, "밀리언 달러 베이비", "Million Dollar Baby", "클린트 이스트우드"],
+      [2006, "크래쉬", "Crash", "폴 해기스"],
+      [2007, "디파티드", "The Departed", "마틴 스코세이지"],
+      [2008, "노인을 위한 나라는 없다", "No Country for Old Men", "코엔 형제"],
+      [2009, "슬럼독 밀리어네어", "Slumdog Millionaire", "대니 보일"],
+      [2010, "허트 로커", "The Hurt Locker", "캐스린 비글로우"],
+      [2011, "킹스 스피치", "The King's Speech", "톰 후퍼"],
+      [2012, "아티스트", "The Artist", "미셸 아자나비시우스"],
+      [2013, "아르고", "Argo", "벤 애플렉"],
+      [2014, "노예 12년", "12 Years a Slave", "스티브 맥퀸"],
+      [2015, "버드맨", "Birdman", "알레한드로 곤살레스 이냐리투"],
+      [2016, "스포트라이트", "Spotlight", "톰 매카시"],
+      [2017, "문라이트", "Moonlight", "배리 젠킨스"],
+      [2018, "셰이프 오브 워터", "The Shape of Water", "기예르모 델 토로"],
+      [2019, "그린 북", "Green Book", "피터 패럴리"],
+      [2020, "기생충", "Parasite", "봉준호"],
+      [2021, "노매드랜드", "Nomadland", "클로이 자오"],
+      [2022, "코다", "CODA", "션 헤이더"],
+      [2023, "에브리씽 에브리웨어 올 앳 원스", "Everything Everywhere All at Once", "다니엘 콴, 다니엘 쉐이너트"],
+      [2024, "오펜하이머", "Oppenheimer", "크리스토퍼 놀란"],
+      [2025, "아노라", "Anora", "션 베이커"]
+    ]
+  },
+  c: {
+    name: "칸 황금종려상", short: "칸", color: "#C0562E",
+    list: [
+      [2000, "어둠 속의 댄서", "Dancer in the Dark", "라스 폰 트리에"],
+      [2001, "아들의 방", "La stanza del figlio", "난니 모레티"],
+      [2002, "피아니스트", "The Pianist", "로만 폴란스키"],
+      [2003, "엘리펀트", "Elephant", "구스 반 산트"],
+      [2004, "화씨 9/11", "Fahrenheit 9/11", "마이클 무어"],
+      [2005, "더 차일드", "L'Enfant", "다르덴 형제"],
+      [2006, "보리밭을 흔드는 바람", "The Wind That Shakes the Barley", "켄 로치"],
+      [2007, "4개월, 3주… 그리고 2일", "4 luni, 3 săptămâni și 2 zile", "크리스티안 문지우"],
+      [2008, "클래스", "Entre les murs", "로랑 캉테"],
+      [2009, "하얀 리본", "Das weiße Band", "미카엘 하네케"],
+      [2010, "엉클 분미", "Uncle Boonmee Who Can Recall His Past Lives", "아피찻퐁 위라세타꾼"],
+      [2011, "트리 오브 라이프", "The Tree of Life", "테런스 맬릭"],
+      [2012, "아무르", "Amour", "미카엘 하네케"],
+      [2013, "가장 따뜻한 색, 블루", "La vie d'Adèle", "압델라티프 케시시"],
+      [2014, "윈터 슬립", "Kış Uykusu", "누리 빌게 제일란"],
+      [2015, "디판", "Dheepan", "자크 오디아르"],
+      [2016, "나, 다니엘 블레이크", "I, Daniel Blake", "켄 로치"],
+      [2017, "더 스퀘어", "The Square", "루벤 외스틀룬드"],
+      [2018, "어느 가족", "万引き家族", "고레에다 히로카즈"],
+      [2019, "기생충", "Parasite", "봉준호"],
+      [2021, "티탄", "Titane", "쥘리아 뒤쿠르노"],
+      [2022, "슬픔의 삼각형", "Triangle of Sadness", "루벤 외스틀룬드"],
+      [2023, "추락의 해부", "Anatomie d'une chute", "쥐스틴 트리에"],
+      [2024, "아노라", "Anora", "션 베이커"],
+      [2025, "그저 사고였을 뿐", "It Was Just an Accident", "자파르 파나히"]
+    ]
+  },
+  v: {
+    name: "베니스 황금사자상", short: "베니스", color: "#3E6B8C",
+    list: [
+      [2000, "위대한 침묵", "Dayereh", "자파르 파나히"],
+      [2001, "몬순 웨딩", "Monsoon Wedding", "미라 나이르"],
+      [2002, "매그덜린 시스터즈", "The Magdalene Sisters", "피터 뮬란"],
+      [2003, "리턴", "Возвращение", "안드레이 즈뱌긴체프"],
+      [2004, "베라 드레이크", "Vera Drake", "마이크 리"],
+      [2005, "브로크백 마운틴", "Brokeback Mountain", "이안"],
+      [2006, "스틸 라이프", "三峡好人", "지아장커"],
+      [2007, "색, 계", "色，戒", "이안"],
+      [2008, "레슬러", "The Wrestler", "대런 애러노프스키"],
+      [2009, "레바논", "Lebanon", "사무엘 마오즈"],
+      [2010, "썸웨어", "Somewhere", "소피아 코폴라"],
+      [2011, "파우스트", "Фауст", "알렉산드르 소쿠로프"],
+      [2012, "피에타", "Pieta", "김기덕"],
+      [2013, "성스러운 도로", "Sacro GRA", "잔프랑코 로시"],
+      [2014, "비둘기, 가지에 앉아 존재를 성찰하다", "En duva satt på en gren", "로이 안데르손"],
+      [2015, "머나먼 곳에서", "Desde allá", "로렌소 비가스"],
+      [2016, "동물의 왕국", "The Woman Who Left", "라브 디아즈"],
+      [2017, "셰이프 오브 워터", "The Shape of Water", "기예르모 델 토로"],
+      [2018, "로마", "Roma", "알폰소 쿠아론"],
+      [2019, "조커", "Joker", "토드 필립스"],
+      [2020, "노매드랜드", "Nomadland", "클로이 자오"],
+      [2021, "레벤느망", "L'Événement", "오드리 디완"],
+      [2022, "고래의 뱃속에서", "All the Beauty and the Bloodshed", "로라 포이트러스"],
+      [2023, "가여운 것들", "Poor Things", "요르고스 란티모스"],
+      [2024, "룸 넥스트 도어", "The Room Next Door", "페드로 알모도바르"],
+      [2025, "파더 마더 시스터 브라더", "Father Mother Sister Brother", "짐 자무시"]
+    ]
+  },
+  b: {
+    name: "베를린 황금곰상", short: "베를린", color: "#6B5B95",
+    list: [
+      [2000, "매그놀리아", "Magnolia", "폴 토머스 앤더슨"],
+      [2001, "인티머시", "Intimacy", "파트리스 셰로"],
+      [2002, "스피릿티드 어웨이", "千と千尋の神隠し", "미야자키 하야오"],
+      [2003, "인 디스 월드", "In This World", "마이클 윈터보텀"],
+      [2004, "베를린 오디세이", "Gegen die Wand", "파티 아킨"],
+      [2005, "우편배달부", "U-Carmen e-Khayelitsha", "마크 돈퍼드메이"],
+      [2006, "사라예보의 그레이스", "Grbavica", "야스밀라 즈바니치"],
+      [2007, "투야의 결혼", "图雅的婚事", "왕취안안"],
+      [2008, "엘리트 부대", "Tropa de Elite", "조제 파질랴"],
+      [2009, "밀크 오브 소로우", "La teta asustada", "클라우디아 요사"],
+      [2010, "허니", "Bal", "세미 카플라노글루"],
+      [2011, "씨민과 나데르의 별거", "جدایی نادر از سیمین", "아쉬가르 파르하디"],
+      [2012, "시저는 죽어야 한다", "Cesare deve morire", "타비아니 형제"],
+      [2013, "포지션 중에서", "Poziția copilului", "칼린 피터 네처"],
+      [2014, "백일염화", "白日焰火", "디아오이난"],
+      [2015, "택시", "تاکسی", "자파르 파나히"],
+      [2016, "화염의 바다", "Fuocoammare", "잔프랑코 로시"],
+      [2017, "온 바디 앤 소울", "Testről és lélekről", "일디코 엔예디"],
+      [2018, "터치 미 낫", "Touch Me Not", "아디나 핀틸리에"],
+      [2019, "시너님", "Synonymes", "나다브 라피드"],
+      [2020, "쉬드 데어 비 데블", "There Is No Evil", "모하마드 라술로프"],
+      [2021, "배드 럭 뱅잉", "Babardeală cu bucluc", "라두 주데"],
+      [2022, "알카라스", "Alcarràs", "카를라 시몬"],
+      [2023, "다뉴브의 밤", "Sur l'Adamant", "니콜라 필리베르"],
+      [2024, "다호메이", "Dahomey", "마티 디옵"],
+      [2025, "드림스", "Drømmer", "다그 요한 하우게루드"]
+    ]
+  }
+};
+
+<\/script>
+<script>
+/* 부모 창의 공유 저장소에 연결합니다. 단독으로 열었을 때도 동작하도록 대비합니다. */
+var APP = (function () {
+  try { if (window.parent && window.parent !== window && window.parent.APP) return window.parent.APP; }
+  catch (e) {}
+  var recs = {}, subs = [];
+  return {
+    records: recs,
+    rec: function (id) {
+      return recs[id] || (recs[id] = { score: 0, status: "", comment: "", spoiler: false, at: "" });
+    },
+    score: function (id) { return recs[id] ? (recs[id].score || 0) : 0; },
+    setScore: function (id, v) { this.rec(id).score = v || 0; this.notify(); },
+    library: [],
+    clearLibrary: function () { this.library = []; this.notify(); return 0; },
+    canSearch: function () { return false; },
+    searchMovies: function () { return Promise.reject(new Error("연결 없음")); },
+    addByTmdbId: function () { return Promise.reject(new Error("연결 없음")); },
+    directorFilms: function () { return Promise.reject(new Error("연결 없음")); },
+    similarTo: function () { return Promise.reject(new Error("연결 없음")); },
+    crit: {},
+    critOf: function () { return null; },
+    critLoad: function () { return Promise.reject(new Error("연결 없음")); },
+    findByTmdb: function () { return null; },
+    dedupe: function () { return 0; },
+    removeFilm: function () {},
+    posters: function () { return Promise.reject(new Error("연결 없음")); },
+    setPoster: function () {},
+    savedCSV: { cinema: "", schedule: "" },
+    setCSV: function () {},
+    kobisKey: "",
+    setKobis: function () {},
+    preview: function () { return Promise.reject(new Error("연결 없음")); },
+    searchPeople: function () { return Promise.resolve([]); },
+    keysBaked: false,
+    subscribe: function (name, fn) { subs.push({ name: name, fn: fn }); },
+    notify: function (from) {
+      subs.forEach(function (s) {
+        if (s.name === from) return;
+        try { s.fn(); } catch (e) {}
+      });
+    }
+  };
+})();
+
+/* 작품 목록은 부모 창의 서재에서 받습니다. 검색으로 추가하면 여기에 바로 반영됩니다. */
+/* 서재와 "같은 배열"을 가리켜야 합니다. 복사본을 쓰면 담아도 이 화면은 모릅니다. */
+var FILMS = APP.library || [];
+var FILM_BY_ID = {};
+FILMS.forEach(function (f) { FILM_BY_ID[f.id] = f; });
+function film(id) { return FILM_BY_ID[id]; }
+
+var EMPTY_HTML = "<div class='emptybox'><b>서재가 비어 있습니다</b>위쪽 <b>영화 추가</b>에서 제목을 검색해 담아보세요.<br>TMDB 에 등록된 거의 모든 영화를 넣을 수 있습니다.</div>";
+
+/* 메타스코어 · 로튼토마토 배지.
+   메타스코어는 61 이상 초록 · 40~60 노랑 · 그 아래 빨강 (메타크리틱 기준).
+   로튼토마토는 60% 이상이 신선(빨강 토마토) 입니다. */
+function critHTML(f) {
+  var c = APP.critOf(f.id);
+  if (!c) return '<div class="crit" data-crit="' + f.id + '"></div>';
+  var out = [];
+  if (c.meta !== null && c.meta !== undefined) {
+    var mc = c.meta >= 61 ? "g" : (c.meta >= 40 ? "y" : "r");
+    out.push('<span class="cb ' + mc + '"><b>' + c.meta + '</b>메타스코어</span>');
+  }
+  if (c.rt !== null && c.rt !== undefined) {
+    out.push('<span class="cb ' + (c.rt >= 60 ? "fresh" : "rotten") + '"><b>' +
+             c.rt + '%</b>' + (c.rt >= 60 ? "신선" : "썩음") + '</span>');
+  }
+  if (!out.length) out.push('<span class="cnote">평론 점수 없음</span>');
+  return '<div class="crit">' + out.join("") + "</div>";
+}
+
+/* 아직 안 받아온 자리를 채웁니다. 꺼낼 때 그 작품만 한 번 요청합니다. */
+function critFill(root, redraw) {
+  var slots = (root || document).querySelectorAll("[data-crit]");
+  Array.prototype.forEach.call(slots, function (el) {
+    var id = el.getAttribute("data-crit");
+    el.removeAttribute("data-crit");
+    el.innerHTML = '<span class="cnote">평론 점수 불러오는 중…</span>';
+    APP.critLoad(id).then(function () {
+      if (typeof redraw === "function") redraw();
+    }).catch(function (e) {
+      el.innerHTML = '<span class="cnote">' + e.message + "</span>";
+    });
+  });
+}
+
+/* 예고편 · 스틸컷: TMDB 에서 받아온 것이 있으면 실물로, 없으면 자리 표시로 */
+function MED(f) {
+  try { return (APP.media || {})[f.id] || null; } catch (e) { return null; }
+}
+function canEmbed() {
+  /* 유튜브는 페이지 출처를 확인할 수 없으면 "동영상 플레이어 구성 오류 153" 을 냅니다.
+     내려받은 파일을 그냥 열면(file://) 출처가 없어 어떤 방법으로도 재생되지 않습니다.
+     주소가 http/https 일 때만 그 자리 재생을 시도합니다. */
+  try {
+    var p = (window.top && window.top.location && window.top.location.protocol) || location.protocol;
+    return p === "http:" || p === "https:";
+  } catch (e) { return location.protocol === "http:" || location.protocol === "https:"; }
+}
+
+function trailerHTML(f, cls) {
+  var md = MED(f);
+  var tag = (cls === "trailer") ? "tt" : "trailer-tag";
+  if (md && md.trailer) {
+    var thumb = (md.stills && md.stills[0]) || md.poster || "";
+    var embed = canEmbed();
+    return '<div class="' + cls + ' tw" data-key="' + md.trailer + '" data-embed="' + embed + '" ' +
+      'role="button" tabindex="0" aria-label="' + f.ko + ' 예고편" style="background:#000">' +
+      (thumb ? '<img src="' + thumb + '" alt="" style="position:absolute;inset:0;' +
+               'width:100%;height:100%;object-fit:cover;opacity:.5">' : "") +
+      '<span class="play"></span>' +
+      '<span class="' + tag + '">' +
+        (embed ? "눌러서 재생" : "눌러서 유튜브에서 보기") + "</span>" +
+      '<a class="ytout" href="https://www.youtube.com/watch?v=' + md.trailer +
+        '" target="_blank" rel="noopener">유튜브</a>' +
+      (embed ? "" : '<span class="whyout">파일을 직접 열면 유튜브가 재생을 막습니다</span>') +
+      "</div>";
+  }
+  return '<div class="' + cls + '" role="button" tabindex="0" aria-label="예고편 자리">' +
+    '<span class="glow" style="background:radial-gradient(circle at 50% 50%,' +
+      f.fg + '55,' + f.bg + ' 70%)"></span><span class="play"></span>' +
+    '<span class="' + (cls === "trailer" ? "tt" : "trailer-tag") + '">' +
+    (md ? "예고편 없음" : "예고편 자리 — 위에서 TMDB 를 연결하세요") + '</span></div>';
+}
+function stillsHTML(f, n) {
+  var md = MED(f);
+  if (md && md.stills && md.stills.length) {
+    return md.stills.slice(0, n).map(function (u) {
+      return '<div data-zoom="' + u + '" role="button" tabindex="0" aria-label="스틸컷 확대" ' +
+             'style="background-image:url(' + u + ');background-size:cover;' +
+             'background-position:center;cursor:zoom-in"></div>';
+    }).join("");
+  }
+  return f.stills.slice(0, n).map(function (c) {
+    return '<div style="background:' + c + '"></div>';
+  }).join("");
+}
+
+/* 눌렀을 때의 동작을 문서 하나에 몰아 둡니다. 모듈마다 따로 붙이지 않아도 됩니다. */
+document.addEventListener("click", function (e) {
+  var t = e.target;
+
+  var out = t.closest && t.closest(".ytout");
+  if (out) return;                                  // 유튜브 링크는 그대로 열리게
+
+  var tw = t.closest && t.closest(".tw");
+  if (tw && tw.dataset.key) {
+    if (tw.dataset.embed !== "true") {
+      window.open("https://www.youtube.com/watch?v=" + tw.dataset.key, "_blank", "noopener");
+      return;
+    }
+    tw.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + tw.dataset.key +
+      '?autoplay=1&rel=0" title="예고편" allowfullscreen allow="autoplay; encrypted-media" ' +
+      'style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>' +
+      '<a class="ytout" href="https://www.youtube.com/watch?v=' + tw.dataset.key +
+      '" target="_blank" rel="noopener">유튜브</a>';
+    tw.classList.remove("tw");
+    return;
+  }
+
+  var zm = t.closest && t.closest("[data-zoom]");
+  if (zm) { openZoom(zm.getAttribute("data-zoom")); return; }
+});
+
+/* 스틸컷 확대 */
+function openZoom(src) {
+  var o = document.createElement("div");
+  o.className = "zoomwrap";
+  /* iframe 안에서는 fixed 가 화면 기준이 아니라 iframe 상자 기준입니다.
+     그래서 바깥 스크롤 위치를 받아 "지금 눈에 보이는 자리" 에 놓습니다. */
+  var vh = (OUTER && OUTER.vh) || window.innerHeight || 700;
+  var top = Math.max(0, (OUTER && OUTER.top) || 0);
+  o.style.position = "absolute";
+  o.style.top = top + "px";
+  o.style.left = "0";
+  o.style.right = "0";
+  o.style.height = vh + "px";
+  o.innerHTML = '<img src="' + src + '" alt="스틸컷 확대">' +
+                '<span class="zoomclose">닫기 · 아무 곳이나 누르세요</span>';
+  o.addEventListener("click", function () { o.remove(); });
+  document.addEventListener("keydown", function esc(ev) {
+    if (ev.key === "Escape") { o.remove(); document.removeEventListener("keydown", esc); }
+  });
+  document.body.appendChild(o);
+}
+
+var MODKEY = "collection";
+
+/* 화면 안쪽에서 바깥 페이지를 특정 위치로 스크롤시킵니다.
+   iframe 자체에는 스크롤이 없으므로 바깥에 부탁해야 합니다. */
+function askDownload(name, blob) {
+  try { parent.postMessage({ tag: "proto-download", name: name, blob: blob }, "*"); return true; }
+  catch (e) { return false; }
+}
+function askOpen(blob) {
+  try { parent.postMessage({ tag: "proto-open", blob: blob }, "*"); return true; }
+  catch (e) { return false; }
+}
+
+function askCapture(el, name, onResult) {
+  try {
+    var r = el.getBoundingClientRect();
+    var once = function (e) {
+      if (!e.data || e.data.tag !== "proto-capture-result") return;
+      window.removeEventListener("message", once);
+      onResult(e.data.ok, e.data.msg);
+    };
+    window.addEventListener("message", once);
+    parent.postMessage({
+      tag: "proto-capture",
+      name: name,
+      rect: { x: r.left, y: r.top, w: r.width, h: r.height }
+    }, "*");
+    return true;
+  } catch (e) { return false; }
+}
+
+function askScroll(y) {
+  try { parent.postMessage({ tag: "proto-scrollto", y: y }, "*"); } catch (e) {}
+}
+
+/* 바깥 스크롤 위치. 진열장 정보 패널이 이 값을 보고 따라 내려갑니다. */
+var OUTER = { top: 0, vh: 800 };
+var scrollSubs = [];
+function onOuterScroll(fn) { scrollSubs.push(fn); }
+window.addEventListener("message", function (e) {
+  var d = e.data;
+  if (d && d.tag === "proto-mode") {
+    document.documentElement.setAttribute("data-mode", d.mode || "dark");
+    return;
+  }
+  if (!d || d.tag !== "proto-scroll") return;
+  OUTER.top = d.top; OUTER.vh = d.vh;
+  scrollSubs.forEach(function (f) { try { f(OUTER); } catch (x) {} });
+});
+
+/* 내용 높이를 부모에게 알려, 안쪽에 또 스크롤바가 생기지 않게 합니다.
+   postMessage 는 file:// 로 열어도 막히지 않습니다. */
+(function () {
+  var KEY = MODKEY, last = 0;
+  function report() {
+    try {
+      /* body.scrollHeight 를 재면 안 됩니다. body 는 iframe 높이보다 작아질 수 없어서
+         부모가 iframe 을 키울 때마다 측정값도 같이 커지는 되먹임이 생깁니다.
+         내용이 담긴 .wrap 만 재면 iframe 높이와 무관한 값이 나옵니다. */
+      /* 진열장은 최상위 컨테이너 이름이 .room 입니다.
+         .wrap 만 찾으면 못 찾아 높이가 늘어나지 않고 화면이 잘립니다. */
+      var el = document.querySelector(".wrap, .room") || document.body.firstElementChild;
+      var h = el ? Math.ceil(el.offsetTop + el.offsetHeight + 24)
+                 : document.documentElement.scrollHeight;
+      if (Math.abs(h - last) < 8) return;
+      last = h;
+      parent.postMessage({ tag: "proto-height", k: KEY, h: h }, "*");
+    } catch (e) {}
+  }
+  window.addEventListener("load", report);
+  setInterval(report, 350);
+})();
+<\/script>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>컬렉션</h1>
+  <p class="sub">4대 영화제 수상작을 한자리에. 서재에 담은 작품은 색이 살아납니다.</p>
+
+  <div class="bar" id="tabs"></div>
+  <div class="bar" style="margin:-6px 0 12px">
+    <button class="chipbtn" id="wipe">저장된 표지 정보 비우기</button>
+    <span class="stat" id="wipelog"></span>
+  </div>
+  <div class="prog"><i id="fill" style="width:0%"></i></div>
+
+  <ul class="grid" id="grid"></ul>
+  <div id="detail"></div>
+
+  <p class="note">
+    <b>자료</b> — 2000년 이후 수상작입니다. 표지는 TMDB 에서 제목으로 찾아 가져옵니다.
+    표지를 누르면 정보가 열리고, 거기서 서재에 담을 수 있습니다.
+  </p>
+
+  <p aria-live="polite" class="sr" id="live"></p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function say(m) { $("live").textContent = m; }
+
+  var KEYS = Object.keys(AWARDS);
+  var cur = KEYS[0];
+  var POSTER = {};                 // "제목|연도" → 포스터 주소
+  var TMDBID = {};                 // "제목|연도" → TMDB 번호
+
+  function key(r) { return r[1] + "|" + r[0]; }
+
+  function norm(x){ return String(x||"").replace(/[\s:·.,'"!?-]/g,"").toLowerCase(); }
+
+  /* 같은 제목의 다른 영화가 많습니다. 제작기 다큐("Making Parasite")까지 걸립니다.
+     연도만 보지 않고 제목이 정확히 맞는지, 얼마나 알려진 작품인지 함께 따집니다. */
+  function bestHit(hits, r){
+    var lo = r[0] - 3, hi = r[0];
+    var want = [norm(r[2]), norm(r[1])].filter(Boolean);
+    var best = null, bs = -1e9;
+
+    (hits || []).forEach(function(h){
+      var y = parseInt(String(h.release_date||"").slice(0,4), 10) || 0;
+      if (y < lo || y > hi) return;
+
+      var t1 = norm(h.title), t2 = norm(h.original_title);
+      var sc = 0;
+      if (want.indexOf(t1) >= 0 || want.indexOf(t2) >= 0) sc += 20;   // 제목이 딱 맞음
+      else if (want.some(function(w){ return t1.indexOf(w) >= 0 || t2.indexOf(w) >= 0; })) sc += 4;
+      else return;                                                    // 아예 다른 제목은 뺍니다
+
+      sc += (y === r[0] || y === r[0] - 1) ? 3 : 0;
+      sc += Math.min((h.vote_count || 0) / 2000, 4);                  // 알려진 정도
+      sc += Math.min((h.popularity || 0) / 50, 2);
+
+      if (sc > bs) { bs = sc; best = h; }
+    });
+    return best;
+  }
+
+  /* 서재에 있는 작품인지 — 제목이 같으면 같은 것으로 봅니다. */
+  function owned(r) {
+    try {
+      return APP.library.some(function (f) {
+        return f.ko === r[1] || (r[2] && f.en === r[2]);
+      });
+    } catch (e) { return false; }
+  }
+
+  function renderTabs() {
+    $("tabs").innerHTML = KEYS.map(function (k) {
+      var a = AWARDS[k];
+      var n = a.list.filter(owned).length;
+      var on = k === cur;
+      return '<button class="chipbtn" data-k="' + k + '" aria-pressed="' + on + '"' +
+        (on ? ' style="background:' + a.color + ';border-color:' + a.color + '"' : "") +
+        ">" + a.short + ' <span style="opacity:.65">' + n + "/" + a.list.length + "</span></button>";
+    }).join("") + '<span class="stat" id="stat"></span>';
+
+    Array.prototype.forEach.call($("tabs").querySelectorAll("[data-k]"), function (b) {
+      b.addEventListener("click", function () {
+        cur = b.dataset.k;
+        $("detail").innerHTML = "";
+        renderTabs(); renderGrid();
+      });
+    });
+  }
+
+  function renderGrid() {
+    var a = AWARDS[cur];
+    var have = a.list.filter(owned).length;
+    var pct = Math.round(have / a.list.length * 100);
+
+    $("stat").innerHTML = a.name + " · <b>" + have + "</b> / " + a.list.length + "편 (" + pct + "%)";
+    $("fill").style.width = pct + "%";
+    $("fill").style.background = a.color;
+
+    $("grid").innerHTML = a.list.slice().reverse().map(function (r, i) {
+      var k = key(r), got = owned(r), p = POSTER[k];
+      return '<li class="it' + (got ? "" : " no") + '">' +
+        '<button class="cov" data-r="' + (a.list.length - 1 - i) + '" ' +
+        'aria-label="' + r[1] + '">' +
+        '<span class="yr">' + r[0] + "</span>" +
+        (got ? '<span class="seen">✓</span>' : "") +
+        (p ? '<img src="' + p + '" alt="">' : "") +
+        "</button>" +
+        '<span class="t">' + r[1] + "</span>" +
+        '<span class="d">' + r[3] + "</span></li>";
+    }).join("");
+
+    $("grid").onclick = function (e) {
+      var b = e.target.closest && e.target.closest("[data-r]");
+      if (!b) return;
+      showInfo(a.list[parseInt(b.dataset.r, 10)]);
+    };
+
+    loadPosters(a.list);
+  }
+
+  /* 표지를 차례로 받아옵니다. 한 번 받으면 저장해 두고 다시 찾지 않습니다. */
+  function loadPosters(list) {
+    if (!APP.canSearch()) return;
+    var todo = list.filter(function (r) { return !POSTER[key(r)]; });
+    if (!todo.length) return;
+
+    /* 한 장씩 차례로 받으면 100편에 30초가 넘습니다. 넷씩 동시에 받습니다. */
+    var q = todo.slice();
+    function worker() {
+      if (!q.length || cur !== keyOfList(list)) return;
+      var r = q.shift();
+      /* 원제로 먼저 찾습니다. 한글 제목은 같은 이름이 여럿이고,
+         아카데미는 시상식 연도라 영화 개봉 연도와 한 해 차이가 납니다. */
+      APP.searchMovies(r[2] || r[1]).then(function (hits) {
+        if (hits && hits.length) return hits;
+        return APP.searchMovies(r[1]);
+      }).then(function (hits) {
+        var h = bestHit(hits, r);
+        if (h && h.poster_path) {
+          POSTER[key(r)] = "https://image.tmdb.org/t/p/w342" + h.poster_path;
+          TMDBID[key(r)] = h.id;
+          paint(r);
+        }
+      }).catch(function () {}).then(function () {
+        if (!q.length) save();
+        setTimeout(worker, 40);
+      });
+    }
+    worker(); worker(); worker(); worker();
+  }
+
+  function keyOfList(list) {
+    for (var k in AWARDS) if (AWARDS[k].list === list) return k;
+    return cur;
+  }
+
+  /* 받아온 표지 한 장만 그 자리에 끼웁니다 — 전체를 다시 그리지 않습니다. */
+  function paint(r) {
+    var a = AWARDS[cur];
+    var idx = a.list.indexOf(r);
+    if (idx < 0) return;
+    var b = $("grid").querySelector('[data-r="' + idx + '"]');
+    if (b && !b.querySelector("img")) {
+      b.insertAdjacentHTML("beforeend", '<img src="' + POSTER[key(r)] + '" alt="">');
+    }
+  }
+
+  function save() {
+    try {
+      window.localStorage.setItem("awards-posters",
+        JSON.stringify({ p: POSTER, t: TMDBID }));
+    } catch (e) {}
+  }
+
+  function showInfo(r) {
+    var box = $("detail");
+    box.innerHTML = '<div class="info"><span class="load">' + r[1] + " 정보를 불러오는 중…</span></div>";
+    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+    if (!APP.canSearch()) {
+      box.innerHTML = '<div class="info"><span class="load">' +
+        "위쪽 <b>TMDB 연결</b>에서 키를 넣으면 정보가 나옵니다.</span></div>";
+      return;
+    }
+
+    /* 표지 찾을 때와 같은 방식으로 골라야 합니다.
+       같은 제목의 다른 영화가 잡히던 원인이 여기였습니다. */
+    function findId() {
+      if (TMDBID[key(r)]) return Promise.resolve(TMDBID[key(r)]);
+      return APP.searchMovies(r[2] || r[1]).then(function (hits) {
+        if (!hits || !hits.length) return APP.searchMovies(r[1]);
+        return hits;
+      }).then(function (hits) {
+        var h = bestHit(hits, r);
+        if (!h) throw new Error(r[0] + "년 전후의 <b>" + (r[2] || r[1]) + "</b> 을 TMDB 에서 찾지 못했습니다");
+        TMDBID[key(r)] = h.id;
+        save();
+        return h.id;
+      });
+    }
+
+    var p = findId().then(function (id) { return APP.preview(id); });
+
+    p.then(function (d) {
+      var got = owned(r);
+      box.innerHTML = '<div class="info">' +
+        (d.poster ? '<img class="p" src="' + d.poster + '" alt="">' : "") +
+        '<div class="txt"><h3>' + d.ko + "</h3>" +
+        '<p class="meta">' + [d.en, d.year, d.runtime && (d.runtime + "분"), d.genres,
+          d.imdb && ("TMDB ★ " + d.imdb),
+          AWARDS[cur].name + " " + r[0]].filter(Boolean).join(" · ") + "</p>" +
+        (d.overview ? '<p class="ov">' + d.overview.slice(0, 220) +
+           (d.overview.length > 220 ? "…" : "") + "</p>" : "") +
+        (d.crew.length ? "<table>" + d.crew.map(function (c) {
+            return "<tr><th>" + c[0] + "</th><td>" + c[1] + "</td></tr>"; }).join("") + "</table>" : "") +
+        (d.cast.length ? '<p class="meta">출연 · ' +
+            d.cast.map(function (c) { return c[0]; }).join(", ") + "</p>" : "") +
+        (d.stills.length ? '<div class="sts">' + d.stills.map(function (u) {
+            return '<i style="background-image:url(' + u + ')"></i>'; }).join("") + "</div>" : "") +
+        '<div class="acts">' +
+        (d.trailer ? '<a href="https://www.youtube.com/watch?v=' + d.trailer +
+           '" target="_blank" rel="noopener">예고편 보기</a>' : "") +
+        (got ? "<button disabled>담김</button>"
+             : '<button data-add="' + d.tmdbId + '">서재에 담기</button>') +
+        "</div></div></div>";
+
+      var ab = box.querySelector("[data-add]");
+      if (ab) ab.addEventListener("click", function () {
+        ab.disabled = true; ab.textContent = "…";
+        APP.addByTmdbId(d.tmdbId).then(function () {
+          ab.textContent = "담김";
+          renderTabs(); renderGrid();
+          say(d.ko + " 을 담았습니다.");
+        }).catch(function () { ab.disabled = false; ab.textContent = "실패"; });
+      });
+    }).catch(function (e) {
+      box.innerHTML = '<div class="info"><span class="load">' + e.message + "</span></div>";
+    });
+  }
+
+  /* 잘못 찾아 저장된 표지·번호를 지웁니다. 다시 열면 처음부터 찾습니다. */
+  $("wipe").addEventListener("click", function () {
+    var n = Object.keys(POSTER).length;
+    if (!n) { $("wipelog").textContent = "저장된 것이 없습니다."; return; }
+    POSTER = {}; TMDBID = {};
+    try { window.localStorage.removeItem("awards-posters"); } catch (e) {}
+    $("detail").innerHTML = "";
+    $("wipelog").textContent = n + "편의 저장분을 지웠습니다. 다시 찾는 중…";
+    renderGrid();
+    say("저장분을 비웠습니다.");
+  });
+
+  (function boot() {
+    try {
+      var raw = window.localStorage.getItem("awards-posters");
+      if (raw) { var o = JSON.parse(raw); POSTER = o.p || {}; TMDBID = o.t || {}; }
+    } catch (e) {}
+    renderTabs();
+    renderGrid();
+  })();
+
+  try { APP.subscribe("collection", function () { renderTabs(); renderGrid(); }); } catch (e) {}
+})();
+<\/script>
+</body>
+</html>
+</script>
 <script type="text/html" id="src-calendar"><!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>개봉 달력 — 프로토타입</title>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --room:#121210; --panel:#1B1B18; --edge:#32322D;
     --lamp:#E3B168; --lamp-deep:#B07B32;
     --paper:#F4F2E7; --mut:#8C8B7E; --dim:#6A6A5F;
-    --serif:"Gowun Batang",Georgia,serif; --sans:"Noto Sans KR",system-ui,sans-serif;
+    --serif:"Noto Sans KR",system-ui,sans-serif; --sans:"Noto Sans KR",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:transparent;color:var(--paper);
@@ -5504,7 +6448,7 @@ window.addEventListener("message", function (e) {
   .cnote{font-size:10.5px;color:#6A6A5F}
   .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
     line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
-  .emptybox>b:first-child{display:block;font-family:"Gowun Batang",serif;font-size:17px;
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
@@ -5911,6 +6855,8 @@ window.addEventListener("message", function (e) {
         items.forEach(function (m) {
           var o = (m.openDt || "").trim();
           if (o.length !== 8 || !m.movieNm) return;
+          /* 성인물(에로)은 달력에서 뺍니다. */
+          if (/성인물|에로/.test(m.repGenreNm || "")) return;
           rows.push({
             d: o.slice(0,4) + "-" + o.slice(4,6) + "-" + o.slice(6),
             t: m.movieNm.trim(),
@@ -6219,13 +7165,13 @@ window.addEventListener("message", function (e) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>부산국제영화제 — 프로토타입</title>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --room:#121210; --panel:#1B1B18; --edge:#32322D;
     --lamp:#E3B168; --lamp-deep:#B07B32;
     --paper:#F4F2E7; --mut:#8C8B7E; --dim:#6A6A5F;
-    --serif:"Gowun Batang",Georgia,serif; --sans:"Noto Sans KR",system-ui,sans-serif;
+    --serif:"Noto Sans KR",system-ui,sans-serif; --sans:"Noto Sans KR",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:transparent;color:var(--paper);
@@ -6374,7 +7320,7 @@ window.addEventListener("message", function (e) {
   .cnote{font-size:10.5px;color:#6A6A5F}
   .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
     line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
-  .emptybox>b:first-child{display:block;font-family:"Gowun Batang",serif;font-size:17px;
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
@@ -6792,13 +7738,17 @@ window.addEventListener("message", function (e) {
        번호를 못 찾으면 예전처럼 이름으로 대조합니다. */
     return APP.searchPeople(wantDir).then(function (ids) {
       var i = 0;
+      var first = null;                     // 감독이 안 맞아도 첫 후보는 기억해 둡니다
       function step() {
         if (i >= list.length) {
-          throw new Error(wantDir
-            ? wantDir + " 의 이 작품을 TMDB 에서 찾지 못했습니다"
-            : "TMDB 에 아직 없는 작품입니다");
+          /* 감독 이름이 언어가 달라 대조가 안 되는 경우가 많습니다
+             (예: Banjong Pisanthanakun ↔ 시트의 한글 표기).
+             그럴 때 아무것도 안 보여주면 오히려 불편하니, 제목이 맞는 첫 후보를 씁니다. */
+          if (first) return first;
+          throw new Error("TMDB 에 아직 없는 작품입니다");
         }
         return APP.preview(list[i++].id).then(function (d) {
+          if (!first) first = d;
           if (!wantDir) return d;
 
           if (ids.length && (d.dirIds || []).length) {
@@ -7042,14 +7992,14 @@ window.addEventListener("message", function (e) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>극장 시간표 — 프로토타입</title>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --room:#1B1610; --panel:#241D14; --edge:#3A2E20;
     --lamp:#E3B168; --lamp-deep:#B07B32;
     --ok:#7FA86A; --ok-bg:#26301E; --bad:#C4685F; --bad-bg:#331F1D;
     --paper:#EFE9DD; --mut:#8E8271; --dim:#6E6455;
-    --serif:"Gowun Batang",Georgia,serif; --sans:"Noto Sans KR",system-ui,sans-serif;
+    --serif:"Noto Sans KR",system-ui,sans-serif; --sans:"Noto Sans KR",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--room);color:var(--paper);font-family:var(--sans);font-size:14px;line-height:1.7}
@@ -7225,7 +8175,7 @@ window.addEventListener("message", function (e) {
   .cnote{font-size:10.5px;color:#6A6A5F}
   .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
     line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
-  .emptybox>b:first-child{display:block;font-family:"Gowun Batang",serif;font-size:17px;
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
@@ -7978,7 +8928,7 @@ window.addEventListener("message", function (e) {
 
     /* 머리말 */
     x.fillStyle = INK;
-    x.font = "700 20px 'Gowun Batang', serif";
+    x.font = "700 20px 'Noto Sans KR', sans-serif";
     x.fillText(day.replace("-", "월 ") + "일 상영 시간표", PAD, 34);
     x.fillStyle = DIM;
     x.font = "12px 'Noto Sans KR', sans-serif";
@@ -8325,14 +9275,14 @@ window.addEventListener("message", function (e) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>영화제 시간표 생성기 — 프로토타입</title>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --room:#1B1610; --panel:#241D14; --edge:#3A2E20;
     --lamp:#E3B168; --lamp-deep:#B07B32;
     --ok:#7FA86A; --ok-bg:#26301E; --bad:#C4685F; --bad-bg:#331F1D;
     --paper:#EFE9DD; --mut:#8E8271; --dim:#6E6455;
-    --serif:"Gowun Batang",Georgia,serif; --sans:"Noto Sans KR",system-ui,sans-serif;
+    --serif:"Noto Sans KR",system-ui,sans-serif; --sans:"Noto Sans KR",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--room);color:var(--paper);font-family:var(--sans);font-size:14px;line-height:1.7}
@@ -8504,7 +9454,7 @@ window.addEventListener("message", function (e) {
   .cnote{font-size:10.5px;color:#6A6A5F}
   .emptybox{padding:44px 22px;text-align:center;color:#8E8271;font-size:13.5px;
     line-height:1.9;border:1px dashed #3A2E20;border-radius:4px;margin-top:6px}
-  .emptybox>b:first-child{display:block;font-family:"Gowun Batang",serif;font-size:17px;
+  .emptybox>b:first-child{display:block;font-family:"Noto Sans KR",serif;font-size:17px;
     color:#EFE9DD;font-weight:700;margin-bottom:6px}
   .whyout{position:absolute;left:9px;top:8px;z-index:3;font-size:10px;color:#C9BDA8;
     background:rgba(0,0,0,.55);padding:2px 8px;border-radius:3px;max-width:78%}
@@ -9173,7 +10123,7 @@ window.addEventListener("message", function (e) {
 
     /* 머리말 */
     x.fillStyle = INK;
-    x.font = "700 20px 'Gowun Batang', serif";
+    x.font = "700 20px 'Noto Sans KR', sans-serif";
     x.fillText(day.replace("-", "월 ") + "일 상영 시간표", PAD, 34);
     x.fillStyle = DIM;
     x.font = "12px 'Noto Sans KR', sans-serif";
@@ -10305,7 +11255,7 @@ function film(id) { return FILM_BY_ID[id]; }
       return retry(function () {
         return tmdb("/movie/" + seed.tmdbId + "/recommendations", a, "");
       }, 2).then(function (r) {
-        (r.results || []).slice(0, 12).forEach(function (c) {
+        (r.results || []).slice(0, 20).forEach(function (c) {
           if (!c.poster_path) return;
           if (APP.findByTmdb(c.id)) return;                 // 이미 서재에 있으면 제외
           var e = bag[c.id] || (bag[c.id] = {
@@ -10313,6 +11263,7 @@ function film(id) { return FILM_BY_ID[id]; }
             ko: c.title || c.original_title,
             year: parseInt(String(c.release_date || "0").slice(0, 4), 10) || 0,
             pub: Math.round((c.vote_average || 0) / 2 * 10) / 10,
+            genres: c.genre_ids || [],          // 취향 점수를 매길 때 씁니다
             poster: IMG + "w185" + c.poster_path,
             from: []
           });
@@ -10321,11 +11272,8 @@ function film(id) { return FILM_BY_ID[id]; }
       }).catch(function () {});
     }
 
-    return Promise.all(seeds.slice(0, 5).map(pull)).then(function () {
-      return Object.keys(bag).map(function (k) { return bag[k]; })
-        .sort(function (x, y) {
-          return y.from.length - x.from.length || y.pub - x.pub;
-        }).slice(0, 8);
+    return Promise.all(seeds.slice(0, 6).map(pull)).then(function () {
+      return Object.keys(bag).map(function (k) { return bag[k]; });
     });
   };
 
@@ -11046,7 +11994,7 @@ function film(id) { return FILM_BY_ID[id]; }
     Store.get("mode").then(function (m) { applyMode(m === "light" ? "light" : "dark", true); });
   })();
 
-  var KEYS = ["shelf", "record", "collage", "taste", "calendar", "biff", "cinema", "schedule"];
+  var KEYS = ["shelf", "record", "collage", "taste", "collection", "calendar", "biff", "cinema", "schedule"];
   var frame = document.getElementById("frame");
   var made = {}, current = KEYS[0];
 
