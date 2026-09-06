@@ -5825,9 +5825,11 @@ window.addEventListener("message", function (e) {
   function renderPool(){
     var cap = capacity(), n = 0;
     pool.innerHTML = "";
+    /* 콜라주에 든 것만, 넣은 차례대로 보여줍니다.
+       서재 전체를 늘어놓으면 방금 넣은 영화가 긴 목록 맨 뒤에 묻힙니다. */
     order.map(byId).forEach(function(f){
-      if (ON[f.id]) n++;
-      if (!visible(f)) return;
+      if (!f || !ON[f.id]) return;
+      n++;
       var li = document.createElement("li");
       li.className = "chip" + (ON[f.id] ? " on" : "");
       li.draggable = true;
