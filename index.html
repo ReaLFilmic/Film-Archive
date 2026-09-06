@@ -958,6 +958,21 @@ window.addEventListener("message", function (e) {
 
     function apply(film) {
       APP.setScore(film.id, value);
+
+      /* 별점을 지우면 서재에서도 빼줍니다.
+         별점을 매겨서 담긴 작품이니, 취소하면 담기 전으로 돌아가는 게 맞습니다.
+         다만 코멘트나 관람 표시를 남긴 작품은 그대로 둡니다. */
+      if (!value) {
+        var r = {};
+        try { r = APP.rec(film.id) || {}; } catch (e) {}
+        if (!r.comment && !r.status) {
+          APP.removeFilm(film.id);
+          render();
+          say(film.ko + " 을 서재에서 뺐습니다.");
+          return;
+        }
+      }
+
       render();
       say(film.ko + (value ? " " + value + "점" : " 별점을 지웠습니다"));
     }
@@ -6373,6 +6388,15 @@ window.addEventListener("message", function (e) {
     text-align:center;font-size:10.5px;line-height:1.5;color:#6E6455}
   /* 커서를 올리면 바로 뜨는 정보. 누르면 아래에 전체 정보가 열립니다. */
   .it{position:relative}
+  .it .plus{position:absolute;right:5px;bottom:5px;z-index:3;
+    width:26px;height:26px;border-radius:50%;border:0;cursor:pointer;
+    background:rgba(18,16,12,.82);color:var(--paper);font-size:15px;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;transition:opacity .12s,background .12s}
+  .it:hover .plus{opacity:1}
+  .it .plus:hover{background:var(--lamp);color:#2A1C08}
+  .it .plus.on{opacity:1;background:var(--lamp);color:#2A1C08}
+  .it .plus.on:hover{background:#A8564E;color:#fff}
   .it .t{display:block;font-size:11.5px;line-height:1.4;margin:6px 2px 0;color:var(--paper)}
   .it .d{display:block;font-size:10px;color:var(--dim);margin:1px 2px 0}
 
@@ -7560,6 +7584,10 @@ window.addEventListener("message", function (e) {
         (p ? '<img src="' + p + '" alt="">'
            : '<span class="ph">포스터<br>불러오는 중</span>') +
         "</button>" +
+        (TMDBID[key(r)]
+          ? '<button class="plus' + (owned(r) ? " on" : "") + '" data-add="' +
+            TMDBID[key(r)] + '" aria-label="서재에 담기">' + (owned(r) ? "✓" : "+") + "</button>"
+          : "") +
         '<span class="t">' + r[1] + "</span>" +
         '<span class="d">' + r[3] + "</span></li>";
     }
@@ -7581,6 +7609,33 @@ window.addEventListener("message", function (e) {
     }
 
     $("grid").onclick = function (e) {
+      var ad = e.target.closest && e.target.closest("[data-add]");
+      if (ad) {
+        e.preventDefault(); e.stopPropagation();
+        var tid = parseInt(ad.dataset.add, 10);
+
+        /* 이미 담긴 것이면 빼기로 동작합니다. */
+        if (ad.classList.contains("on")) {
+          var f = APP.findByTmdb(tid);
+          if (f) {
+            APP.removeFilm(f.id);
+            ad.textContent = "+"; ad.classList.remove("on");
+            ad.setAttribute("aria-label", "서재에 담기");
+            renderTabs();
+            say(f.ko + " 을 서재에서 뺐습니다.");
+          }
+          return;
+        }
+
+        ad.textContent = "…";
+        APP.addByTmdbId(tid).then(function (f) {
+          ad.textContent = "✓"; ad.classList.add("on");
+          ad.setAttribute("aria-label", "서재에서 빼기");
+          renderTabs();
+          say(f.ko + " 을 담았습니다.");
+        }).catch(function () { ad.textContent = "+"; });
+        return;
+      }
       var b = e.target.closest && e.target.closest("[data-r]");
       if (!b) return;
       showInfo(all[parseInt(b.dataset.r, 10)], true);
@@ -7826,6 +7881,16 @@ window.addEventListener("message", function (e) {
   .it .seen{position:absolute;right:5px;top:5px;z-index:2;width:18px;height:18px;
     border-radius:50%;background:var(--lamp);color:#2A1C08;font-size:11px;font-weight:700;
     display:flex;align-items:center;justify-content:center}
+  .it{position:relative}
+  .it .plus{position:absolute;right:5px;bottom:5px;z-index:3;
+    width:26px;height:26px;border-radius:50%;border:0;cursor:pointer;
+    background:rgba(18,16,12,.82);color:var(--paper);font-size:15px;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;transition:opacity .12s,background .12s}
+  .it:hover .plus{opacity:1}
+  .it .plus:hover{background:var(--lamp);color:#2A1C08}
+  .it .plus.on{opacity:1;background:var(--lamp);color:#2A1C08}
+  .it .plus.on:hover{background:#A8564E;color:#fff}
   .it .t{display:block;font-size:11.5px;line-height:1.4;margin:6px 2px 0;color:var(--paper)}
 
   .more{display:block;width:100%;margin:16px 0 0;padding:12px;border-radius:8px;
@@ -8340,10 +8405,38 @@ window.addEventListener("message", function (e) {
         (day ? '<span class="d">' + parseInt(day, 10) + "일</span>" : "") +
         (owned(r.id) ? '<span class="seen">✓</span>' : "") +
         '<img src="' + r.poster + '" alt=""></button>' +
+        '<button class="plus' + (owned(r.id) ? " on" : "") + '" data-add="' + r.id +
+          '" aria-label="' + (owned(r.id) ? "서재에서 빼기" : "서재에 담기") + '">' + (owned(r.id) ? "✓" : "+") + "</button>" +
         '<span class="t">' + r.ko + "</span></li>";
     }).join("");
 
     $("grid").onclick = function (e) {
+      /* 담기 버튼이 먼저입니다. 포스터 위에 있어 함께 눌리기 때문입니다. */
+      var ad = e.target.closest && e.target.closest("[data-add]");
+      if (ad) {
+        e.preventDefault(); e.stopPropagation();
+        var tid = parseInt(ad.dataset.add, 10);
+
+        /* 이미 담긴 것이면 빼기로 동작합니다. */
+        if (ad.classList.contains("on")) {
+          var f = APP.findByTmdb(tid);
+          if (f) {
+            APP.removeFilm(f.id);
+            ad.textContent = "+"; ad.classList.remove("on");
+            ad.setAttribute("aria-label", "서재에 담기");
+            say(f.ko + " 을 서재에서 뺐습니다.");
+          }
+          return;
+        }
+
+        ad.textContent = "…";
+        APP.addByTmdbId(tid).then(function (f) {
+          ad.textContent = "✓"; ad.classList.add("on");
+          ad.setAttribute("aria-label", "서재에서 빼기");
+          say(f.ko + " 을 담았습니다.");
+        }).catch(function () { ad.textContent = "+"; });
+        return;
+      }
       var b = e.target.closest && e.target.closest("[data-i]");
       if (!b) return;
       showInfo(rows[parseInt(b.dataset.i, 10)]);
@@ -8517,6 +8610,10 @@ window.addEventListener("message", function (e) {
   .row .add{flex:none;font-size:11.5px;border-radius:999px;padding:5px 13px;
     border:1px solid var(--edge);background:#2C2317;color:#C9BDA8}
   .row .add:hover{background:var(--lamp);border-color:var(--lamp);color:#2A1C08}
+  .row .add.on{background:var(--lamp);border-color:var(--lamp);color:#2A1C08;font-weight:700}
+  .row .add.on:hover{background:#A8564E;border-color:#A8564E;color:#fff}
+  .info .acts .drop{border-color:#6E3A36;background:#3A211E;color:#DFA9A2}
+  .info .acts .drop:hover{background:#A8564E;border-color:#A8564E;color:#fff}
   .row .add[disabled]{opacity:.5;cursor:default}
 
   .note{font-size:11.5px;color:var(--dim);line-height:1.7;margin:16px 0 0;
@@ -8995,7 +9092,7 @@ window.addEventListener("message", function (e) {
           return '<div class="row"><span class="m"><b class="pt" data-tip="' + idx +
             '" data-info="' + idx + '">' + f.ko + '</b>' +
             '<span>' + [f.en, f.d, f.c].filter(Boolean).join(" · ") + '</span></span>' +
-            (have ? '<button class="add" disabled>담김</button>'
+            (have ? '<button class="add on" data-un="' + idx + '">담김</button>'
                   : '<button class="add" data-i="' + idx + '">담기</button>') +
             "</div>";
         }).join("") + "</div>";
@@ -9004,6 +9101,19 @@ window.addEventListener("message", function (e) {
     $("list").onclick = function (e) {
       var t = e.target.closest && e.target.closest("[data-info]");
       if (t) { e.preventDefault(); showInfo(BIFF[parseInt(t.dataset.info, 10)]); return; }
+      var un = e.target.closest && e.target.closest("[data-un]");
+      if (un) {
+        e.preventDefault();
+        var g = BIFF[parseInt(un.dataset.un, 10)];
+        var f3 = APP.library.filter(function (x) {
+          return x.ko === g.ko || (g.en && x.en === g.en);
+        })[0];
+        if (f3) {
+          APP.removeFilm(f3.id); renderTabs(); renderList();
+          say(g.ko + " 을 서재에서 뺐습니다.");
+        }
+        return;
+      }
       var b = e.target.closest && e.target.closest("[data-i]");
       if (b) { e.preventDefault(); addOne(BIFF[parseInt(b.dataset.i, 10)], b); }
     };
@@ -9117,11 +9227,35 @@ window.addEventListener("message", function (e) {
         '<div class="acts">' +
         (d.trailer ? '<a href="https://www.youtube.com/watch?v=' + d.trailer +
            '" target="_blank" rel="noopener">예고편 보기</a>' : "") +
-        (have ? "<button disabled>담김</button>"
+        (have ? '<button class="drop" data-drop="' + d.tmdbId + '">서재에서 빼기</button>'
               : '<button data-add="' + d.tmdbId + '">서재에 담기</button>') +
         "</div></div>";
     }
   }
+
+  /* 정보 칸의 담기·빼기. 칸이 다시 그려져도 반응하도록 한 번만 걸어 둡니다. */
+  $("detail").addEventListener("click", function (e) {
+    var ad = e.target.closest && e.target.closest("[data-add]");
+    if (ad) {
+      ad.disabled = true; ad.textContent = "…";
+      APP.addByTmdbId(parseInt(ad.dataset.add, 10)).then(function (f) {
+        ad.outerHTML = '<button class="drop" data-drop="' + f.tmdbId + '">서재에서 빼기</button>';
+        renderTabs(); renderList();
+        say(f.ko + " 을 담았습니다.");
+      }).catch(function () { ad.disabled = false; ad.textContent = "실패"; });
+      return;
+    }
+    var db = e.target.closest && e.target.closest("[data-drop]");
+    if (db) {
+      var tid = parseInt(db.dataset.drop, 10);
+      var f2 = APP.findByTmdb(tid);
+      if (!f2) return;
+      APP.removeFilm(f2.id);
+      db.outerHTML = '<button data-add="' + tid + '">서재에 담기</button>';
+      renderTabs(); renderList();
+      say(f2.ko + " 을 서재에서 뺐습니다.");
+    }
+  });
 
   /* TMDB 에서 제목으로 찾아 담습니다. 한제로 먼저, 안 되면 영제로. */
   function addOne(f, btn) {
@@ -13629,7 +13763,7 @@ function film(id) { return FILM_BY_ID[id]; }
   })();
 
   /* 어느 판을 보고 있는지 알 수 있게 빌드 시각을 남깁니다. */
-  var BUILD = "0906-0955";
+  var BUILD = "0906-1004";
   (function(){ var e=document.getElementById("buildStamp"); if(e) e.textContent = "build " + BUILD; })();
 
   var KEYS = ["rate", "shelf", "record", "collage", "taste", "collection", "calendar", "biff", "cinema", "schedule"];
